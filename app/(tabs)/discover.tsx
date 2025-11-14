@@ -30,12 +30,8 @@ export default function DiscoverScreen() {
         }
       ]} />
 
-      {/* 集成搜索栏 (包含菜单和通知) */}
-      <SearchBar
-        placeholder="Search for models..."
-        showMenuButton={true}
-        showNotificationButton={true}
-      />
+      {/* 搜索栏 */}
+      <SearchBar placeholder="Search for models..." />
 
       {/* 模型网格 */}
       <ScrollView

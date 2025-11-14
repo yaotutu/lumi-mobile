@@ -1,4 +1,5 @@
 import { StyleSheet, View, Image, TouchableOpacity, Text, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
@@ -15,21 +16,79 @@ export function ModelCard({ title, creator, imageUrl, likes }: ModelCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  const cardContent = (
+    <>
+      {/* 标题 */}
+      <Text
+        style={[
+          styles.title,
+          { color: isDark ? Colors.dark.text : Colors.light.text }
+        ]}
+        numberOfLines={1}
+      >
+        {title}
+      </Text>
+
+      {/* 创作者 */}
+      <Text
+        style={[
+          styles.creator,
+          { color: isDark ? '#0A84FF' : '#007AFF' }
+        ]}
+        numberOfLines={1}
+      >
+        by {creator}
+      </Text>
+
+      {/* 底部操作栏 */}
+      <View style={styles.footer}>
+        {/* 点赞 */}
+        <View style={styles.likes}>
+          <Ionicons
+            name="heart-outline"
+            size={20}
+            color={isDark ? '#FF453A' : '#FF3B30'}
+          />
+          <Text
+            style={[
+              styles.likesText,
+              { color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText }
+            ]}
+          >
+            {formatLikes(likes)}
+          </Text>
+        </View>
+
+        {/* 收藏按钮 */}
+        <TouchableOpacity
+          style={[
+            styles.bookmarkButton,
+            { backgroundColor: isDark ? '#0A84FF' : '#007AFF' }
+          ]}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="bookmark-outline"
+            size={18}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
   return (
     <View style={[
       styles.card,
-      {
-        backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
-      },
       Platform.select({
         ios: {
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isDark ? 0.4 : 0.12,
-          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: isDark ? 0.5 : 0.15,
+          shadowRadius: 12,
         },
         android: {
-          elevation: 4,
+          elevation: 6,
         },
       })
     ]}>
@@ -40,65 +99,33 @@ export function ModelCard({ title, creator, imageUrl, likes }: ModelCardProps) {
         resizeMode="cover"
       />
 
-      {/* 内容区 */}
-      <View style={styles.content}>
-        {/* 标题 */}
-        <Text
+      {/* iOS 使用毛玻璃内容区 */}
+      {Platform.OS === 'ios' ? (
+        <BlurView
+          intensity={isDark ? 50 : 70}
+          tint={isDark ? 'dark' : 'light'}
           style={[
-            styles.title,
-            { color: isDark ? Colors.dark.text : Colors.light.text }
+            styles.blurContent,
+            {
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+              borderTopWidth: StyleSheet.hairlineWidth,
+            }
           ]}
-          numberOfLines={1}
         >
-          {title}
-        </Text>
-
-        {/* 创作者 */}
-        <Text
-          style={[
-            styles.creator,
-            { color: isDark ? '#0A84FF' : '#007AFF' }
-          ]}
-          numberOfLines={1}
-        >
-          by {creator}
-        </Text>
-
-        {/* 底部操作栏 */}
-        <View style={styles.footer}>
-          {/* 点赞 */}
-          <View style={styles.likes}>
-            <Ionicons
-              name="heart-outline"
-              size={20}
-              color={isDark ? '#FF453A' : '#FF3B30'}
-            />
-            <Text
-              style={[
-                styles.likesText,
-                { color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText }
-              ]}
-            >
-              {formatLikes(likes)}
-            </Text>
-          </View>
-
-          {/* 收藏按钮 */}
-          <TouchableOpacity
-            style={[
-              styles.bookmarkButton,
-              { backgroundColor: isDark ? '#0A84FF' : '#007AFF' }
-            ]}
-            activeOpacity={0.7}
-          >
-            <Ionicons
-              name="bookmark-outline"
-              size={18}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
+          {cardContent}
+        </BlurView>
+      ) : (
+        /* Android/Web 使用普通背景 */
+        <View style={[
+          styles.content,
+          {
+            backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+          }
+        ]}>
+          {cardContent}
         </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -108,11 +135,16 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     marginBottom: Spacing.xl,
+    backgroundColor: 'transparent',
   },
   image: {
     width: '100%',
     height: 180,
     backgroundColor: '#E5E5EA',
+  },
+  blurContent: {
+    padding: Spacing.lg,
+    overflow: 'hidden',
   },
   content: {
     padding: Spacing.lg,

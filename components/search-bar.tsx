@@ -1,4 +1,5 @@
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, View, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing, BorderRadius, FontSize } from '@/constants/theme';
@@ -7,46 +8,18 @@ interface SearchBarProps {
   placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
-  showMenuButton?: boolean;
-  showNotificationButton?: boolean;
-  onMenuPress?: () => void;
-  onNotificationPress?: () => void;
 }
 
 export function SearchBar({
   placeholder = 'Search for models...',
   value,
   onChangeText,
-  showMenuButton = true,
-  showNotificationButton = true,
-  onMenuPress,
-  onNotificationPress,
 }: SearchBarProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  return (
-    <View style={[
-      styles.container,
-      {
-        backgroundColor: isDark ? Colors.dark.inputBackground : Colors.light.inputBackground,
-      }
-    ]}>
-      {/* 左侧菜单按钮 */}
-      {showMenuButton && (
-        <TouchableOpacity
-          style={styles.iconButton}
-          activeOpacity={0.7}
-          onPress={onMenuPress}
-        >
-          <Ionicons
-            name="menu"
-            size={24}
-            color={isDark ? Colors.dark.text : Colors.light.text}
-          />
-        </TouchableOpacity>
-      )}
-
+  const content = (
+    <>
       {/* 搜索图标 */}
       <Ionicons
         name="search"
@@ -66,45 +39,65 @@ export function SearchBar({
         value={value}
         onChangeText={onChangeText}
       />
+    </>
+  );
 
-      {/* 右侧通知按钮 */}
-      {showNotificationButton && (
-        <TouchableOpacity
-          style={styles.iconButton}
-          activeOpacity={0.7}
-          onPress={onNotificationPress}
+  // iOS 使用毛玻璃效果
+  if (Platform.OS === 'ios') {
+    return (
+      <View style={styles.wrapper}>
+        <BlurView
+          intensity={80}
+          tint={isDark ? 'dark' : 'light'}
+          style={styles.blurContainer}
         >
-          <Ionicons
-            name="notifications-outline"
-            size={24}
-            color={isDark ? Colors.dark.text : Colors.light.text}
-          />
-        </TouchableOpacity>
-      )}
+          {content}
+        </BlurView>
+      </View>
+    );
+  }
+
+  // Android 和 Web 使用普通背景
+  return (
+    <View style={styles.wrapper}>
+      <View style={[
+        styles.container,
+        {
+          backgroundColor: isDark ? Colors.dark.inputBackground : Colors.light.inputBackground,
+        }
+      ]}>
+        {content}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm + 2, // 10px
-    borderRadius: BorderRadius.md,
+  wrapper: {
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
   },
-  iconButton: {
-    width: 36,
-    height: 36,
+  blurContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    overflow: 'hidden',
+    // iOS 毛玻璃边框
+    borderWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 0,
+    borderColor: 'rgba(255, 255, 255, 0.18)',
+  },
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
   },
   searchIcon: {
-    marginRight: Spacing.sm,
+    marginRight: Spacing.md,
   },
   input: {
     flex: 1,
