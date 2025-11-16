@@ -18,21 +18,42 @@ export async function fetchGalleryModels(
   url.searchParams.append('limit', limit.toString());
   url.searchParams.append('offset', offset.toString());
 
+  // 创建超时控制器
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
   try {
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
+      if (response.status >= 500) {
+        throw new Error('服务器出错了,请稍后重试');
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data: GalleryResponse = await response.json();
     return data;
   } catch (error) {
+    clearTimeout(timeoutId);
+
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('连接超时,请检查网络');
+      }
+      if (error.message.includes('Failed to fetch') || error.message.includes('Network request failed')) {
+        throw new Error('无法连接到服务器');
+      }
+    }
+
     console.error('获取画廊模型失败:', error);
     throw error;
   }

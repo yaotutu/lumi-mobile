@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, Platform, StatusBar, ActivityIndicator, RefreshControl, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Platform, StatusBar, ActivityIndicator, RefreshControl, Text, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing } from '@/constants/theme';
@@ -93,13 +93,19 @@ export default function DiscoverScreen() {
       {/* 错误状态 */}
       {error && !loading && (
         <View style={styles.errorContainer}>
+          <Text style={styles.errorIcon}>⚠️</Text>
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Text
-            style={[styles.retryButton, { color: isDark ? Colors.dark.tint : Colors.light.tint }]}
+          <TouchableOpacity
+            style={[styles.retryButton, {
+              backgroundColor: isDark ? 'rgba(74, 144, 226, 0.2)' : 'rgba(0, 122, 255, 0.1)',
+              borderColor: isDark ? Colors.dark.tint : Colors.light.tint,
+            }]}
             onPress={() => loadModels()}
           >
-            点击重试
-          </Text>
+            <Text style={[styles.retryButtonText, { color: isDark ? Colors.dark.tint : Colors.light.tint }]}>
+              重新加载
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -201,12 +207,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: Spacing.xxxl,
   },
-  errorText: {
-    textAlign: 'center',
+  errorIcon: {
+    fontSize: 48,
     marginBottom: Spacing.lg,
-    opacity: 0.8,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+    opacity: 0.7,
+    lineHeight: 22,
   },
   retryButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  retryButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },
