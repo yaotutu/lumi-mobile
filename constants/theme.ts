@@ -10,34 +10,34 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    secondaryText: '#687076',
+    text: '#000000',
+    secondaryText: '#3C3C43',
     tertiaryText: '#8E8E93',
-    background: '#FFFFFF',
-    secondaryBackground: '#F2F2F7',
+    background: '#F2F2F7',           // iOS grouped background
+    secondaryBackground: '#FFFFFF',   // 卡片背景
     cardBackground: '#FFFFFF',
     inputBackground: '#F2F2F7',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#3C3C43',
+    tabIconDefault: '#3C3C43',
     tabIconSelected: tintColorLight,
-    border: '#E5E5EA',
-    separator: '#C6C6C8',
+    border: 'rgba(0, 0, 0, 0.08)',   // 更轻的边框
+    separator: 'rgba(60, 60, 67, 0.29)',
   },
   dark: {
-    text: '#ECEDEE',
-    secondaryText: '#98989D',
+    text: '#FFFFFF',
+    secondaryText: '#EBEBF5',
     tertiaryText: '#8E8E93',
-    background: '#000000',
-    secondaryBackground: '#1C1C1E',
+    background: '#000000',            // iOS grouped background
+    secondaryBackground: '#1C1C1E',   // 卡片背景
     cardBackground: '#1C1C1E',
     inputBackground: '#2C2C2E',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#EBEBF5',
+    tabIconDefault: '#EBEBF5',
     tabIconSelected: tintColorDark,
-    border: '#38383A',
-    separator: '#48484A',
+    border: 'rgba(255, 255, 255, 0.1)',
+    separator: 'rgba(84, 84, 88, 0.65)',
   },
 };
 

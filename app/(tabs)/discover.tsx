@@ -71,7 +71,7 @@ export default function DiscoverScreen() {
         backgroundColor={isDark ? Colors.dark.background : Colors.light.background}
       />
 
-      {/* 顶部安全区域 */}
+      {/* 顶部安全区域 - 使用背景色 */}
       <View style={[
         styles.safeArea,
         {
@@ -171,7 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Spacing.xxxl,
+    paddingBottom: Platform.select({
+      ios: 90,  // 83 tabBar + 7 spacing
+      android: 85,  // 75 tabBar + 10 spacing
+      default: 85,
+    }),
   },
   grid: {
     flexDirection: 'row',

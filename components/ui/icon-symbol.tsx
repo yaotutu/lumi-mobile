@@ -21,6 +21,9 @@ const MAPPING = {
   'magnifyingglass': 'search',
   'wand.and.stars': 'auto-fix-high',
   'person.fill': 'person',
+  'sparkles': 'auto-awesome',
+  'person.crop.circle': 'account-circle',
+  'safari': 'explore',
 } as IconMapping;
 
 /**
