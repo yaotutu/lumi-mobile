@@ -16,6 +16,7 @@ export function ModelCard({ title, creator, imageUrl, likes }: ModelCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+
   const cardContent = (
     <>
       {/* 标题 */}
