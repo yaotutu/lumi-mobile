@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+# LAF - AI 3D模型创作平台
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+基于Expo和React Native构建的跨平台移动应用，支持AI创作和3D模型展示。
 
-## Get started
+## 🚀 快速开始
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+### 安装依赖
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 启动开发服务器
+```bash
+npm start
+```
 
-## Learn more
+### 平台特定启动
+```bash
+npm run ios        # iOS模拟器
+npm run android    # Android模拟器
+npm run web        # Web浏览器
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📱 功能特性
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **🎨 AI创作** - 智能生成3D模型
+- **🔍 模型发现** - 浏览和搜索优质3D模型
+- **👤 个人中心** - 管理创作和历史记录
 
-## Join the community
+## 🛠️ 技术栈
 
-Join our community of developers creating universal apps.
+- **框架**: Expo SDK 54, React Native 0.81, React 19
+- **路由**: Expo Router 6 (文件路由)
+- **类型**: TypeScript 5.9+ (严格模式)
+- **动画**: React Native Reanimated 4
+- **主题**: 支持亮暗双主题
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🎨 双UI设计
+
+本项目采用平台原生UI设计：
+- **iOS**: Apple HIG设计规范，毛玻璃效果，SF Symbols
+- **Android**: Material Design 3规范，涟漪效果，Material Icons
+
+## 📁 项目结构
+
+```
+├── app/                    # Expo Router页面路由
+├── components/             # 组件库
+│   ├── ui/                # 基础UI组件
+│   └── pages/             # 页面专属组件
+├── constants/             # 常量和主题
+├── hooks/                 # 自定义Hook
+├── services/              # API服务层
+├── types/                 # TypeScript类型
+└── utils/                 # 工具函数
+```
+
+## 🔧 开发命令
+
+```bash
+npm run lint              # 代码检查
+npm run reset-project     # 重置项目模板
+```
+
+## 📄 许可证
+
+MIT License

@@ -159,6 +159,45 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 - 其他平台: 使用 @expo/vector-icons
 - `IconSymbol` 组件提供跨平台抽象
 
+## 双UI开发规范
+
+### 核心原则
+- **逻辑统一，视觉分离** - 业务逻辑100%共享，UI样式平台化
+- **交互一致，视觉差异** - 相同的功能逻辑，平台原生的视觉风格
+
+### 开发模式
+```typescript
+// 1. 业务逻辑Hook (共享)
+function useComponentLogic(props) {
+  // 所有状态管理和业务逻辑
+  return { state, handlers };
+}
+
+// 2. 平台特定实现
+// component.ios.tsx - iOS风格
+// component.android.tsx - Android风格
+// index.tsx - Platform.select()自动选择
+```
+
+### 设计规范
+- **iOS**: Apple HIG风格，毛玻璃效果，SF Symbols，细腻阴影
+- **Android**: Material Design 3，Ripple效果，Material Icons，Elevation阴影
+
+### 文件组织
+```
+components/
+├── component-name/        # 组件专用文件夹
+│   ├── index.tsx          # 统一入口 (Platform.select)
+│   ├── component.ios.tsx  # iOS版本实现
+│   ├── component.android.tsx # Android版本实现
+│   └── types.ts           # 共享类型定义
+```
+
+### 适配原则
+- **小屏** (≤375px): 间距缩小10%，字体缩小5%
+- **标准** (390px): 基准设计
+- **大屏** (≥430px): 间距增大10%，保持内容密度
+
 ## 开发注意事项
 
 1. **路由**: 在 `app/` 目录添加新页面时,Expo Router 会自动生成路由
@@ -167,3 +206,4 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 4. **原生目录**: `/ios` 和 `/android` 目录会在构建时生成,不要提交到版本控制
 5. **主题化**: 新组件应考虑支持亮暗模式,使用 `useColorScheme()` 和 `Colors` 常量
 6. **触觉反馈**: iOS 交互可使用 `expo-haptics` 提供反馈
+7. **平台差异**: 新组件必须提供iOS和Android两个版本，确保功能逻辑完全一致

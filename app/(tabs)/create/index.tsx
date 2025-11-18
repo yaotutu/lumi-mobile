@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ExamplePrompts } from "@/components/pages/create/_example-prompts";
-import { GenerationButton } from "@/components/pages/create/_generation-button";
-import { PromptInput } from "@/components/pages/create/_prompt-input";
-import { StyleSelector } from "@/components/pages/create/_style-selector";
-import { WelcomeSection } from "@/components/pages/create/_welcome-section";
+import { ExamplePrompts } from "@/components/pages/create/example-prompts";
+import { GenerationButton } from "@/components/pages/create/generation-button";
+import { PromptInput } from "@/components/pages/create/prompt-input";
+import { StyleSelector } from "@/components/pages/create/style-selector";
+import { WelcomeSection } from "@/components/pages/create/welcome-section";
 
 export default function CreateScreen() {
 	const colorScheme = useColorScheme();

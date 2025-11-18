@@ -1,8 +1,8 @@
+import { Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import {
 	Image,
-	Platform,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -11,13 +11,7 @@ import {
 import { formatLikes } from "@/constants/mock-data";
 import { BorderRadius, Colors, FontWeight, Spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-
-interface ModelCardProps {
-	title: string;
-	creator: string;
-	imageUrl: string;
-	likes: number;
-}
+import type { ModelCardProps } from './types';
 
 export function ModelCard({ title, creator, imageUrl, likes }: ModelCardProps) {
 	const colorScheme = useColorScheme();
@@ -125,40 +119,22 @@ export function ModelCard({ title, creator, imageUrl, likes }: ModelCardProps) {
 			/>
 
 			{/* iOS 使用毛玻璃内容区 */}
-			{Platform.OS === "ios" ? (
-				<BlurView
-					intensity={isDark ? 40 : 60} // 50/70 → 40/60
-					tint={isDark ? "dark" : "light"}
-					style={[
-						styles.blurContent,
-						{
-							borderWidth: StyleSheet.hairlineWidth,
-							borderColor: isDark
-								? "rgba(255, 255, 255, 0.08)"
-								: "rgba(0, 0, 0, 0.04)",
-							borderTopWidth: StyleSheet.hairlineWidth,
-						},
-					]}
-				>
-					{cardContent}
-				</BlurView>
-			) : (
-				/* Android/Web 使用普通背景 */
-				<View
-					style={[
-						styles.content,
-						{
-							backgroundColor: isDark
-								? Colors.dark.cardBackground
-								: Colors.light.cardBackground,
-							borderTopWidth: StyleSheet.hairlineWidth,
-							borderTopColor: isDark ? Colors.dark.border : Colors.light.border,
-						},
-					]}
-				>
-					{cardContent}
-				</View>
-			)}
+			<BlurView
+				intensity={isDark ? 40 : 60} // 50/70 → 40/60
+				tint={isDark ? "dark" : "light"}
+				style={[
+					styles.blurContent,
+					{
+						borderWidth: StyleSheet.hairlineWidth,
+						borderColor: isDark
+							? "rgba(255, 255, 255, 0.08)"
+							: "rgba(0, 0, 0, 0.04)",
+						borderTopWidth: StyleSheet.hairlineWidth,
+					},
+				]}
+			>
+				{cardContent}
+			</BlurView>
 		</View>
 	);
 }
@@ -178,9 +154,6 @@ const styles = StyleSheet.create({
 	blurContent: {
 		padding: Spacing.sm + Spacing.xs, // 12px
 		overflow: "hidden",
-	},
-	content: {
-		padding: Spacing.sm + Spacing.xs, // 12px
 	},
 	title: {
 		fontSize: 15, // 16 → 15px
