@@ -8,6 +8,6 @@ export const HapticTab = Platform.select({
   ios: HapticTabIOS,
   android: HapticTabAndroid,
   default: HapticTabIOS, // 默认使用iOS版本
-}) as React.ComponentType<HapticTabProps>;
+}) as (props: HapticTabProps) => React.JSX.Element;
 
 export type { HapticTabProps };

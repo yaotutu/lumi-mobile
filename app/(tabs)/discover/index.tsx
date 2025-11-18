@@ -70,8 +70,8 @@ export default function DiscoverScreen() {
 	};
 
 	// 将模型数组分成两列
-	const leftColumn = models.filter((_, index) => index % 2 === 0);
-	const rightColumn = models.filter((_, index) => index % 2 === 1);
+	const leftColumn = models?.filter((_, index) => index % 2 === 0) || [];
+	const rightColumn = models?.filter((_, index) => index % 2 === 1) || [];
 
 	return (
 		<ThemedView style={styles.container}>
