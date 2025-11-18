@@ -45,29 +45,71 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 
 ### 目录结构
 
+本项目采用"就近原则"(Colocation)组织代码,页面相关的组件放在页面目录下,只有全局共享的组件才放在 components 文件夹中。
+
 - **app/**: Expo Router 文件路由目录
   - `_layout.tsx`: 根布局,配置主题和导航栈
   - `(tabs)/`: 标签导航组
     - `_layout.tsx`: 标签布局配置
-    - `index.tsx`: 首页 (Home 标签)
-    - `explore.tsx`: 探索页面
+    - `discover/`: 发现页面 (原 index.tsx)
+      - `index.tsx`: 页面主文件
+      - `_components/`: 页面专属组件 (下划线前缀避免被 Expo Router 识别为路由)
+        - `model-card.tsx`: 模型卡片组件
+    - `create/`: AI 创作页面
+      - `index.tsx`: 页面主文件
+      - `_components/`: 页面专属组件 (下划线前缀避免被 Expo Router 识别为路由)
+        - `welcome-section.tsx`: 欢迎区域
+        - `example-prompts.tsx`: 示例提示词
+        - `prompt-input.tsx`: 输入框组件
+        - `style-selector.tsx`: 风格选择器
+        - `generation-button.tsx`: 生成按钮
+    - `profile.tsx`: 个人中心页面
   - `modal.tsx`: 模态页面示例
 
-- **components/**: 可复用的 React 组件
+- **components/**: 全局共享组件
   - `ui/`: UI 基础组件
     - `icon-symbol.tsx`: 跨平台图标组件
     - `icon-symbol.ios.tsx`: iOS 平台特定图标实现
     - `collapsible.tsx`: 可折叠组件
   - `themed-*.tsx`: 主题化组件 (支持亮暗模式)
+  - `search-bar.tsx`: 搜索栏组件
   - `haptic-tab.tsx`: 带触觉反馈的标签栏按钮
+
+- **config/**: 配置文件
+  - `env.ts`: 环境变量配置
+  - `api.ts`: API 配置和端点定义
 
 - **constants/**: 常量定义
   - `theme.ts`: 颜色主题和字体定义 (包含亮暗模式配置)
+  - `mock-data.ts`: Mock 数据
 
 - **hooks/**: 自定义 React Hooks
   - `use-color-scheme.ts`: 颜色模式检测 hook
   - `use-color-scheme.web.ts`: Web 平台特定实现
   - `use-theme-color.ts`: 主题颜色 hook
+
+- **services/**: 服务层
+  - `http/`: HTTP 客户端
+    - `client.ts`: 统一的 HTTP 请求封装
+  - `api/`: API 服务
+    - `gallery.ts`: 画廊相关 API
+  - `index.ts`: 服务统一导出
+
+- **styles/**: 样式工具
+  - `mixins.ts`: 可复用样式混入
+  - `shadows.ts`: 阴影样式库
+
+- **types/**: TypeScript 类型定义
+  - `api/`: API 相关类型
+    - `common.ts`: 通用 API 类型
+    - `gallery.ts`: 画廊 API 类型
+  - `models/`: 数据模型类型
+    - `gallery.ts`: 画廊模型类型
+  - `global.d.ts`: 全局类型声明
+  - `index.ts`: 类型统一导出
+
+- **utils/**: 工具函数
+  - `platform.ts`: 平台检测工具
 
 - **assets/**: 静态资源 (图片、字体等)
 
