@@ -40,7 +40,7 @@ export interface CreateState {
   selectStyle: (style: StyleOption | null) => void;
   showStyleSelector: () => void;
   hideStyleSelector: () => void;
-  startGeneration: () => Promise<void>;
+  startGeneration: (abortController?: AbortController) => Promise<void>;
   cancelGeneration: () => void;
   setGenerationProgress: (progress: number) => void;
   completeGeneration: (resultUrl: string) => void;

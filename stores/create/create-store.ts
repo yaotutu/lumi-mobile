@@ -66,7 +66,7 @@ export const useCreateStore = create<CreateState>()(
         },
 
         // 开始生成
-        startGeneration: async () => {
+        startGeneration: async (abortController?: AbortController) => {
           const { prompt, selectedStyle } = get();
 
           if (!prompt.trim()) {
@@ -96,13 +96,19 @@ export const useCreateStore = create<CreateState>()(
 
           // 模拟生成过程
           try {
-            await simulateGeneration(generationId, get().setGenerationProgress);
+            await simulateGeneration(generationId, get().setGenerationProgress, abortController);
 
             // 生成成功
             const resultUrl = `https://example.com/models/${generationId}.glb`;
             get().completeGeneration(resultUrl);
 
           } catch (error) {
+            // 如果是取消错误，不设置失败状态
+            if (error instanceof Error && error.name === 'AbortError') {
+              logger.debug('生成被取消');
+              return;
+            }
+
             logger.error('生成失败:', error);
             get().failGeneration(error instanceof Error ? error.message : '生成失败');
           }
@@ -248,12 +254,33 @@ export const useCreateStore = create<CreateState>()(
 );
 
 // 模拟生成过程的辅助函数
-async function simulateGeneration(generationId: string, setProgress: (progress: number) => void) {
+async function simulateGeneration(generationId: string, setProgress: (progress: number) => void, abortController?: AbortController) {
   const steps = [10, 25, 45, 70, 90];
   const delays = [1000, 1500, 2000, 1500, 1000];
 
   for (let i = 0; i < steps.length; i++) {
-    await new Promise(resolve => setTimeout(resolve, delays[i]));
+    // 检查是否被取消
+    if (abortController?.signal.aborted) {
+      throw new Error('生成被取消');
+    }
+
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(resolve, delays[i]);
+
+      // 监听取消信号
+      if (abortController) {
+        abortController.signal.addEventListener('abort', () => {
+          clearTimeout(timeout);
+          reject(new Error('生成被取消'));
+        });
+      }
+    });
+
+    // 再次检查是否被取消
+    if (abortController?.signal.aborted) {
+      throw new Error('生成被取消');
+    }
+
     setProgress(steps[i]);
   }
 }

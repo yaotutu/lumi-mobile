@@ -42,6 +42,7 @@ export async function request<T = any>(
 		retryAttempts = 0, // 默认不重试,让调用方决定
 		retryDelay = API_CONFIG.retryDelay,
 		headers = {},
+		signal,
 		...restConfig
 	} = config;
 
@@ -49,9 +50,10 @@ export async function request<T = any>(
 		? endpoint
 		: `${API_CONFIG.baseURL}${endpoint}`;
 
-	// 创建超时控制器
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), timeout);
+	// 使用外部提供的 signal 或创建新的超时控制器
+	const internalController = new AbortController();
+	const controller = signal ? { signal } : internalController;
+	const timeoutId = signal ? null : setTimeout(() => internalController.abort(), timeout);
 
 	let lastError: Error | null = null;
 
@@ -67,7 +69,7 @@ export async function request<T = any>(
 				signal: controller.signal,
 			});
 
-			clearTimeout(timeoutId);
+			if (timeoutId) clearTimeout(timeoutId);
 
 			// 处理 HTTP 错误
 			if (!response.ok) {
@@ -89,7 +91,7 @@ export async function request<T = any>(
 			const data: T = await response.json();
 			return data;
 		} catch (error) {
-			clearTimeout(timeoutId);
+			if (timeoutId) clearTimeout(timeoutId);
 
 			// 处理中断错误
 			if (error instanceof Error) {

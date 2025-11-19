@@ -22,7 +22,7 @@ export interface GalleryState {
   cacheDuration: number; // 缓存持续时间（毫秒）
 
   // Actions
-  fetchModels: (page?: number, options?: FetchOptions) => Promise<void>;
+  fetchModels: (page?: number, options?: FetchOptions, abortController?: AbortController) => Promise<void>;
   refreshModels: () => Promise<void>;
   loadMore: () => Promise<void>;
   searchModels: (query: string) => Promise<void>;

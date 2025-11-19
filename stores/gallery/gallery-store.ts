@@ -35,7 +35,7 @@ export const useGalleryStore = create<GalleryState>()(
         cacheDuration: CACHE_DURATION,
 
         // 获取模型列表
-        fetchModels: async (page = 1, options: FetchOptions = {}) => {
+        fetchModels: async (page = 1, options: FetchOptions = {}, abortController?: AbortController) => {
           const {
             models: existingModels,
             currentPage: existingPage,
@@ -75,6 +75,8 @@ export const useGalleryStore = create<GalleryState>()(
               limit: pageSize,
               offset: (page - 1) * pageSize,
               ...(options.category && { category: options.category }),
+            }, {
+              signal: abortController?.signal
             });
 
             if (!response.success) {
@@ -102,6 +104,12 @@ export const useGalleryStore = create<GalleryState>()(
             logger.info(`成功获取 ${newModels.length} 个模型，当前总数: ${get().models.length}`);
 
           } catch (error) {
+            // 如果是取消错误，不设置错误状态
+            if (error instanceof Error && error.name === 'AbortError') {
+              logger.debug('请求被取消');
+              return;
+            }
+
             const errorMessage = error instanceof Error ? error.message : '加载失败，请重试';
 
             logger.error('获取模型失败:', error);

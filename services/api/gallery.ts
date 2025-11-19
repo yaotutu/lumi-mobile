@@ -16,6 +16,7 @@ import { get, post } from "../http/client";
  */
 export async function fetchGalleryModels(
 	params: GalleryQueryParams = {},
+	options?: { signal?: AbortSignal },
 ): Promise<GalleryListResponse> {
 	const { sortBy = "latest", limit = 20, offset = 0 } = params;
 
@@ -23,7 +24,7 @@ export async function fetchGalleryModels(
 		sortBy,
 		limit,
 		offset,
-	});
+	}, options);
 }
 
 /**

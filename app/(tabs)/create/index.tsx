@@ -5,24 +5,19 @@ import { GenerationButton } from "@/components/pages/create/generation-button";
 import { PromptInput } from "@/components/pages/create/prompt-input";
 import { StyleSelector } from "@/components/pages/create/style-selector";
 import { WelcomeSection } from "@/components/pages/create/welcome-section";
-import {
-	useCreateStore,
-	useCreatePrompt,
-	useCreateSelectedStyle,
-	useCreateShowStyles,
-	useCreateGenerating,
-} from "@/stores";
+import { useCreateStore } from "@/stores";
 
 export default function CreateScreen() {
 	const colorScheme = useColorScheme();
 	const isDark = colorScheme === "dark";
 
 	// 从 Create Store 获取状态和方法
-	const prompt = useCreatePrompt();
-	const selectedStyle = useCreateSelectedStyle();
-	const showStyles = useCreateShowStyles();
-	const { isGenerating, generationProgress } = useCreateGenerating();
 	const {
+		prompt,
+		selectedStyle,
+		showStyles,
+		isGenerating,
+		generationProgress,
 		setPrompt,
 		selectStyle,
 		showStyleSelector,

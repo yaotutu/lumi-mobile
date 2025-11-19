@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
 	ActivityIndicator,
 	Platform,
@@ -16,29 +16,33 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors, Spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ModelCard } from "@/components/model-card";
-import {
-	useGalleryStore,
-	useGalleryModels,
-	useGalleryLoading,
-	useGalleryRefreshing,
-	useGalleryError,
-} from "@/stores";
+import { useAsyncController } from "@/hooks/useAsyncController";
+import { categorizeError, logError } from "@/utils/error-handler";
+import { useGalleryStore } from "@/stores";
 
 export default function DiscoverScreen() {
 	const colorScheme = useColorScheme();
 	const isDark = colorScheme === "dark";
 
+	// 异步操作控制器
+	const { createController } = useAsyncController();
+
 	// 从 Gallery Store 获取状态和方法
-	const models = useGalleryModels();
-	const loading = useGalleryLoading();
-	const refreshing = useGalleryRefreshing();
-	const error = useGalleryError();
-	const { fetchModels, refreshModels, clearError } = useGalleryStore();
+	const {
+		models,
+		loading,
+		refreshing,
+		error,
+		fetchModels,
+		refreshModels,
+		clearError,
+	} = useGalleryStore();
 
 	// 组件挂载时加载数据
 	useEffect(() => {
-		fetchModels();
-	}, [fetchModels]);
+		const controller = createController();
+		fetchModels(1, {}, controller);
+	}, [fetchModels, createController]);
 
 	// 下拉刷新
 	const handleRefresh = () => {
@@ -47,13 +51,23 @@ export default function DiscoverScreen() {
 
 	// 重新加载
 	const handleRetry = () => {
+		const controller = createController();
 		clearError();
-		fetchModels();
+		fetchModels(1, {}, controller);
 	};
 
-	// 将模型数组分成两列
-	const leftColumn = models?.filter((_, index) => index % 2 === 0) || [];
-	const rightColumn = models?.filter((_, index) => index % 2 === 1) || [];
+	// 缓存分列计算结果，避免每次渲染都重新计算
+	const { leftColumn, rightColumn } = useMemo(() => ({
+		leftColumn: models?.filter((_: any, index: number) => index % 2 === 0) || [],
+		rightColumn: models?.filter((_: any, index: number) => index % 2 === 1) || [],
+	}), [models]);
+
+	// 使用错误处理工具函数分类错误
+	const errorInfo = useMemo(() => {
+		if (!error) return null;
+		const errorObj = new Error(error);
+		return categorizeError(errorObj);
+	}, [error]);
 
 	return (
 		<ThemedView style={styles.container}>
@@ -92,10 +106,12 @@ export default function DiscoverScreen() {
 			)}
 
 			{/* 错误状态 */}
-			{error && !loading && (
+			{errorInfo && !loading && (
 				<View style={styles.errorContainer}>
-					<Text style={styles.errorIcon}>⚠️</Text>
-					<ThemedText style={styles.errorText}>{error}</ThemedText>
+					<Text style={styles.errorIcon}>
+						{errorInfo.type === 'network' ? '🌐' : errorInfo.type === 'server' ? '🔧' : '⚠️'}
+					</Text>
+					<ThemedText style={styles.errorText}>{errorInfo.message}</ThemedText>
 					<TouchableOpacity
 						style={[
 							styles.retryButton,
@@ -106,7 +122,12 @@ export default function DiscoverScreen() {
 								borderColor: isDark ? Colors.dark.tint : Colors.light.tint,
 							},
 						]}
-						onPress={handleRetry}
+						onPress={() => {
+							if (error) {
+								logError(new Error(error), 'DiscoverScreen');
+							}
+							handleRetry();
+						}}
 					>
 						<Text
 							style={[
@@ -121,7 +142,7 @@ export default function DiscoverScreen() {
 			)}
 
 			{/* 模型网格 */}
-			{!loading && !error && (
+			{!loading && !errorInfo && (
 				<ScrollView
 					style={styles.scrollView}
 					contentContainerStyle={styles.scrollContent}
@@ -144,7 +165,7 @@ export default function DiscoverScreen() {
 						<View style={styles.grid}>
 							{/* 左列 */}
 							<View style={styles.column}>
-								{leftColumn.map((model) => (
+								{leftColumn.map((model: any) => (
 									<ModelCard
 										key={model.id}
 										title={model.name}
@@ -157,7 +178,7 @@ export default function DiscoverScreen() {
 
 							{/* 右列 */}
 							<View style={styles.column}>
-								{rightColumn.map((model) => (
+								{rightColumn.map((model: any) => (
 									<ModelCard
 										key={model.id}
 										title={model.name}

@@ -221,3 +221,50 @@ components/
 6. **触觉反馈**: iOS 交互可使用 `expo-haptics` 提供反馈
 7. **平台差异**: 新组件必须提供iOS和Android两个版本，确保功能逻辑完全一致
 8. **日志规范**: 禁止使用 `console.*`，必须使用 `logger` 模块（从 `@/utils/logger` 导入）。使用合适的日志级别：`debug` 用于调试信息、`info` 用于业务流程、`warn` 用于警告、`error` 用于错误。开发环境显示所有日志，生产环境仅输出 error 级别，ESLint 已配置强制检查（scripts 目录除外）
+
+## 状态管理架构
+
+**状态管理原则**：
+- 页面状态：使用 `useState` 管理简单的UI状态
+- 跨组件状态：使用 `use-immer` hook 管理复杂业务逻辑，避免 prop drilling
+- 异步操作：使用 `useAsyncController` hook 处理取消操作，防止内存泄漏
+- 错误处理：使用 `error-handler` 工具统一分类和记录错误
+
+**Store 使用模式**：
+```typescript
+// 标准状态管理模式
+export const useXxxStore = () => {
+  const [state, updateState] = useImmer(initialState);
+
+  const someAction = useCallback(async (...args) => {
+    const controller = createController(); // 创建取消控制器
+
+    try {
+      updateState(draft => {
+        draft.loading = true;
+        draft.error = null;
+      });
+
+      const result = await apiCall(...args, controller);
+
+      updateState(draft => {
+        draft.data = result;
+        draft.loading = false;
+      });
+    } catch (error) {
+      const errorInfo = categorizeError(error);
+      updateState(draft => {
+        draft.loading = false;
+        draft.error = errorInfo.message;
+      });
+      logError(error, 'XxxStore.someAction');
+    }
+  }, [createController, updateState]);
+
+  return {
+    ...state,
+    someAction,
+    // 其他 actions...
+  };
+};
+```
