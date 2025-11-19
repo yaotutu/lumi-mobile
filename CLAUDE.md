@@ -193,10 +193,18 @@ function useComponentLogic(props) {
 components/
 ├── component-name/        # 组件专用文件夹
 │   ├── index.tsx          # 统一入口 (Platform.select)
-│   ├── component.ios.tsx  # iOS版本实现
-│   ├── component.android.tsx # Android版本实现
+│   ├── android/           # Android 平台特定代码
+│   │   └── component.tsx  # Android版本实现
+│   ├── ios/               # iOS 平台特定代码
+│   │   └── component.tsx  # iOS版本实现
 │   └── types.ts           # 共享类型定义
 ```
+
+### 组件命名规范
+
+- **禁止下划线前缀**: 在 `components/` 目录中不允许使用下划线 `_` 开头的文件名
+- **页面组件组织**: 页面专属组件应直接放在页面目录下的 `components/` 文件夹中（不使用下划线前缀）
+- **推荐结构**: 使用 `android/` 和 `ios/` 文件夹组织平台特定代码，而非 `.ios.tsx` 和 `.android.tsx` 后缀
 
 ### 适配原则
 - **小屏** (≤375px): 间距缩小10%，字体缩小5%

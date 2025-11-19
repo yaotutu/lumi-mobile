@@ -18,7 +18,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { logger } from "@/utils/logger";
 import { fetchGalleryModels } from "@/services";
 import type { GalleryModel } from "@/types";
-import { ModelCard } from "@/components/pages/discover/model-card";
+import { ModelCard } from "@/components/model-card";
 
 export default function DiscoverScreen() {
 	const colorScheme = useColorScheme();
