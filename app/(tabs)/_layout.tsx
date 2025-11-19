@@ -4,11 +4,13 @@ import { Platform, StyleSheet } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
 	const isDark = colorScheme === "dark";
+	const themeColors = isDark ? Colors.dark : Colors.light;
 
 	return (
 		<Tabs
@@ -18,23 +20,33 @@ export default function TabLayout() {
 				tabBarButton: HapticTab,
 				tabBarActiveTintColor: isDark ? "#4A9EFF" : "#007AFF",
 				tabBarInactiveTintColor: "#8E8E93",
-				tabBarStyle: styles.tabBar,
+				tabBarStyle: [
+					styles.tabBar,
+					Platform.OS === "android" && {
+						backgroundColor: themeColors.secondaryBackground,
+						borderTopColor: themeColors.border,
+						borderTopWidth: StyleSheet.hairlineWidth,
+					},
+				],
 				tabBarLabelStyle: styles.tabBarLabel,
 				tabBarIconStyle: styles.tabBarIcon,
-				tabBarBackground: () => (
-					<BlurView
-						intensity={100}
-						tint={isDark ? "dark" : "light"}
-						style={[
-							styles.blurView,
-							{
-								borderTopColor: isDark
-									? "rgba(255, 255, 255, 0.1)"
-									: "rgba(0, 0, 0, 0.1)",
-							},
-						]}
-					/>
-				),
+				tabBarBackground:
+					Platform.OS === "ios"
+						? () => (
+								<BlurView
+									intensity={100}
+									tint={isDark ? "dark" : "light"}
+									style={[
+										styles.blurView,
+										{
+											borderTopColor: isDark
+												? "rgba(255, 255, 255, 0.1)"
+												: "rgba(0, 0, 0, 0.1)",
+										},
+									]}
+								/>
+							)
+						: undefined,
 			}}
 		>
 			<Tabs.Screen
@@ -70,18 +82,23 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
 	tabBar: {
-		backgroundColor: "transparent",
-		borderTopWidth: 0,
 		position: "absolute",
-		elevation: 0,
 		...Platform.select({
 			ios: {
+				backgroundColor: "transparent",
+				borderTopWidth: 0,
+				elevation: 0,
 				height: 83, // 49 content + 34 safe area
 			},
 			android: {
+				// backgroundColor 在 screenOptions 中动态设置
+				elevation: 8, // Material Design 阴影
 				height: 70,
 			},
 			default: {
+				backgroundColor: "transparent",
+				borderTopWidth: 0,
+				elevation: 0,
 				height: 70,
 			},
 		}),
