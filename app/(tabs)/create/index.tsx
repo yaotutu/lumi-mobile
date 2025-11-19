@@ -1,19 +1,33 @@
-import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { logger } from "@/utils/logger";
 import { ExamplePrompts } from "@/components/pages/create/example-prompts";
 import { GenerationButton } from "@/components/pages/create/generation-button";
 import { PromptInput } from "@/components/pages/create/prompt-input";
 import { StyleSelector } from "@/components/pages/create/style-selector";
 import { WelcomeSection } from "@/components/pages/create/welcome-section";
+import {
+	useCreateStore,
+	useCreatePrompt,
+	useCreateSelectedStyle,
+	useCreateShowStyles,
+	useCreateGenerating,
+} from "@/stores";
 
 export default function CreateScreen() {
 	const colorScheme = useColorScheme();
 	const isDark = colorScheme === "dark";
-	const [prompt, setPrompt] = useState("");
-	const [selectedStyle, setSelectedStyle] = useState<number | null>(null);
-	const [showStyles, setShowStyles] = useState(false);
+
+	// 从 Create Store 获取状态和方法
+	const prompt = useCreatePrompt();
+	const selectedStyle = useCreateSelectedStyle();
+	const showStyles = useCreateShowStyles();
+	const { isGenerating, generationProgress } = useCreateGenerating();
+	const {
+		setPrompt,
+		selectStyle,
+		showStyleSelector,
+		startGeneration,
+	} = useCreateStore();
 
 	const backgroundColor = isDark ? "#000000" : "#F5F5F7";
 	const cardBackground = isDark ? "#1C1C1E" : "#FFFFFF";
@@ -22,14 +36,16 @@ export default function CreateScreen() {
 	const borderColor = isDark ? "#38383A" : "#D1D1D6";
 
 	const handleGenerateStyles = () => {
-		if (prompt.trim()) {
-			setShowStyles(true);
-		}
+		showStyleSelector();
 	};
 
-	const handleGenerate3DModel = () => {
-		// 这里后续对接生成3D模型的逻辑
-		logger.debug("生成 3D 模型:", { prompt, selectedStyle });
+	const handleGenerate3DModel = async () => {
+		try {
+			await startGeneration();
+			// 生成成功后的处理可以在这里添加
+		} catch {
+			// 错误处理已在 Store 中完成
+		}
 	};
 
 	return (
@@ -82,14 +98,19 @@ export default function CreateScreen() {
 				{showStyles && (
 					<StyleSelector
 						selectedStyle={selectedStyle}
-						onStyleSelect={setSelectedStyle}
+						onStyleSelect={selectStyle}
 						textColor={textColor}
 					/>
 				)}
 
 				{/* Generate Button - 只在选择风格后显示 */}
 				{showStyles && selectedStyle !== null && (
-					<GenerationButton onPress={handleGenerate3DModel} />
+					<GenerationButton
+						onPress={handleGenerate3DModel}
+						disabled={isGenerating}
+						isGenerating={isGenerating}
+						generationProgress={generationProgress}
+					/>
 				)}
 			</ScrollView>
 

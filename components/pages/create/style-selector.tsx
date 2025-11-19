@@ -1,27 +1,24 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { StyleOption } from "@/stores/style";
+import { getStyleOptions } from "@/stores";
 
-const STYLE_IMAGES = [
-	{
-		id: 1,
-		uri: "https://via.placeholder.com/300x300/FF6B35/FFFFFF?text=Low-Poly",
-	},
-	{
-		id: 2,
-		uri: "https://via.placeholder.com/300x300/004E89/FFFFFF?text=Realistic",
-	},
-	{
-		id: 3,
-		uri: "https://via.placeholder.com/300x300/1AA7EC/FFFFFF?text=Cartoon",
-	},
-	{
-		id: 4,
-		uri: "https://via.placeholder.com/300x300/A23B72/FFFFFF?text=Portrait",
-	},
-];
+// 获取风格对应的颜色
+function getStyleColor(category: string): string {
+	const colors: Record<string, string> = {
+		realistic: '#004E89',
+		cartoon: '#1AA7EC',
+		lowpoly: '#FF6B35',
+		cyberpunk: '#A23B72',
+		pixel: '#8B4513',
+		handdrawn: '#228B22',
+	};
+	return colors[category] || '#666666';
+}
 
 interface StyleSelectorProps {
-	selectedStyle: number | null;
-	onStyleSelect: (styleId: number) => void;
+	selectedStyle: StyleOption | null;
+	onStyleSelect: (style: StyleOption) => void;
 	textColor: string;
 }
 
@@ -30,24 +27,28 @@ export function StyleSelector({
 	onStyleSelect,
 	textColor,
 }: StyleSelectorProps) {
+	const [styleOptions, setStyleOptions] = useState<StyleOption[]>([]);
+
+	useEffect(() => {
+		setStyleOptions(getStyleOptions());
+	}, []);
+
 	return (
 		<View style={styles.container}>
 			<Text style={[styles.title, { color: textColor }]}>Choose a style</Text>
 			<View style={styles.grid}>
-				{STYLE_IMAGES.map((style) => (
+				{styleOptions.map((style) => (
 					<TouchableOpacity
 						key={style.id}
 						style={[
 							styles.styleCard,
-							selectedStyle === style.id && styles.styleCardSelected,
+							selectedStyle?.id === style.id && styles.styleCardSelected,
 						]}
-						onPress={() => onStyleSelect(style.id)}
+						onPress={() => onStyleSelect(style)}
 					>
-						<Image
-							source={{ uri: style.uri }}
-							style={styles.styleImage}
-							resizeMode="cover"
-						/>
+						<View style={[styles.styleImagePlaceholder, { backgroundColor: getStyleColor(style.category) }]}>
+							<Text style={styles.styleText}>{style.name}</Text>
+						</View>
 					</TouchableOpacity>
 				))}
 			</View>
@@ -83,9 +84,16 @@ const styles = StyleSheet.create({
 	styleCardSelected: {
 		borderColor: "#007AFF",
 	},
-	styleImage: {
+	styleImagePlaceholder: {
 		width: "100%",
 		height: "100%",
-		backgroundColor: "#1C1C1E",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	styleText: {
+		color: "#FFFFFF",
+		fontSize: 12,
+		fontWeight: "600",
+		textAlign: "center",
 	},
 });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
 	ActivityIndicator,
 	Platform,
@@ -15,59 +15,40 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors, Spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { logger } from "@/utils/logger";
-import { fetchGalleryModels } from "@/services";
-import type { GalleryModel } from "@/types";
 import { ModelCard } from "@/components/model-card";
+import {
+	useGalleryStore,
+	useGalleryModels,
+	useGalleryLoading,
+	useGalleryRefreshing,
+	useGalleryError,
+} from "@/stores";
 
 export default function DiscoverScreen() {
 	const colorScheme = useColorScheme();
 	const isDark = colorScheme === "dark";
 
-	// 状态管理
-	const [models, setModels] = useState<GalleryModel[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-
-	// 获取模型数据
-	const loadModels = useCallback(async (isRefresh = false) => {
-		try {
-			if (isRefresh) {
-				setRefreshing(true);
-			} else {
-				setLoading(true);
-			}
-			setError(null);
-
-			const response = await fetchGalleryModels({
-				sortBy: "latest",
-				limit: 20,
-				offset: 0,
-			});
-
-			if (response.success) {
-				setModels(response.data.models);
-			} else {
-				throw new Error("获取数据失败");
-			}
-		} catch (err) {
-			logger.error("加载模型失败:", err);
-			setError(err instanceof Error ? err.message : "加载失败，请重试");
-		} finally {
-			setLoading(false);
-			setRefreshing(false);
-		}
-	}, []);
+	// 从 Gallery Store 获取状态和方法
+	const models = useGalleryModels();
+	const loading = useGalleryLoading();
+	const refreshing = useGalleryRefreshing();
+	const error = useGalleryError();
+	const { fetchModels, refreshModels, clearError } = useGalleryStore();
 
 	// 组件挂载时加载数据
 	useEffect(() => {
-		loadModels();
-	}, [loadModels]);
+		fetchModels();
+	}, [fetchModels]);
 
 	// 下拉刷新
 	const handleRefresh = () => {
-		loadModels(true);
+		refreshModels();
+	};
+
+	// 重新加载
+	const handleRetry = () => {
+		clearError();
+		fetchModels();
 	};
 
 	// 将模型数组分成两列
@@ -125,7 +106,7 @@ export default function DiscoverScreen() {
 								borderColor: isDark ? Colors.dark.tint : Colors.light.tint,
 							},
 						]}
-						onPress={() => loadModels()}
+						onPress={handleRetry}
 					>
 						<Text
 							style={[
