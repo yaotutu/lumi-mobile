@@ -1,11 +1,13 @@
-import { Platform } from 'react-native';
-import { ModelCard as ModelCardIOS } from './ios/model-card';
-import { ModelCard as ModelCardAndroid } from './android/model-card';
-import type { ModelCardProps } from './types';
+import { Platform } from "react-native";
+import { ModelCard as ModelCardIOS } from "./ios/model-card";
+import { ModelCard as ModelCardAndroid } from "./android/model-card";
 
 // 根据平台自动选择对应的组件实现
-export const ModelCard = Platform.OS === 'ios'
-  ? ModelCardIOS
-  : ModelCardAndroid;
+export const ModelCard =
+  Platform.OS === "ios" ? ModelCardIOS : ModelCardAndroid;
 
-export type { ModelCardProps, CardContentProps, CardActionsProps } from './types';
+export type {
+  ModelCardProps,
+  CardContentProps,
+  CardActionsProps,
+} from "./types";
