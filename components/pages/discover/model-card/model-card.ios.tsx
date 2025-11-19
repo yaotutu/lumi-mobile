@@ -1,13 +1,12 @@
-import { Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import {
+import { Platform ,
 	Image,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { formatLikes } from "@/constants/mock-data";
 import { BorderRadius, Colors, FontWeight, Spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
