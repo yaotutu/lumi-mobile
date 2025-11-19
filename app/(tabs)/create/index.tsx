@@ -1,5 +1,6 @@
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ExamplePrompts } from '@/components/pages/create/example-prompts';
 import { GenerationButton } from '@/components/pages/create/generation-button';
 import { PromptInput } from '@/components/pages/create/prompt-input';
@@ -10,6 +11,7 @@ import { useCreateStore } from '@/stores';
 export default function CreateScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { headerPaddingTop, contentPaddingBottom } = useSafeAreaSpacing();
 
   // 从 Create Store 获取状态和方法
   const {
@@ -46,13 +48,16 @@ export default function CreateScreen() {
   return (
     <View style={[styles.container, { backgroundColor }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: headerPaddingTop }]}>
         <Text style={[styles.title, { color: textColor }]}>AI Creation Studio</Text>
       </View>
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, !showStyles && styles.scrollContentCentered]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          !showStyles && [styles.scrollContentCentered, { paddingBottom: contentPaddingBottom + 30 }],
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Initial State - 渐变色装饰、欢迎文字、示例提示词 */}
@@ -106,7 +111,7 @@ export default function CreateScreen() {
 
       {/* Prompt Input - 显示风格后固定在底部 */}
       {showStyles && (
-        <View style={[styles.inputSectionBottom, { backgroundColor }]}>
+        <View style={[styles.inputSectionBottom, { backgroundColor, paddingBottom: contentPaddingBottom }]}>
           <PromptInput
             value={prompt}
             onChangeText={setPrompt}
@@ -136,18 +141,10 @@ const styles = StyleSheet.create({
   scrollContentCentered: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingBottom: Platform.select({
-      ios: 150, // 给底部导航栏留出空间
-      android: 120,
-      default: 120,
-    }),
+    // paddingBottom 通过 useSafeAreaSpacing 动态设置
   },
   header: {
-    paddingTop: Platform.select({
-      ios: 60,
-      android: 40,
-      default: 40,
-    }),
+    // paddingTop 通过 useSafeAreaSpacing 动态设置
     paddingHorizontal: 20,
     paddingBottom: 24,
     alignItems: 'center',
@@ -163,11 +160,7 @@ const styles = StyleSheet.create({
   inputSectionBottom: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    paddingBottom: Platform.select({
-      ios: 100, // Tab bar height + safe area
-      android: 85,
-      default: 85,
-    }),
+    // paddingBottom 通过 useSafeAreaSpacing 动态设置
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'rgba(0, 0, 0, 0.1)',
   },

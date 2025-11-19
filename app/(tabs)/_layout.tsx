@@ -6,11 +6,13 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const themeColors = isDark ? Colors.dark : Colors.light;
+  const { tabBarHeight } = useSafeAreaSpacing();
 
   return (
     <Tabs
@@ -22,6 +24,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#8E8E93',
         tabBarStyle: [
           styles.tabBar,
+          { height: tabBarHeight },
           Platform.OS === 'android' && {
             backgroundColor: themeColors.secondaryBackground,
             borderTopColor: themeColors.border,
@@ -77,23 +80,21 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
+    // height 通过 useSafeAreaSpacing 动态设置
     ...Platform.select({
       ios: {
         backgroundColor: 'transparent',
         borderTopWidth: 0,
         elevation: 0,
-        height: 83, // 49 content + 34 safe area
       },
       android: {
         // backgroundColor 在 screenOptions 中动态设置
         elevation: 8, // Material Design 阴影
-        height: 70,
       },
       default: {
         backgroundColor: 'transparent',
         borderTopWidth: 0,
         elevation: 0,
-        height: 70,
       },
     }),
   },

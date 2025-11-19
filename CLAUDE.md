@@ -222,6 +222,11 @@ components/
 7. **平台差异**: 新组件必须提供iOS和Android两个版本，确保功能逻辑完全一致
 8. **日志规范**: 禁止使用 `console.*`，必须使用 `logger` 模块（从 `@/utils/logger` 导入）。使用合适的日志级别：`debug` 用于调试信息、`info` 用于业务流程、`warn` 用于警告、`error` 用于错误。开发环境显示所有日志，生产环境仅输出 error 级别，ESLint 已配置强制检查（scripts 目录除外）
 
+## UI 实现模式
+
+### Stretchy Header（可拉伸头部）
+**实现原理**：图片绝对定位在底层（zIndex: 1），透明 ScrollView 覆盖其上（zIndex: 2），导航栏固定在最顶层（zIndex: 100），通过监听 scrollY 并用 Animated.interpolate 动态调整图片高度，实现下拉时图片拉伸填充空白的效果。参考实现：`app/model/components/model-detail/ios/model-detail.tsx`
+
 ## 状态管理架构
 
 **状态管理原则**：

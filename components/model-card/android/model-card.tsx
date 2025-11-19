@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Colors, BorderRadius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { CardContent } from './card-content';
@@ -24,22 +25,37 @@ const createCardStyles = (isDark: boolean) => ({
   },
 });
 
-export const ModelCard = React.memo(({ title, creator, imageUrl, likes }: ModelCardProps) => {
+export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const router = useRouter();
 
   // 预计算样式对象，避免每次渲染时重新创建
   const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
 
+  // 处理点击
+  const handlePress = () => {
+    if (onPress) {
+      onPress(modelId);
+    } else {
+      router.push(`/model/${modelId}`);
+    }
+  };
+
   return (
-    <View
-      style={[
+    <Pressable
+      onPress={handlePress}
+      style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+          opacity: pressed ? 0.85 : 1,
         },
         cardStyles.card,
       ]}
+      android_ripple={{
+        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      }}
     >
       {/* 图片 */}
       <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
@@ -49,7 +65,7 @@ export const ModelCard = React.memo(({ title, creator, imageUrl, likes }: ModelC
         <CardContent title={title} creator={creator} likes={likes} />
         <CardActions likes={likes} />
       </View>
-    </View>
+    </Pressable>
   );
 });
 

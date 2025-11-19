@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import {
   ActivityIndicator,
-  Platform,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -15,6 +14,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ModelCard } from '@/components/model-card';
 import { useAsyncController } from '@/hooks/useAsyncController';
 import { categorizeError, logError } from '@/utils/error-handler';
@@ -23,6 +23,7 @@ import { useGalleryStore } from '@/stores';
 export default function DiscoverScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { topInset, contentPaddingBottom } = useSafeAreaSpacing();
 
   // 异步操作控制器
   const { createController } = useAsyncController();
@@ -76,7 +77,7 @@ export default function DiscoverScreen() {
       {/* 顶部安全区域 - 使用背景色 */}
       <View
         style={[
-          styles.safeArea,
+          { paddingTop: topInset },
           {
             backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
           },
@@ -132,7 +133,7 @@ export default function DiscoverScreen() {
       {!loading && !errorInfo && (
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: contentPaddingBottom }]}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
@@ -155,6 +156,7 @@ export default function DiscoverScreen() {
                 {leftColumn.map((model: any) => (
                   <ModelCard
                     key={model.id}
+                    modelId={model.id}
                     title={model.name}
                     creator={model.user?.name || '匿名用户'}
                     imageUrl={model.previewImageUrl}
@@ -168,6 +170,7 @@ export default function DiscoverScreen() {
                 {rightColumn.map((model: any) => (
                   <ModelCard
                     key={model.id}
+                    modelId={model.id}
                     title={model.name}
                     creator={model.user?.name || '匿名用户'}
                     imageUrl={model.previewImageUrl}
@@ -187,22 +190,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  safeArea: {
-    paddingTop: Platform.select({
-      ios: 44,
-      android: StatusBar.currentHeight || 0,
-      default: 0,
-    }),
-  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Platform.select({
-      ios: 90, // 83 tabBar + 7 spacing
-      android: 85, // 75 tabBar + 10 spacing
-      default: 85,
-    }),
+    // paddingBottom 通过 useSafeAreaSpacing 动态设置
   },
   grid: {
     flexDirection: 'row',

@@ -1,8 +1,10 @@
 export interface ModelCardProps {
+  modelId: string;
   title: string;
   creator: string;
   imageUrl: string;
   likes: number;
+  onPress?: (modelId: string) => void;
 }
 
 export interface CardContentProps {

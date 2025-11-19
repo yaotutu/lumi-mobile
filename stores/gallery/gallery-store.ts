@@ -182,6 +182,11 @@ export const useGalleryStore = create<GalleryState>()(
             state.lastFetchTime = 0;
           });
         },
+
+        // 根据 ID 获取单个模型
+        getModelById: (id: string): GalleryModel | undefined => {
+          return get().models.find(model => model.id === id);
+        },
       })),
       {
         name: 'gallery-store',

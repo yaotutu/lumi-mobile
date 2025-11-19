@@ -33,6 +33,7 @@ export interface GalleryState {
   clearSearch: () => void;
   clearError: () => void;
   reset: () => void;
+  getModelById: (id: string) => GalleryModel | undefined;
 }
 
 export interface FetchOptions {

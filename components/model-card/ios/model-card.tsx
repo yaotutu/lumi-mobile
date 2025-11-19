@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { Platform, Image, StyleSheet, View } from 'react-native';
+import { Platform, Image, StyleSheet, View, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 import { Colors, BorderRadius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { CardContent } from './card-content';
@@ -35,19 +36,31 @@ const createCardStyles = (isDark: boolean) => ({
   },
 });
 
-export const ModelCard = React.memo(({ title, creator, imageUrl, likes }: ModelCardProps) => {
+export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const router = useRouter();
 
   // 预计算样式对象，避免每次渲染时重新创建
   const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
 
+  // 处理点击
+  const handlePress = () => {
+    if (onPress) {
+      onPress(modelId);
+    } else {
+      router.push(`/model/${modelId}`);
+    }
+  };
+
   return (
-    <View
-      style={[
+    <Pressable
+      onPress={handlePress}
+      style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+          opacity: pressed ? 0.9 : 1,
         },
         cardStyles.card,
       ]}
@@ -64,7 +77,7 @@ export const ModelCard = React.memo(({ title, creator, imageUrl, likes }: ModelC
         <CardContent title={title} creator={creator} likes={likes} />
         <CardActions likes={likes} />
       </BlurView>
-    </View>
+    </Pressable>
   );
 });
 

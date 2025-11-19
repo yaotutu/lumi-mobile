@@ -112,3 +112,46 @@ export const FontWeight = {
   semibold: '600' as const,
   bold: '700' as const,
 };
+
+/**
+ * Typography 系统 - 预定义的文字样式
+ */
+export const Typography = {
+  // 大标题
+  title1: {
+    fontSize: FontSize.xxxl,
+    fontWeight: FontWeight.bold,
+  },
+  title2: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.bold,
+  },
+  title3: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.semibold,
+  },
+  // 标题
+  headline: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.semibold,
+  },
+  // 正文
+  body: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.regular,
+  },
+  // 次要文字
+  callout: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.regular,
+  },
+  // 说明文字
+  caption1: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.regular,
+  },
+  caption2: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.regular,
+  },
+};
