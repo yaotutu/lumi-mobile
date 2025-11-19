@@ -41,6 +41,7 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 - **动画**: React Native Reanimated ~4.1
 - **手势**: React Native Gesture Handler ~2.28
 - **图标**: Expo Symbols (iOS SF Symbols) 和 @expo/vector-icons
+- **日志**: react-native-logs (统一日志管理)
 - **Lint**: ESLint 使用 eslint-config-expo
 
 ### 目录结构
@@ -71,6 +72,9 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
     - `icon-symbol.tsx`: 跨平台图标组件
     - `icon-symbol.ios.tsx`: iOS 平台特定图标实现
     - `collapsible.tsx`: 可折叠组件
+  - `error-boundary/`: 全局错误边界组件
+    - `index.tsx`: 错误捕获逻辑
+    - `types.ts`: 类型定义
   - `themed-*.tsx`: 主题化组件 (支持亮暗模式)
   - `search-bar.tsx`: 搜索栏组件
   - `haptic-tab.tsx`: 带触觉反馈的标签栏按钮
@@ -110,6 +114,7 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 
 - **utils/**: 工具函数
   - `platform.ts`: 平台检测工具
+  - `logger.ts`: 统一日志模块
 
 - **assets/**: 静态资源 (图片、字体等)
 
@@ -207,3 +212,4 @@ components/
 5. **主题化**: 新组件应考虑支持亮暗模式,使用 `useColorScheme()` 和 `Colors` 常量
 6. **触觉反馈**: iOS 交互可使用 `expo-haptics` 提供反馈
 7. **平台差异**: 新组件必须提供iOS和Android两个版本，确保功能逻辑完全一致
+8. **日志规范**: 禁止使用 `console.*`，必须使用 `logger` 模块（从 `@/utils/logger` 导入）。使用合适的日志级别：`debug` 用于调试信息、`info` 用于业务流程、`warn` 用于警告、`error` 用于错误。开发环境显示所有日志，生产环境仅输出 error 级别，ESLint 已配置强制检查（scripts 目录除外）

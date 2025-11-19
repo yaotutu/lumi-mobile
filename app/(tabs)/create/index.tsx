@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { logger } from "@/utils/logger";
 import { ExamplePrompts } from "@/components/pages/create/example-prompts";
 import { GenerationButton } from "@/components/pages/create/generation-button";
 import { PromptInput } from "@/components/pages/create/prompt-input";
@@ -28,7 +29,7 @@ export default function CreateScreen() {
 
 	const handleGenerate3DModel = () => {
 		// 这里后续对接生成3D模型的逻辑
-		console.log("Generate 3D Model with:", { prompt, selectedStyle });
+		logger.debug("生成 3D 模型:", { prompt, selectedStyle });
 	};
 
 	return (

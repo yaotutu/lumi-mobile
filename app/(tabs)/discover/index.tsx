@@ -15,6 +15,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors, Spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { logger } from "@/utils/logger";
 import { fetchGalleryModels } from "@/services";
 import type { GalleryModel } from "@/types";
 import { ModelCard } from "@/components/pages/discover/model-card";
@@ -51,7 +52,7 @@ export default function DiscoverScreen() {
 				throw new Error("获取数据失败");
 			}
 		} catch (err) {
-			console.error("加载模型失败:", err);
+			logger.error("加载模型失败:", err);
 			setError(err instanceof Error ? err.message : "加载失败，请重试");
 		} finally {
 			setLoading(false);

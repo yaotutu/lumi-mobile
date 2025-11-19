@@ -8,6 +8,7 @@ import type {
 	GalleryModel,
 	GalleryQueryParams,
 } from "@/types";
+import { logger } from "@/utils/logger";
 import { get, post } from "../http/client";
 
 /**
@@ -42,7 +43,7 @@ export async function recordModelDownload(id: string): Promise<void> {
 	try {
 		await post(API_ENDPOINTS.gallery.modelDownload(id));
 	} catch (error) {
-		console.error("记录下载失败:", error);
+		logger.error("记录下载失败:", error);
 		// 不抛出错误,下载计数失败不应影响用户体验
 	}
 }

@@ -4,6 +4,7 @@
  */
 
 import { API_CONFIG } from "@/config/api";
+import { logger } from "@/utils/logger";
 
 // 请求配置
 export interface RequestConfig extends RequestInit {
@@ -113,7 +114,7 @@ export async function request<T = any>(
 			}
 
 			// 重试次数用尽,抛出错误
-			console.error("HTTP request failed:", error);
+			logger.error("HTTP 请求失败:", error);
 			throw lastError;
 		}
 	}
