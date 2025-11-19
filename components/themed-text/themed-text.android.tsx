@@ -25,10 +25,12 @@ export function ThemedText({
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? {
-          ...styles.link,
-          color: isDark ? Colors.dark.tint : Colors.light.tint, // Material链接色
-        } : undefined,
+        type === 'link'
+          ? {
+              ...styles.link,
+              color: isDark ? Colors.dark.tint : Colors.light.tint, // Material链接色
+            }
+          : undefined,
         style,
       ]}
       {...rest}

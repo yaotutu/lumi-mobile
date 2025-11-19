@@ -35,23 +35,29 @@ export const useGalleryStore = create<GalleryState>()(
         cacheDuration: CACHE_DURATION,
 
         // 获取模型列表
-        fetchModels: async (page = 1, options: FetchOptions = {}, abortController?: AbortController) => {
+        fetchModels: async (
+          page = 1,
+          options: FetchOptions = {},
+          abortController?: AbortController
+        ) => {
           const {
             models: existingModels,
             currentPage: existingPage,
             lastFetchTime,
             cacheDuration,
-            pageSize
+            pageSize,
           } = get();
 
           const now = Date.now();
 
           // 检查缓存（仅在请求第一页且没有特定选项时使用缓存）
-          if (page === 1 &&
-              !options.sortBy &&
-              !options.category &&
-              now - lastFetchTime < cacheDuration &&
-              existingModels.length > 0) {
+          if (
+            page === 1 &&
+            !options.sortBy &&
+            !options.category &&
+            now - lastFetchTime < cacheDuration &&
+            existingModels.length > 0
+          ) {
             logger.debug('使用缓存的模型数据');
             return;
           }
@@ -61,7 +67,7 @@ export const useGalleryStore = create<GalleryState>()(
             set({
               loading: true,
               error: null,
-              refreshing: false
+              refreshing: false,
             });
           } else {
             set({ loading: true });
@@ -70,14 +76,17 @@ export const useGalleryStore = create<GalleryState>()(
           try {
             logger.info(`获取模型数据: page=${page}, options=`, options);
 
-            const response = await fetchGalleryModels({
-              sortBy: options.sortBy || 'latest',
-              limit: pageSize,
-              offset: (page - 1) * pageSize,
-              ...(options.category && { category: options.category }),
-            }, {
-              signal: abortController?.signal
-            });
+            const response = await fetchGalleryModels(
+              {
+                sortBy: options.sortBy || 'latest',
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                ...(options.category && { category: options.category }),
+              },
+              {
+                signal: abortController?.signal,
+              }
+            );
 
             if (!response.success) {
               throw new Error('获取数据失败');
@@ -85,7 +94,7 @@ export const useGalleryStore = create<GalleryState>()(
 
             const newModels = response.data.models;
 
-            set((state) => {
+            set(state => {
               if (page === 1) {
                 // 第一页：替换数据
                 state.models = newModels;
@@ -102,7 +111,6 @@ export const useGalleryStore = create<GalleryState>()(
             });
 
             logger.info(`成功获取 ${newModels.length} 个模型，当前总数: ${get().models.length}`);
-
           } catch (error) {
             // 如果是取消错误，不设置错误状态
             if (error instanceof Error && error.name === 'AbortError') {
@@ -114,7 +122,7 @@ export const useGalleryStore = create<GalleryState>()(
 
             logger.error('获取模型失败:', error);
 
-            set((state) => {
+            set(state => {
               state.loading = false;
               state.error = errorMessage;
               state.refreshing = false;
@@ -161,7 +169,7 @@ export const useGalleryStore = create<GalleryState>()(
 
         // 重置状态
         reset: () => {
-          set((state) => {
+          set(state => {
             state.models = [];
             state.loading = false;
             state.refreshing = false;
@@ -177,7 +185,7 @@ export const useGalleryStore = create<GalleryState>()(
       })),
       {
         name: 'gallery-store',
-        partialize: (state) => ({
+        partialize: state => ({
           models: state.models,
           lastFetchTime: state.lastFetchTime,
         }),
@@ -190,17 +198,19 @@ export const useGalleryStore = create<GalleryState>()(
 );
 
 // 选择器 hooks，用于性能优化
-export const useGalleryModels = () => useGalleryStore((state) => state.models);
-export const useGalleryLoading = () => useGalleryStore((state) => state.loading);
-export const useGalleryRefreshing = () => useGalleryStore((state) => state.refreshing);
-export const useGalleryError = () => useGalleryStore((state) => state.error);
-export const useGalleryPagination = () => useGalleryStore((state) => ({
-  currentPage: state.currentPage,
-  hasMore: state.hasMore,
-  pageSize: state.pageSize,
-}));
-export const useGallerySearch = () => useGalleryStore((state) => ({
-  searchQuery: state.searchQuery,
-  searchResults: state.searchResults,
-  isSearching: state.isSearching,
-}));
+export const useGalleryModels = () => useGalleryStore(state => state.models);
+export const useGalleryLoading = () => useGalleryStore(state => state.loading);
+export const useGalleryRefreshing = () => useGalleryStore(state => state.refreshing);
+export const useGalleryError = () => useGalleryStore(state => state.error);
+export const useGalleryPagination = () =>
+  useGalleryStore(state => ({
+    currentPage: state.currentPage,
+    hasMore: state.hasMore,
+    pageSize: state.pageSize,
+  }));
+export const useGallerySearch = () =>
+  useGalleryStore(state => ({
+    searchQuery: state.searchQuery,
+    searchResults: state.searchResults,
+    isSearching: state.isSearching,
+  }));

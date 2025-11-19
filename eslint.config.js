@@ -1,11 +1,21 @@
 // https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
+const prettierPlugin = require('eslint-plugin-prettier');
 
 module.exports = defineConfig([
   expoConfig,
   {
     ignores: ['dist/*'],
+  },
+  // 集成 Prettier
+  {
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    rules: {
+      'prettier/prettier': 'error',
+    },
   },
   // 禁止使用 console（使用统一的 logger 模块）
   {

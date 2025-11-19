@@ -13,23 +13,23 @@ export const Colors = {
     text: '#000000',
     secondaryText: '#3C3C43',
     tertiaryText: '#8E8E93',
-    background: '#F2F2F7',           // iOS grouped background
-    secondaryBackground: '#FFFFFF',   // 卡片背景
+    background: '#F2F2F7', // iOS grouped background
+    secondaryBackground: '#FFFFFF', // 卡片背景
     cardBackground: '#FFFFFF',
     inputBackground: '#F2F2F7',
     tint: tintColorLight,
     icon: '#3C3C43',
     tabIconDefault: '#3C3C43',
     tabIconSelected: tintColorLight,
-    border: 'rgba(0, 0, 0, 0.08)',   // 更轻的边框
+    border: 'rgba(0, 0, 0, 0.08)', // 更轻的边框
     separator: 'rgba(60, 60, 67, 0.29)',
   },
   dark: {
     text: '#FFFFFF',
     secondaryText: '#EBEBF5',
     tertiaryText: '#8E8E93',
-    background: '#000000',            // iOS grouped background
-    secondaryBackground: '#1C1C1E',   // 卡片背景
+    background: '#000000', // iOS grouped background
+    secondaryBackground: '#1C1C1E', // 卡片背景
     cardBackground: '#1C1C1E',
     inputBackground: '#2C2C2E',
     tint: tintColorDark,

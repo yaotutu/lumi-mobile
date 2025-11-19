@@ -14,23 +14,23 @@ export function SearchBar({
 
   return (
     <View style={styles.wrapper}>
-      <View style={[
-        styles.container,
-        {
-          backgroundColor: isDark ? Colors.dark.inputBackground : Colors.light.inputBackground,
-          // Material Design Elevation
-          elevation: 2,
-          shadowColor: isDark ? '#000' : '#1976D2',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: isDark ? 0.2 : 0.1,
-          shadowRadius: 3,
-          // Material边框
-          borderWidth: 1,
-          borderColor: isDark
-            ? 'rgba(255, 255, 255, 0.12)'
-            : 'rgba(0, 0, 0, 0.08)',
-        }
-      ]}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: isDark ? Colors.dark.inputBackground : Colors.light.inputBackground,
+            // Material Design Elevation
+            elevation: 2,
+            shadowColor: isDark ? '#000' : '#1976D2',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: isDark ? 0.2 : 0.1,
+            shadowRadius: 3,
+            // Material边框
+            borderWidth: 1,
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
+          },
+        ]}
+      >
         {/* 搜索图标 */}
         <Ionicons
           name="search"
@@ -45,7 +45,7 @@ export function SearchBar({
             styles.input,
             {
               color: isDark ? Colors.dark.text : Colors.light.text,
-            }
+            },
           ]}
           placeholder={placeholder}
           placeholderTextColor={isDark ? Colors.dark.tertiaryText : Colors.light.tertiaryText}

@@ -56,7 +56,7 @@ export const useCreateStore = () => {
   // 设置提示词
   const setPrompt = useCallback((prompt: string) => {
     logger.debug('设置提示词:', prompt);
-    updateState((draft) => {
+    updateState(draft => {
       draft.prompt = prompt;
     });
   }, []);
@@ -64,7 +64,7 @@ export const useCreateStore = () => {
   // 选择风格
   const selectStyle = useCallback((style: StyleOption | null) => {
     logger.debug('选择风格:', style);
-    updateState((draft) => {
+    updateState(draft => {
       draft.selectedStyle = style;
     });
   }, []);
@@ -75,7 +75,7 @@ export const useCreateStore = () => {
       logger.warn('提示词为空，不能显示风格选择器');
       return;
     }
-    updateState((draft) => {
+    updateState(draft => {
       draft.showStyles = true;
     });
   }, [state.prompt]);
@@ -83,58 +83,63 @@ export const useCreateStore = () => {
   // 隐藏风格选择器
   const hideStyleSelector = useCallback(() => {
     logger.debug('隐藏风格选择器');
-    updateState((draft) => {
+    updateState(draft => {
       draft.showStyles = false;
       draft.selectedStyle = null;
     });
   }, []);
 
   // 开始生成
-  const startGeneration = useCallback(async (abortController?: AbortController) => {
-    if (!state.prompt.trim()) {
-      throw new Error('请输入提示词');
-    }
-
-    if (!state.selectedStyle) {
-      throw new Error('请选择一个风格');
-    }
-
-    const generationId = Date.now().toString();
-
-    updateState((draft) => {
-      draft.isGenerating = true;
-      draft.generationProgress = 0;
-      draft.currentGenerationId = generationId;
-    });
-
-    // 添加到历史记录
-    addToHistory({
-      prompt: state.prompt,
-      selectedStyle: state.selectedStyle,
-      status: 'generating',
-    });
-
-    logger.info('开始生成3D模型:', { prompt: state.prompt, selectedStyle: state.selectedStyle.name });
-
-    // 模拟生成过程
-    try {
-      await simulateGeneration(generationId, setGenerationProgress, abortController);
-
-      // 生成成功
-      const resultUrl = `https://example.com/models/${generationId}.glb`;
-      completeGeneration(resultUrl);
-
-    } catch (error) {
-      // 如果是取消错误，不设置失败状态
-      if (error instanceof Error && error.name === 'AbortError') {
-        logger.debug('生成被取消');
-        return;
+  const startGeneration = useCallback(
+    async (abortController?: AbortController) => {
+      if (!state.prompt.trim()) {
+        throw new Error('请输入提示词');
       }
 
-      logger.error('生成失败:', error);
-      failGeneration(error instanceof Error ? error.message : '生成失败');
-    }
-  }, [state.prompt, state.selectedStyle]);
+      if (!state.selectedStyle) {
+        throw new Error('请选择一个风格');
+      }
+
+      const generationId = Date.now().toString();
+
+      updateState(draft => {
+        draft.isGenerating = true;
+        draft.generationProgress = 0;
+        draft.currentGenerationId = generationId;
+      });
+
+      // 添加到历史记录
+      addToHistory({
+        prompt: state.prompt,
+        selectedStyle: state.selectedStyle,
+        status: 'generating',
+      });
+
+      logger.info('开始生成3D模型:', {
+        prompt: state.prompt,
+        selectedStyle: state.selectedStyle.name,
+      });
+
+      // 模拟生成过程
+      try {
+        await simulateGeneration(generationId, setGenerationProgress, abortController);
+
+        // 生成成功
+        const resultUrl = `https://example.com/models/${generationId}.glb`;
+        completeGeneration(resultUrl);
+      } catch (error) {
+        // 如果是取消错误，不设置失败状态
+        if (error instanceof Error && error.name === 'AbortError') {
+          logger.debug('生成被取消');
+          return;
+        }
+
+        logger.error('生成失败:', error);
+        failGeneration(error instanceof Error ? error.message : '生成失败');
+      }
+    },
+    [state.prompt, state.selectedStyle]
+  );
 
   // 取消生成
   const cancelGeneration = useCallback(() => {
@@ -144,7 +149,7 @@ export const useCreateStore = () => {
 
     logger.info('取消生成:', state.currentGenerationId);
 
-    updateState((draft) => {
+    updateState(draft => {
       draft.isGenerating = false;
       draft.generationProgress = 0;
       draft.currentGenerationId = null;
@@ -156,45 +161,51 @@ export const useCreateStore = () => {
 
   // 设置生成进度
   const setGenerationProgress = useCallback((progress: number) => {
-    updateState((draft) => {
+    updateState(draft => {
       draft.generationProgress = Math.max(0, Math.min(100, progress));
     });
   }, []);
 
   // 完成生成
-  const completeGeneration = useCallback((resultUrl: string) => {
-    if (!state.currentGenerationId) {
-      return;
-    }
+  const completeGeneration = useCallback(
+    (resultUrl: string) => {
+      if (!state.currentGenerationId) {
+        return;
+      }
 
-    logger.info('生成完成:', { generationId: state.currentGenerationId, resultUrl });
+      logger.info('生成完成:', { generationId: state.currentGenerationId, resultUrl });
 
-    updateState((draft) => {
-      draft.isGenerating = false;
-      draft.generationProgress = 100;
-    });
+      updateState(draft => {
+        draft.isGenerating = false;
+        draft.generationProgress = 100;
+      });
 
-    // 更新历史记录
-    updateGenerationStatus(state.currentGenerationId, 'completed', undefined, resultUrl);
-  }, [state.currentGenerationId]);
+      // 更新历史记录
+      updateGenerationStatus(state.currentGenerationId, 'completed', undefined, resultUrl);
+    },
+    [state.currentGenerationId]
+  );
 
   // 生成失败
-  const failGeneration = useCallback((error: string) => {
-    if (!state.currentGenerationId) {
-      return;
-    }
+  const failGeneration = useCallback(
+    (error: string) => {
+      if (!state.currentGenerationId) {
+        return;
+      }
 
-    logger.error('生成失败:', error);
+      logger.error('生成失败:', error);
 
-    updateState((draft) => {
-      draft.isGenerating = false;
-      draft.generationProgress = 0;
-      draft.currentGenerationId = null;
-    });
+      updateState(draft => {
+        draft.isGenerating = false;
+        draft.generationProgress = 0;
+        draft.currentGenerationId = null;
+      });
 
-    // 更新历史记录
-    updateGenerationStatus(state.currentGenerationId, 'failed', error);
-  }, [state.currentGenerationId]);
+      // 更新历史记录
+      updateGenerationStatus(state.currentGenerationId, 'failed', error);
+    },
+    [state.currentGenerationId]
+  );
 
   // 添加到历史记录
   const addToHistory = useCallback((generation: Omit<Generation, 'id' | 'generatedAt'>) => {
@@ -204,7 +215,7 @@ export const useCreateStore = () => {
       generatedAt: new Date(),
     };
 
-    updateState((draft) => {
+    updateState(draft => {
       draft.generationHistory.unshift(newGeneration);
 
       // 限制历史记录数量，保留最近50条
@@ -215,28 +226,31 @@ export const useCreateStore = () => {
   }, []);
 
   // 更新生成状态
-  const updateGenerationStatus = useCallback((id: string, status: Generation['status'], error?: string, resultUrl?: string) => {
-    updateState((draft) => {
-      const generation = draft.generationHistory.find(g => g.id === id);
-      if (generation) {
-        generation.status = status;
-        if (error) generation.error = error;
-        if (resultUrl) generation.resultUrl = resultUrl;
-      }
-    });
-  }, []);
+  const updateGenerationStatus = useCallback(
+    (id: string, status: Generation['status'], error?: string, resultUrl?: string) => {
+      updateState(draft => {
+        const generation = draft.generationHistory.find(g => g.id === id);
+        if (generation) {
+          generation.status = status;
+          if (error) generation.error = error;
+          if (resultUrl) generation.resultUrl = resultUrl;
+        }
+      });
+    },
+    []
+  );
 
   // 清除历史记录
   const clearHistory = useCallback(() => {
     logger.info('清除生成历史记录');
-    updateState((draft) => {
+    updateState(draft => {
       draft.generationHistory = [];
     });
   }, []);
 
   // 切换高级选项
   const toggleAdvancedOptions = useCallback(() => {
-    updateState((draft) => {
+    updateState(draft => {
       draft.showAdvancedOptions = !draft.showAdvancedOptions;
     });
   }, []);
@@ -244,7 +258,7 @@ export const useCreateStore = () => {
   // 重置状态
   const reset = useCallback(() => {
     logger.info('重置创作状态');
-    updateState((draft) => {
+    updateState(draft => {
       draft.prompt = '';
       draft.selectedStyle = null;
       draft.showStyles = false;
@@ -275,7 +289,11 @@ export const useCreateStore = () => {
 };
 
 // 模拟生成过程的辅助函数
-async function simulateGeneration(generationId: string, setProgress: (progress: number) => void, abortController?: AbortController) {
+async function simulateGeneration(
+  generationId: string,
+  setProgress: (progress: number) => void,
+  abortController?: AbortController
+) {
   const steps = [10, 25, 45, 70, 90];
   const delays = [1000, 1500, 2000, 1500, 1000];
 

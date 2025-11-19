@@ -45,7 +45,12 @@ export interface CreateState {
   setGenerationProgress: (progress: number) => void;
   completeGeneration: (resultUrl: string) => void;
   failGeneration: (error: string) => void;
-  updateGenerationStatus: (id: string, status: Generation['status'], error?: string, resultUrl?: string) => void;
+  updateGenerationStatus: (
+    id: string,
+    status: Generation['status'],
+    error?: string,
+    resultUrl?: string
+  ) => void;
   addToHistory: (generation: Omit<Generation, 'id' | 'generatedAt'>) => void;
   clearHistory: () => void;
   toggleAdvancedOptions: () => void;

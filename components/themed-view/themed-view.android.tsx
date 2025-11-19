@@ -21,13 +21,15 @@ export function ThemedView({
       style={[
         { backgroundColor },
         // Material Elevation效果
-        shadow || elevation > 0 ? {
-          elevation: elevation || 2,
-          shadowColor: isDark ? '#000' : '#1976D2', // Material阴影色
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: isDark ? 0.2 : 0.1,
-          shadowRadius: 3,
-        } : undefined,
+        shadow || elevation > 0
+          ? {
+              elevation: elevation || 2,
+              shadowColor: isDark ? '#000' : '#1976D2', // Material阴影色
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: isDark ? 0.2 : 0.1,
+              shadowRadius: 3,
+            }
+          : undefined,
         style,
       ]}
       {...otherProps}

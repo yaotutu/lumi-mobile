@@ -4,21 +4,21 @@
  */
 
 export const ENV = {
-	// API 配置
-	API_URL: process.env.EXPO_PUBLIC_API_URL || "http://192.168.200.97:4000",
+  // API 配置
+  API_URL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.200.97:4000',
 
-	// 环境名称
-	ENV_NAME: (process.env.EXPO_PUBLIC_ENV || "development") as
-		| "development"
-		| "staging"
-		| "production",
+  // 环境名称
+  ENV_NAME: (process.env.EXPO_PUBLIC_ENV || 'development') as
+    | 'development'
+    | 'staging'
+    | 'production',
 
-	// 其他配置(可选)
-	SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
-	ANALYTICS_ID: process.env.EXPO_PUBLIC_ANALYTICS_ID,
+  // 其他配置(可选)
+  SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  ANALYTICS_ID: process.env.EXPO_PUBLIC_ANALYTICS_ID,
 } as const;
 
 // 环境判断辅助函数
-export const isDevelopment = ENV.ENV_NAME === "development";
-export const isStaging = ENV.ENV_NAME === "staging";
-export const isProduction = ENV.ENV_NAME === "production";
+export const isDevelopment = ENV.ENV_NAME === 'development';
+export const isStaging = ENV.ENV_NAME === 'staging';
+export const isProduction = ENV.ENV_NAME === 'production';

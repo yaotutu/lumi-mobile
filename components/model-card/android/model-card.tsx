@@ -18,66 +18,56 @@ const createCardStyles = (isDark: boolean) => ({
     shadowRadius: 4,
   },
   content: {
-    backgroundColor: isDark
-      ? Colors.dark.cardBackground
-      : Colors.light.cardBackground,
+    backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
     borderTopWidth: 1,
-    borderTopColor: isDark
-      ? 'rgba(255, 255, 255, 0.12)'
-      : 'rgba(0, 0, 0, 0.08)',
+    borderTopColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
   },
 });
 
 export const ModelCard = React.memo(({ title, creator, imageUrl, likes }: ModelCardProps) => {
-	const colorScheme = useColorScheme();
-	const isDark = colorScheme === 'dark';
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
-	// 预计算样式对象，避免每次渲染时重新创建
-	const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
+  // 预计算样式对象，避免每次渲染时重新创建
+  const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
 
-	return (
-		<View
-			style={[
-				styles.card,
-				{
-					backgroundColor: isDark
-						? Colors.dark.cardBackground
-						: Colors.light.cardBackground,
-				},
-				cardStyles.card,
-			]}
-		>
-			{/* 图片 */}
-			<Image
-				source={{ uri: imageUrl }}
-				style={styles.image}
-				resizeMode="cover"
-			/>
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+        },
+        cardStyles.card,
+      ]}
+    >
+      {/* 图片 */}
+      <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
 
-			{/* Android Material Design内容区 */}
-			<View style={[styles.content, cardStyles.content]}>
-				<CardContent title={title} creator={creator} likes={likes} />
-				<CardActions likes={likes} />
-			</View>
-		</View>
-	);
+      {/* Android Material Design内容区 */}
+      <View style={[styles.content, cardStyles.content]}>
+        <CardContent title={title} creator={creator} likes={likes} />
+        <CardActions likes={likes} />
+      </View>
+    </View>
+  );
 });
 
 ModelCard.displayName = 'ModelCard';
 
 const styles = StyleSheet.create({
-	card: {
-		borderRadius: BorderRadius.md,
-		overflow: 'hidden',
-		marginBottom: Spacing.xl,
-		marginHorizontal: Spacing.sm,
-	},
-	image: {
-		width: '100%',
-		height: 180,
-		backgroundColor: '#E5E5EA',
-	},
-	content: {
-		padding: Spacing.md,
-	},
+  card: {
+    borderRadius: BorderRadius.md,
+    overflow: 'hidden',
+    marginBottom: Spacing.xl,
+    marginHorizontal: Spacing.sm,
+  },
+  image: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#E5E5EA',
+  },
+  content: {
+    padding: Spacing.md,
+  },
 });

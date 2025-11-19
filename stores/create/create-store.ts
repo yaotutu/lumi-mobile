@@ -29,17 +29,17 @@ export const useCreateStore = create<CreateState>()(
         showAdvancedOptions: false,
 
         // 设置提示词
-        setPrompt: (prompt) => {
+        setPrompt: prompt => {
           logger.debug('设置提示词:', prompt);
-          set((state) => {
+          set(state => {
             state.prompt = prompt;
           });
         },
 
         // 选择风格
-        selectStyle: (style) => {
+        selectStyle: style => {
           logger.debug('选择风格:', style);
-          set((state) => {
+          set(state => {
             state.selectedStyle = style;
           });
         },
@@ -51,7 +51,7 @@ export const useCreateStore = create<CreateState>()(
             logger.warn('提示词为空，不能显示风格选择器');
             return;
           }
-          set((state) => {
+          set(state => {
             state.showStyles = true;
           });
         },
@@ -59,7 +59,7 @@ export const useCreateStore = create<CreateState>()(
         // 隐藏风格选择器
         hideStyleSelector: () => {
           logger.debug('隐藏风格选择器');
-          set((state) => {
+          set(state => {
             state.showStyles = false;
             state.selectedStyle = null;
           });
@@ -79,7 +79,7 @@ export const useCreateStore = create<CreateState>()(
 
           const generationId = Date.now().toString();
 
-          set((state) => {
+          set(state => {
             state.isGenerating = true;
             state.generationProgress = 0;
             state.currentGenerationId = generationId;
@@ -101,7 +101,6 @@ export const useCreateStore = create<CreateState>()(
             // 生成成功
             const resultUrl = `https://example.com/models/${generationId}.glb`;
             get().completeGeneration(resultUrl);
-
           } catch (error) {
             // 如果是取消错误，不设置失败状态
             if (error instanceof Error && error.name === 'AbortError') {
@@ -124,7 +123,7 @@ export const useCreateStore = create<CreateState>()(
 
           logger.info('取消生成:', currentGenerationId);
 
-          set((state) => {
+          set(state => {
             state.isGenerating = false;
             state.generationProgress = 0;
             state.currentGenerationId = null;
@@ -135,14 +134,14 @@ export const useCreateStore = create<CreateState>()(
         },
 
         // 设置生成进度
-        setGenerationProgress: (progress) => {
-          set((state) => {
+        setGenerationProgress: progress => {
+          set(state => {
             state.generationProgress = Math.max(0, Math.min(100, progress));
           });
         },
 
         // 完成生成
-        completeGeneration: (resultUrl) => {
+        completeGeneration: resultUrl => {
           const { currentGenerationId } = get();
 
           if (!currentGenerationId) {
@@ -151,7 +150,7 @@ export const useCreateStore = create<CreateState>()(
 
           logger.info('生成完成:', { generationId: currentGenerationId, resultUrl });
 
-          set((state) => {
+          set(state => {
             state.isGenerating = false;
             state.generationProgress = 100;
           });
@@ -161,7 +160,7 @@ export const useCreateStore = create<CreateState>()(
         },
 
         // 生成失败
-        failGeneration: (error) => {
+        failGeneration: error => {
           const { currentGenerationId } = get();
 
           if (!currentGenerationId) {
@@ -170,7 +169,7 @@ export const useCreateStore = create<CreateState>()(
 
           logger.error('生成失败:', error);
 
-          set((state) => {
+          set(state => {
             state.isGenerating = false;
             state.generationProgress = 0;
             state.currentGenerationId = null;
@@ -181,14 +180,14 @@ export const useCreateStore = create<CreateState>()(
         },
 
         // 添加到历史记录
-        addToHistory: (generation) => {
+        addToHistory: generation => {
           const newGeneration: Generation = {
             ...generation,
             id: Date.now().toString(),
             generatedAt: new Date(),
           };
 
-          set((state) => {
+          set(state => {
             state.generationHistory.unshift(newGeneration);
 
             // 限制历史记录数量，保留最近50条
@@ -200,7 +199,7 @@ export const useCreateStore = create<CreateState>()(
 
         // 更新生成状态
         updateGenerationStatus: (id, status, error, resultUrl) => {
-          set((state) => {
+          set(state => {
             const generation = state.generationHistory.find(g => g.id === id);
             if (generation) {
               generation.status = status;
@@ -213,14 +212,14 @@ export const useCreateStore = create<CreateState>()(
         // 清除历史记录
         clearHistory: () => {
           logger.info('清除生成历史记录');
-          set((state) => {
+          set(state => {
             state.generationHistory = [];
           });
         },
 
         // 切换高级选项
         toggleAdvancedOptions: () => {
-          set((state) => {
+          set(state => {
             state.showAdvancedOptions = !state.showAdvancedOptions;
           });
         },
@@ -228,7 +227,7 @@ export const useCreateStore = create<CreateState>()(
         // 重置状态
         reset: () => {
           logger.info('重置创作状态');
-          set((state) => {
+          set(state => {
             state.prompt = '';
             state.selectedStyle = null;
             state.showStyles = false;
@@ -241,7 +240,7 @@ export const useCreateStore = create<CreateState>()(
       })),
       {
         name: 'create-store',
-        partialize: (state) => ({
+        partialize: state => ({
           generationHistory: state.generationHistory,
           showAdvancedOptions: state.showAdvancedOptions,
         }),
@@ -254,7 +253,11 @@ export const useCreateStore = create<CreateState>()(
 );
 
 // 模拟生成过程的辅助函数
-async function simulateGeneration(generationId: string, setProgress: (progress: number) => void, abortController?: AbortController) {
+async function simulateGeneration(
+  generationId: string,
+  setProgress: (progress: number) => void,
+  abortController?: AbortController
+) {
   const steps = [10, 25, 45, 70, 90];
   const delays = [1000, 1500, 2000, 1500, 1000];
 
@@ -291,12 +294,13 @@ export function getStyleOptions(): StyleOption[] {
 }
 
 // 选择器 hooks，用于性能优化
-export const useCreatePrompt = () => useCreateStore((state) => state.prompt);
-export const useCreateSelectedStyle = () => useCreateStore((state) => state.selectedStyle);
-export const useCreateShowStyles = () => useCreateStore((state) => state.showStyles);
-export const useCreateGenerating = () => useCreateStore((state) => ({
-  isGenerating: state.isGenerating,
-  generationProgress: state.generationProgress,
-}));
-export const useCreateHistory = () => useCreateStore((state) => state.generationHistory);
-export const useCreateAdvancedOptions = () => useCreateStore((state) => state.showAdvancedOptions);
+export const useCreatePrompt = () => useCreateStore(state => state.prompt);
+export const useCreateSelectedStyle = () => useCreateStore(state => state.selectedStyle);
+export const useCreateShowStyles = () => useCreateStore(state => state.showStyles);
+export const useCreateGenerating = () =>
+  useCreateStore(state => ({
+    isGenerating: state.isGenerating,
+    generationProgress: state.generationProgress,
+  }));
+export const useCreateHistory = () => useCreateStore(state => state.generationHistory);
+export const useCreateAdvancedOptions = () => useCreateStore(state => state.showAdvancedOptions);

@@ -23,7 +23,7 @@ export function SearchBar({
           {
             borderWidth: StyleSheet.hairlineWidth,
             borderColor: 'rgba(255, 255, 255, 0.18)',
-          }
+          },
         ]}
       >
         {/* 搜索图标 */}
@@ -36,10 +36,7 @@ export function SearchBar({
 
         {/* 输入框 */}
         <TextInput
-          style={[
-            styles.input,
-            { color: isDark ? Colors.dark.text : Colors.light.text }
-          ]}
+          style={[styles.input, { color: isDark ? Colors.dark.text : Colors.light.text }]}
           placeholder={placeholder}
           placeholderTextColor={isDark ? Colors.dark.tertiaryText : Colors.light.tertiaryText}
           value={value}

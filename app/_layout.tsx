@@ -1,21 +1,14 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import "react-native-reanimated";
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import {
-  ErrorBoundary,
-  setupGlobalErrorHandlers,
-} from "@/components/error-boundary";
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ErrorBoundary, setupGlobalErrorHandlers } from '@/components/error-boundary';
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: '(tabs)',
 };
 
 export default function RootLayout() {
@@ -28,7 +21,7 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           {/*<Stack.Screen

@@ -5,16 +5,19 @@
 ## 🚀 快速开始
 
 ### 安装依赖
+
 ```bash
 npm install
 ```
 
 ### 启动开发服务器
+
 ```bash
 npm start
 ```
 
 ### 平台特定启动
+
 ```bash
 npm run ios        # iOS模拟器
 npm run android    # Android模拟器
@@ -38,6 +41,7 @@ npm run web        # Web浏览器
 ## 🎨 双UI设计
 
 本项目采用平台原生UI设计：
+
 - **iOS**: Apple HIG设计规范，毛玻璃效果，SF Symbols
 - **Android**: Material Design 3规范，涟漪效果，Material Icons
 
