@@ -7,4 +7,5 @@ export interface ModelDetailProps {
   onBookmark?: () => void;
   onDownload?: () => void;
   onAddToQueue?: () => void;
+  on3DPreview?: () => void;
 }

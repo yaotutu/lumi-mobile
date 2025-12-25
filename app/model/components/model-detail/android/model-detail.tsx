@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { getImageUrl } from '@/utils/url';
 import type { ModelDetailProps } from '../types';
 import { logger } from '@/utils/logger';
 
@@ -37,6 +38,7 @@ export const ModelDetail = React.memo(({
   onBookmark,
   onDownload,
   onAddToQueue,
+  on3DPreview,
 }: ModelDetailProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -65,6 +67,12 @@ export const ModelDetail = React.memo(({
     onAddToQueue?.();
   };
 
+  // 处理 3D 预览
+  const handle3DPreview = () => {
+    logger.info('预览 3D 模型:', model.name);
+    on3DPreview?.();
+  };
+
   // 预计算样式
   const dynamicStyles = useMemo(
     () => ({
@@ -84,6 +92,9 @@ export const ModelDetail = React.memo(({
     [isDark]
   );
 
+  // 转换图片URL为绝对路径
+  const absoluteImageUrl = useMemo(() => getImageUrl(model.previewImageUrl), [model.previewImageUrl]);
+
   return (
     <ThemedView style={styles.container}>
       {/* 状态栏 */}
@@ -97,10 +108,22 @@ export const ModelDetail = React.memo(({
         {/* 主图 */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: model.previewImageUrl }}
+            source={{ uri: absoluteImageUrl }}
             style={styles.mainImage}
             resizeMode="cover"
           />
+
+          {/* 3D 预览按钮 */}
+          <View style={styles.previewButtonContainer}>
+            <TouchableOpacity
+              style={[styles.previewButton, dynamicStyles.primaryButton]}
+              onPress={handle3DPreview}
+              activeOpacity={0.85}
+            >
+              <IconSymbol name="cube" size={20} color="#fff" />
+              <Text style={styles.previewButtonText}>预览 3D 模型</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* 内容区域 */}
@@ -395,6 +418,27 @@ const styles = StyleSheet.create({
   secondaryActionText: {
     fontSize: 16,
     fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  previewButtonContainer: {
+    position: 'absolute',
+    bottom: Spacing.xl,
+    left: Spacing.xl,
+    right: Spacing.xl,
+  },
+  previewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    gap: Spacing.sm,
+  },
+  previewButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
     letterSpacing: 0.3,
   },
 });

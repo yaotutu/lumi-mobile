@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { GalleryState, FetchOptions } from './types';
-import type { GalleryModel } from '@/types';
+import type { ModelSummary } from '@/types';
 import { fetchGalleryModels } from '@/services';
 import { logger } from '@/utils/logger';
 
@@ -50,10 +50,10 @@ export const useGalleryStore = create<GalleryState>()(
 
           const now = Date.now();
 
-          // 检查缓存（仅在请求第一页且没有特定选项时使用缓存）
+          // 检查缓存(仅在请求第一页且没有特定选项时使用缓存)
           if (
             page === 1 &&
-            !options.sortBy &&
+            !options.sort &&
             !options.category &&
             now - lastFetchTime < cacheDuration &&
             existingModels.length > 0
@@ -78,7 +78,7 @@ export const useGalleryStore = create<GalleryState>()(
 
             const response = await fetchGalleryModels(
               {
-                sortBy: options.sortBy || 'latest',
+                sort: options.sort || 'latest',
                 limit: pageSize,
                 offset: (page - 1) * pageSize,
                 ...(options.category && { category: options.category }),
@@ -88,23 +88,33 @@ export const useGalleryStore = create<GalleryState>()(
               }
             );
 
-            if (!response.success) {
+            // JSend 格式验证
+            if (response.status !== 'success') {
               throw new Error('获取数据失败');
             }
 
-            const newModels = response.data.models;
+            const newModels = response.data.items;
+
+            // 调试日志：查看图片URL
+            logger.debug('模型数据示例:', newModels[0]);
+            if (newModels[0]?.previewImageUrl) {
+              logger.debug('原始图片URL:', newModels[0].previewImageUrl);
+              const baseURL = 'http://192.168.100.100:4000';
+              logger.debug('完整图片URL应为:', `${baseURL}${newModels[0].previewImageUrl}`);
+            }
 
             set(state => {
               if (page === 1) {
-                // 第一页：替换数据
+                // 第一页:替换数据
                 state.models = newModels;
               } else {
-                // 后续页：追加数据
+                // 后续页:追加数据
                 state.models = [...existingModels, ...newModels];
               }
 
               state.currentPage = page;
-              state.hasMore = newModels.length === pageSize;
+              // 根据返回的数据量判断是否还有更多
+              state.hasMore = newModels.length >= pageSize;
               state.lastFetchTime = now;
               state.loading = false;
               state.error = null;
@@ -112,7 +122,7 @@ export const useGalleryStore = create<GalleryState>()(
 
             logger.info(`成功获取 ${newModels.length} 个模型，当前总数: ${get().models.length}`);
           } catch (error) {
-            // 如果是取消错误，不设置错误状态
+            // 如果是取消错误,不设置错误状态
             if (error instanceof Error && error.name === 'AbortError') {
               logger.debug('请求被取消');
               return;
@@ -184,7 +194,7 @@ export const useGalleryStore = create<GalleryState>()(
         },
 
         // 根据 ID 获取单个模型
-        getModelById: (id: string): GalleryModel | undefined => {
+        getModelById: (id: string): ModelSummary | undefined => {
           return get().models.find(model => model.id === id);
         },
       })),
@@ -202,7 +212,7 @@ export const useGalleryStore = create<GalleryState>()(
   )
 );
 
-// 选择器 hooks，用于性能优化
+// 选择器 hooks,用于性能优化
 export const useGalleryModels = () => useGalleryStore(state => state.models);
 export const useGalleryLoading = () => useGalleryStore(state => state.loading);
 export const useGalleryRefreshing = () => useGalleryStore(state => state.refreshing);

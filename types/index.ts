@@ -14,4 +14,10 @@ export type {
 export type { GalleryDetailResponse, GalleryListResponse, GalleryQueryParams } from './api/gallery';
 
 // 模型类型
-export type { GalleryModel, ModelStatus, UserInfo } from './models/gallery';
+export type {
+  GalleryModel,
+  ModelStatus,
+  ModelSummary,
+  ModelVisibility,
+  UserInfo,
+} from './models/gallery';

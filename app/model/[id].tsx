@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ModelDetail } from './components/model-detail';
 import { useGalleryStore } from '@/stores';
+import { fetchModelDetail } from '@/services';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing, BorderRadius } from '@/constants/theme';
@@ -10,6 +11,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { logger } from '@/utils/logger';
+import type { GalleryModel } from '@/types';
 
 export default function ModelDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,9 +20,41 @@ export default function ModelDetailScreen() {
   const isDark = colorScheme === 'dark';
   const { headerPaddingTop } = useSafeAreaSpacing();
 
-  // 从全局 store 获取模型数据
-  const { getModelById } = useGalleryStore();
-  const model = getModelById(id as string);
+  // 状态管理
+  const [model, setModel] = useState<GalleryModel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 从 API 获取模型详情
+  useEffect(() => {
+    if (!id) return;
+
+    const loadModelDetail = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        logger.info('获取模型详情:', id);
+
+        const data = await fetchModelDetail(id);
+        setModel(data);
+
+        logger.debug('模型详情数据:', {
+          id: data.id,
+          name: data.name,
+          modelUrl: data.modelUrl,
+          previewImageUrl: data.previewImageUrl,
+        });
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : '加载失败';
+        logger.error('获取模型详情失败:', err);
+        setError(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadModelDetail();
+  }, [id]);
 
   // 自定义导航栏
   const renderHeader = () => (
@@ -53,7 +87,19 @@ export default function ModelDetailScreen() {
   );
 
   // 如果模型不存在，显示错误页面
-  if (!model) {
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.errorContainer}>
+          <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
+          <ThemedText style={styles.loadingText}>加载中...</ThemedText>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  if (error || !model) {
     logger.warn('模型未找到:', id);
     return (
       <ThemedView style={styles.container}>
@@ -62,7 +108,7 @@ export default function ModelDetailScreen() {
           <Text style={styles.errorIcon}>😕</Text>
           <ThemedText style={styles.errorTitle}>模型未找到</ThemedText>
           <ThemedText style={styles.errorMessage}>
-            无法找到该模型，可能已被删除或不存在。
+            {error || '无法找到该模型，可能已被删除或不存在。'}
           </ThemedText>
           <TouchableOpacity
             style={[
@@ -92,6 +138,10 @@ export default function ModelDetailScreen() {
         onBookmark={() => logger.info('收藏功能待实现')}
         onDownload={() => logger.info('下载功能待实现')}
         onAddToQueue={() => logger.info('加入队列功能待实现')}
+        on3DPreview={() => {
+          logger.info('打开 3D 预览:', model.name);
+          router.push(`/model-viewer/${id}` as any);
+        }}
       />
     </>
   );
@@ -150,6 +200,11 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     marginBottom: Spacing.xl,
     lineHeight: 22,
+  },
+  loadingText: {
+    marginTop: Spacing.lg,
+    fontSize: 16,
+    opacity: 0.7,
   },
   backButton: {
     paddingVertical: 12,

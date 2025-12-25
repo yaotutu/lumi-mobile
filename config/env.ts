@@ -5,7 +5,7 @@
 
 export const ENV = {
   // API 配置
-  API_URL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.200.97:4000',
+  API_URL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.88.100:3000',
 
   // 环境名称
   ENV_NAME: (process.env.EXPO_PUBLIC_ENV || 'development') as

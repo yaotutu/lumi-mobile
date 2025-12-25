@@ -1,7 +1,7 @@
 export interface ModelCardProps {
   modelId: string;
   title: string;
-  creator: string;
+  creator?: string; // 可选,API 可能不返回
   imageUrl: string;
   likes: number;
   onPress?: (modelId: string) => void;
@@ -9,7 +9,7 @@ export interface ModelCardProps {
 
 export interface CardContentProps {
   title: string;
-  creator: string;
+  creator?: string; // 可选,API 可能不返回
   likes: number;
 }
 

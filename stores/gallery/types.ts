@@ -1,8 +1,8 @@
-import type { GalleryModel } from '@/types';
+import type { ModelSummary } from '@/types';
 
 export interface GalleryState {
   // 数据状态
-  models: GalleryModel[];
+  models: ModelSummary[];
   loading: boolean;
   refreshing: boolean;
   error: string | null;
@@ -14,12 +14,12 @@ export interface GalleryState {
 
   // 搜索状态
   searchQuery: string;
-  searchResults: GalleryModel[];
+  searchResults: ModelSummary[];
   isSearching: boolean;
 
   // 缓存控制
   lastFetchTime: number;
-  cacheDuration: number; // 缓存持续时间（毫秒）
+  cacheDuration: number; // 缓存持续时间(毫秒)
 
   // Actions
   fetchModels: (
@@ -33,11 +33,11 @@ export interface GalleryState {
   clearSearch: () => void;
   clearError: () => void;
   reset: () => void;
-  getModelById: (id: string) => GalleryModel | undefined;
+  getModelById: (id: string) => ModelSummary | undefined;
 }
 
 export interface FetchOptions {
-  sortBy?: 'latest' | 'popular';
+  sort?: 'latest' | 'popular' | 'liked';
   category?: string;
   limit?: number;
 }

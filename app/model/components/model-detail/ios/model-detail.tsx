@@ -14,6 +14,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
+import { getImageUrl } from '@/utils/url';
 import type { ModelDetailProps } from '../types';
 import { logger } from '@/utils/logger';
 
@@ -42,6 +43,7 @@ export const ModelDetail = React.memo(({
   onBookmark,
   onDownload,
   onAddToQueue,
+  on3DPreview,
 }: ModelDetailProps) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -97,6 +99,12 @@ export const ModelDetail = React.memo(({
     onAddToQueue?.();
   };
 
+  // 处理 3D 预览
+  const handle3DPreview = () => {
+    logger.info('预览 3D 模型:', model.name);
+    on3DPreview?.();
+  };
+
   // 预计算样式
   const dynamicStyles = useMemo(
     () => ({
@@ -111,6 +119,9 @@ export const ModelDetail = React.memo(({
     [isDark]
   );
 
+  // 转换图片URL为绝对路径
+  const absoluteImageUrl = useMemo(() => getImageUrl(model.previewImageUrl), [model.previewImageUrl]);
+
   return (
     <ThemedView style={styles.container}>
       {/* 状态栏 */}
@@ -122,7 +133,7 @@ export const ModelDetail = React.memo(({
 
       {/* 主图 - 绝对定位在最上层，可自由拉伸 */}
       <AnimatedImage
-        source={{ uri: model.previewImageUrl }}
+        source={{ uri: absoluteImageUrl }}
         style={[
           styles.headerImage,
           {
@@ -261,6 +272,18 @@ export const ModelDetail = React.memo(({
             <IconSymbol name="square.and.arrow.up" size={22} color="#000" />
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* 3D 预览按钮 - 浮在预览图上方 */}
+      <View style={[styles.previewButtonContainer, { top: HEADER_HEIGHT - 70, paddingHorizontal: Spacing.xl }]}>
+        <TouchableOpacity
+          style={styles.previewButton}
+          onPress={handle3DPreview}
+          activeOpacity={0.8}
+        >
+          <IconSymbol name="cube" size={20} color="#fff" />
+          <Text style={styles.previewButtonText}>预览 3D 模型</Text>
+        </TouchableOpacity>
       </View>
     </ThemedView>
   );
@@ -445,5 +468,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
+  },
+  previewButtonContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    zIndex: 50,
+  },
+  previewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 122, 255, 0.9)',
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.full,
+    gap: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  previewButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

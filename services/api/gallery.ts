@@ -14,12 +14,12 @@ export async function fetchGalleryModels(
   params: GalleryQueryParams = {},
   options?: { signal?: AbortSignal }
 ): Promise<GalleryListResponse> {
-  const { sortBy = 'latest', limit = 20, offset = 0 } = params;
+  const { sort = 'latest', limit = 20, offset = 0 } = params;
 
   return get<GalleryListResponse>(
     API_ENDPOINTS.gallery.models,
     {
-      sortBy,
+      sort,
       limit,
       offset,
     },
@@ -31,7 +31,7 @@ export async function fetchGalleryModels(
  * 获取单个模型详情
  */
 export async function fetchModelDetail(id: string): Promise<GalleryModel> {
-  const response = await get<{ success: boolean; data: GalleryModel }>(
+  const response = await get<{ status: 'success'; data: GalleryModel }>(
     API_ENDPOINTS.gallery.modelDetail(id)
   );
   return response.data;

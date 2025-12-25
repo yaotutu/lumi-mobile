@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,11 +20,13 @@ import { ModelCard } from '@/components/model-card';
 import { useAsyncController } from '@/hooks/useAsyncController';
 import { categorizeError, logError } from '@/utils/error-handler';
 import { useGalleryStore } from '@/stores';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function DiscoverScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { topInset, contentPaddingBottom } = useSafeAreaSpacing();
+  const router = useRouter();
 
   // 异步操作控制器
   const { createController } = useAsyncController();
@@ -158,7 +161,6 @@ export default function DiscoverScreen() {
                     key={model.id}
                     modelId={model.id}
                     title={model.name}
-                    creator={model.user?.name || '匿名用户'}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
                   />
@@ -172,7 +174,6 @@ export default function DiscoverScreen() {
                     key={model.id}
                     modelId={model.id}
                     title={model.name}
-                    creator={model.user?.name || '匿名用户'}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
                   />

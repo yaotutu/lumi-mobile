@@ -2,24 +2,26 @@
  * 画廊 API 类型定义
  */
 
-import type { GalleryModel } from '../models/gallery';
-import type { APIResponse, PaginatedData } from './common';
+import type { ModelSummary, GalleryModel } from '../models/gallery';
 
-// 画廊列表响应
-export interface GalleryListResponse extends APIResponse {
+// 画廊列表响应 (JSend 格式)
+export interface GalleryListResponse {
+  status: 'success';
   data: {
-    models: GalleryModel[];
+    items: ModelSummary[];
     total: number;
-    hasMore: boolean;
   };
 }
 
 // 画廊查询参数
 export interface GalleryQueryParams {
-  sortBy?: 'latest' | 'popular';
+  sort?: 'latest' | 'popular' | 'liked';
   limit?: number;
   offset?: number;
 }
 
-// 画廊模型详情响应
-export type GalleryDetailResponse = APIResponse<GalleryModel>;
+// 画廊模型详情响应 (JSend 格式)
+export interface GalleryDetailResponse {
+  status: 'success';
+  data: GalleryModel;
+}

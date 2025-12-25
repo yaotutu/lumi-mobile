@@ -3,6 +3,7 @@ import { Image, StyleSheet, View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, BorderRadius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { getImageUrl } from '@/utils/url';
 import { CardContent } from './card-content';
 import { CardActions } from './card-actions';
 import type { ModelCardProps } from '../types';
@@ -42,6 +43,9 @@ export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes,
     }
   };
 
+  // 转换图片URL为绝对路径
+  const absoluteImageUrl = useMemo(() => getImageUrl(imageUrl), [imageUrl]);
+
   return (
     <Pressable
       onPress={handlePress}
@@ -58,7 +62,7 @@ export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes,
       }}
     >
       {/* 图片 */}
-      <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+      <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
 
       {/* Android Material Design内容区 */}
       <View style={[styles.content, cardStyles.content]}>

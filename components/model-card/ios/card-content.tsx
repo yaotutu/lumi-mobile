@@ -18,10 +18,12 @@ export function CardContent({ title, creator, likes }: CardContentProps) {
         {title}
       </Text>
 
-      {/* 创作者 */}
-      <Text style={[styles.creator, { color: isDark ? '#0A84FF' : '#007AFF' }]} numberOfLines={1}>
-        by {creator}
-      </Text>
+      {/* 创作者(可选) */}
+      {creator && (
+        <Text style={[styles.creator, { color: isDark ? '#0A84FF' : '#007AFF' }]} numberOfLines={1}>
+          by {creator}
+        </Text>
+      )}
     </View>
   );
 }
