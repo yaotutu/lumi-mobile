@@ -11,6 +11,8 @@ import { zustandStorage } from '@/utils/storage';
 // 注意:对于信息流页面,我们使用"先显示缓存,立即刷新"的策略
 // 缓存只用于避免白屏,实际数据总是尽快刷新
 const DEFAULT_PAGE_SIZE = 20;
+// 缓存持续时间（毫秒）- 5分钟
+const DEFAULT_CACHE_DURATION = 5 * 60 * 1000;
 
 export const useGalleryStore = create<GalleryState>()(
   devtools(
@@ -34,6 +36,7 @@ export const useGalleryStore = create<GalleryState>()(
 
         // 缓存控制
         lastFetchTime: 0,
+        cacheDuration: DEFAULT_CACHE_DURATION,
 
         // 获取模型列表
         fetchModels: async (

@@ -19,7 +19,8 @@ import type { GalleryModel } from '@/types';
 export default function ModelViewer3DScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme];
+  // 确保 colorScheme 不为 null，提供默认值 'light'
+  const colors = Colors[colorScheme ?? 'light'];
   const { id } = useLocalSearchParams<{ id: string }>();
 
   // 状态管理

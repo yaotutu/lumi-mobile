@@ -17,7 +17,8 @@ interface ErrorFallbackProps {
 
 export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onRetry }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme];
+  // 确保 colorScheme 不为 null，提供默认值 'light'
+  const colors = Colors[colorScheme ?? 'light'];
 
   // 根据错误类型显示不同的图标和消息
   const getErrorConfig = () => {

@@ -61,7 +61,8 @@ export const useModelLoader = (
 
   const currentUrlRef = useRef<string>('');
   const abortControllerRef = useRef<AbortController | null>(null);
-  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+  // 在 React Native 中，setTimeout 返回 number 类型
+  const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 清理函数
   const cleanup = useCallback(() => {

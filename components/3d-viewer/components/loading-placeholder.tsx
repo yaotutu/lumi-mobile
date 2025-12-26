@@ -72,7 +72,8 @@ export const LoadingPlaceholder: React.FC = () => {
     outputRange: ['0deg', '360deg'],
   });
 
-  const colors = Colors[colorScheme];
+  // 确保 colorScheme 不为 null，提供默认值 'light'
+  const colors = Colors[colorScheme ?? 'light'];
 
   return (
     <View style={styles.container}>

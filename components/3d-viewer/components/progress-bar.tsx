@@ -25,7 +25,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
     }).start();
   }, [progress.percentage, widthAnim]);
 
-  const colors = Colors[colorScheme];
+  // 确保 colorScheme 不为 null，提供默认值 'light'
+  const colors = Colors[colorScheme ?? 'light'];
 
   // 格式化文件大小
   const formatBytes = (bytes: number): string => {

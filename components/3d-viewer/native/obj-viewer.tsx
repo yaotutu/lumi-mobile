@@ -32,7 +32,8 @@ export const ObjViewer: React.FC<ViewerProps> = ({
 }) => {
   const [isGlReady, setIsGlReady] = useState(false);
   const [isModelLoaded, setIsModelLoaded] = useState(false); // 新增：模型是否已加载到场景
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  // 初始化 ref，提供 undefined 作为初始值
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
@@ -122,8 +123,8 @@ export const ObjViewer: React.FC<ViewerProps> = ({
     try {
       logger.info(`Loading OBJ from: ${objectUrl}`, 'ObjViewer');
 
-      // 加载 OBJ 模型
-      const loader = new OBJLoader();
+      // 加载 OBJ 模型，传入 LoadingManager
+      const loader = new OBJLoader(new THREE.LoadingManager());
 
       const object = await new Promise<THREE.Group>((resolve, reject) => {
         loader.load(
