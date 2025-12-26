@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { ModelDetail } from './components/model-detail';
+import { ModelDetail } from '@/components/model-detail';
 import { useGalleryStore } from '@/stores';
 import { fetchModelDetail } from '@/services';
 import { ThemedView } from '@/components/themed-view';

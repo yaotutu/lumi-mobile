@@ -14,7 +14,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getImageUrl } from '@/utils/url';
-import type { ModelDetailProps } from '../types';
+import type { ModelDetailProps } from './types';
 import { logger } from '@/utils/logger';
 
 // 格式化数字（例如：8192 → 8.2k）

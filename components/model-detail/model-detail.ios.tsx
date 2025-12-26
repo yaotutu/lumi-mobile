@@ -15,7 +15,7 @@ import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { getImageUrl } from '@/utils/url';
-import type { ModelDetailProps } from '../types';
+import type { ModelDetailProps } from './types';
 import { logger } from '@/utils/logger';
 
 // 创建动画图片组件

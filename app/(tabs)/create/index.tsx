@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ExamplePrompts } from '@/components/pages/create/example-prompts';
@@ -52,13 +53,17 @@ export default function CreateScreen() {
         <Text style={[styles.title, { color: textColor }]}>AI Creation Studio</Text>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
-          !showStyles && [styles.scrollContentCentered, { paddingBottom: contentPaddingBottom + 30 }],
+          !showStyles && [
+            styles.scrollContentCentered,
+            { paddingBottom: contentPaddingBottom + 30 },
+          ],
         ]}
         showsVerticalScrollIndicator={false}
+        bottomOffset={showStyles ? 100 : 0}
       >
         {/* Initial State - 渐变色装饰、欢迎文字、示例提示词 */}
         {!showStyles && (
@@ -107,11 +112,16 @@ export default function CreateScreen() {
             generationProgress={generationProgress}
           />
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {/* Prompt Input - 显示风格后固定在底部 */}
       {showStyles && (
-        <View style={[styles.inputSectionBottom, { backgroundColor, paddingBottom: contentPaddingBottom }]}>
+        <View
+          style={[
+            styles.inputSectionBottom,
+            { backgroundColor, paddingBottom: contentPaddingBottom },
+          ]}
+        >
           <PromptInput
             value={prompt}
             onChangeText={setPrompt}

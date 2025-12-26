@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -22,18 +23,20 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ErrorBoundary>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            {/*<Stack.Screen
-              name="modal"
-              options={{ presentation: "modal", title: "Modal" }}
-            />*/}
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </ErrorBoundary>
+      <KeyboardProvider>
+        <ErrorBoundary>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              {/*<Stack.Screen
+                name="modal"
+                options={{ presentation: "modal", title: "Modal" }}
+              />*/}
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </ErrorBoundary>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }
