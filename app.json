@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "laf",
-    "slug": "laf",
+    "name": "lumi",
+    "slug": "lumi-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "laf",
+    "scheme": "lumi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.laf"
+      "bundleIdentifier": "top.yaotutu.lumi"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.laf"
+      "package": "top.yaotutu.lumi"
     },
     "web": {
       "output": "static",

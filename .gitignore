@@ -45,3 +45,4 @@ app-example
 # Claude Code files
 CLAUDE.md
 .claude/
+.zed/*
