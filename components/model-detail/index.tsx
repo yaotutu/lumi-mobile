@@ -10,4 +10,3 @@ export const ModelDetail = Platform.select({
 });
 
 export type { ModelDetailProps } from './types';
-

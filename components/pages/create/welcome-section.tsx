@@ -1,5 +1,5 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Typography, FontSize, FontWeight, Spacing } from '@/constants/theme';
 
 interface WelcomeSectionProps {
   isDark: boolean;
@@ -7,68 +7,40 @@ interface WelcomeSectionProps {
   secondaryTextColor: string;
 }
 
+/**
+ * 欢迎区域
+ * 简洁的标题和副标题显示
+ */
 export function WelcomeSection({ isDark, textColor, secondaryTextColor }: WelcomeSectionProps) {
   return (
     <View style={styles.container}>
-      {/* 渐变色装饰圆形 */}
-      <View style={styles.decorationContainer}>
-        <LinearGradient
-          colors={isDark ? ['#4A90E2', '#9B59B6'] : ['#667EEA', '#764BA2']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientCircle}
-        />
-      </View>
+      {/* 主标题 */}
+      <Text style={[styles.title, { color: textColor }]}>AI 创作</Text>
 
-      {/* 欢迎文字 */}
-      <View style={styles.welcomeTextContainer}>
-        <Text style={[styles.welcomeTitle, { color: textColor }]}>开始创作你的3D模型</Text>
-        <Text style={[styles.welcomeSubtitle, { color: secondaryTextColor }]}>
-          描述你的创意,AI为你实现
-        </Text>
-      </View>
+      {/* 副标题 */}
+      <Text style={[styles.subtitle, { color: secondaryTextColor }]}>
+        用一句话,创造属于你的 3D 作品
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // 主容器样式
   container: {
-    marginBottom: 32,
+    marginBottom: Spacing.xl, // 底部间距
   },
-  decorationContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
+
+  // 主标题样式
+  title: {
+    ...Typography.title1, // 使用预定义的 title1 样式
+    marginBottom: Spacing.sm, // 底部间距
   },
-  gradientCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#667EEA',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
-        shadowRadius: 16,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  welcomeTextContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  welcomeTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  welcomeSubtitle: {
-    fontSize: 16,
-    lineHeight: 22,
-    textAlign: 'center',
+
+  // 副标题样式
+  subtitle: {
+    ...Typography.body, // 使用预定义的 body 样式
+    lineHeight: 22, // 行高
+    opacity: 0.8, // 透明度
   },
 });

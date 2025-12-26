@@ -37,53 +37,55 @@ const createCardStyles = (isDark: boolean) => ({
   },
 });
 
-export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const router = useRouter();
+export const ModelCard = React.memo(
+  ({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
+    const router = useRouter();
 
-  // 预计算样式对象，避免每次渲染时重新创建
-  const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
+    // 预计算样式对象，避免每次渲染时重新创建
+    const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
 
-  // 处理点击
-  const handlePress = () => {
-    if (onPress) {
-      onPress(modelId);
-    } else {
-      router.push(`/model/${modelId}`);
-    }
-  };
+    // 处理点击
+    const handlePress = () => {
+      if (onPress) {
+        onPress(modelId);
+      } else {
+        router.push(`/model/${modelId}`);
+      }
+    };
 
-  // 转换图片URL为绝对路径
-  const absoluteImageUrl = useMemo(() => getImageUrl(imageUrl), [imageUrl]);
+    // 转换图片URL为绝对路径
+    const absoluteImageUrl = useMemo(() => getImageUrl(imageUrl), [imageUrl]);
 
-  return (
-    <Pressable
-      onPress={handlePress}
-      style={({ pressed }) => [
-        styles.card,
-        {
-          backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
-          opacity: pressed ? 0.9 : 1,
-        },
-        cardStyles.card,
-      ]}
-    >
-      {/* 图片 */}
-      <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
-
-      {/* iOS 使用毛玻璃内容区 */}
-      <BlurView
-        intensity={cardStyles.blurView.intensity}
-        tint={cardStyles.blurView.tint}
-        style={[styles.blurContent, cardStyles.blurView.blurContent]}
+    return (
+      <Pressable
+        onPress={handlePress}
+        style={({ pressed }) => [
+          styles.card,
+          {
+            backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+            opacity: pressed ? 0.9 : 1,
+          },
+          cardStyles.card,
+        ]}
       >
-        <CardContent title={title} creator={creator} likes={likes} />
-        <CardActions likes={likes} />
-      </BlurView>
-    </Pressable>
-  );
-});
+        {/* 图片 */}
+        <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
+
+        {/* iOS 使用毛玻璃内容区 */}
+        <BlurView
+          intensity={cardStyles.blurView.intensity}
+          tint={cardStyles.blurView.tint}
+          style={[styles.blurContent, cardStyles.blurView.blurContent]}
+        >
+          <CardContent title={title} creator={creator} likes={likes} />
+          <CardActions likes={likes} />
+        </BlurView>
+      </Pressable>
+    );
+  }
+);
 
 ModelCard.displayName = 'ModelCard';
 

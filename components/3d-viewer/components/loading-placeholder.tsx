@@ -91,11 +91,7 @@ export const LoadingPlaceholder: React.FC = () => {
 
         {/* 内层正方形（模拟透视效果） */}
         <View
-          style={[
-            styles.square,
-            styles.innerSquare,
-            { borderColor: colors.tint, opacity: 0.6 },
-          ]}
+          style={[styles.square, styles.innerSquare, { borderColor: colors.tint, opacity: 0.6 }]}
         />
 
         {/* 连接线（模拟立方体边） */}

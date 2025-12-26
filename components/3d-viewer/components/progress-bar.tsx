@@ -47,10 +47,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
       {/* 进度条 */}
       <View style={[styles.progressTrack, { backgroundColor: colors.tabIconDefault }]}>
         <Animated.View
-          style={[
-            styles.progressFill,
-            { width: progressWidth, backgroundColor: colors.tint },
-          ]}
+          style={[styles.progressFill, { width: progressWidth, backgroundColor: colors.tint }]}
         />
       </View>
 

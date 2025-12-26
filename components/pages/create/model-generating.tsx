@@ -1,6 +1,9 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Easing, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 import type { GenerationTask } from '@/stores/create/types';
+import { useEffect, useRef } from 'react';
 
 interface ModelGeneratingProps {
   task: GenerationTask;
@@ -10,191 +13,313 @@ interface ModelGeneratingProps {
 }
 
 /**
- * 3D 模型生成中组件
- * 显示生成进度和选中的图片
+ * 3D 模型生成中组件 - 现代精致风格
+ * 显示生成进度和旋转立方体动画
  */
-export function ModelGenerating({
-  task,
-  onCancel,
-  paddingBottom,
-  isDark,
-}: ModelGeneratingProps) {
-  const textColor = isDark ? '#FFFFFF' : '#000000';
-  const secondaryTextColor = isDark ? '#98989D' : '#86868B';
-  const cardBackground = isDark ? '#1C1C1E' : '#FFFFFF';
-  const borderColor = isDark ? '#38383A' : '#D1D1D6';
+export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: ModelGeneratingProps) {
+  // 动态颜色
+  const backgroundColor = isDark ? Colors.dark.background : Colors.light.background;
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const secondaryTextColor = isDark ? Colors.dark.secondaryText : Colors.light.secondaryText;
+  const borderColor = isDark ? Colors.dark.border : Colors.light.border;
 
   const progress = task.modelProgress || 0;
 
-  // 获取选中的图片
-  const selectedImage = task.images?.find(img => img.id === task.selectedImageId);
+  // 淡入动画
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // 估算剩余时间（简单计算）
-  const estimatedMinutes = Math.max(1, Math.ceil((100 - progress) / 20));
+  // 立方体旋转动画
+  const cubeRotationValue = useRef(new Animated.Value(0)).current;
+
+  // 脉冲动画
+  const pulseValue = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // 淡入
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+
+    // 旋转
+    Animated.loop(
+      Animated.timing(cubeRotationValue, {
+        toValue: 1,
+        duration: 4000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+
+    // 脉冲
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseValue, {
+          toValue: 1.05,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseValue, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [fadeAnim, cubeRotationValue, pulseValue]);
+
+  const cubeRotation = cubeRotationValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  // 计算当前阶段
+  const currentStage = Math.min(Math.floor(progress / 25), 3);
+  const stages = ['分析参考', '构建网格', '添加纹理', '优化导出'];
 
   return (
-    <View style={[styles.container, { paddingBottom }]}>
-      {/* 选中的图片 */}
-      {selectedImage && (
-        <View style={styles.imageContainer}>
-          <View style={[styles.imageCard, { backgroundColor: cardBackground, borderColor }]}>
-            <Image source={{ uri: selectedImage.url }} style={styles.image} resizeMode="cover" />
-            <View style={styles.imageBadge}>
-              <IconSymbol name="checkmark.circle.fill" size={20} color="#34C759" />
-              <Text style={[styles.imageBadgeText, { color: textColor }]}>已选择</Text>
-            </View>
-          </View>
-        </View>
-      )}
+    <View style={[styles.container, { backgroundColor }]}>
+      {/* 头部 */}
+      <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
+        <Text style={[styles.title, { color: textColor }]}>构建 3D 模型中</Text>
+        <Text style={[styles.subtitle, { color: secondaryTextColor }]}>{stages[currentStage]}</Text>
+      </Animated.View>
 
-      {/* 生成状态 */}
-      <View style={styles.content}>
-        <Text style={[styles.statusTitle, { color: textColor }]}>正在生成 3D 模型...</Text>
+      {/* 中心内容区 */}
+      <Animated.View style={[styles.centerContainer, { opacity: fadeAnim }]}>
+        {/* 旋转立方体 */}
+        <Animated.View
+          style={[
+            styles.cubeWrapper,
+            {
+              transform: [{ scale: pulseValue }, { rotate: cubeRotation }],
+            },
+          ]}
+        >
+          <LinearGradient
+            colors={['#667EEA', '#764BA2']}
+            style={[
+              styles.cubeGradient,
+              Platform.select({
+                ios: {
+                  shadowColor: '#667EEA',
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 20,
+                },
+                android: {
+                  elevation: 12,
+                },
+              }),
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <IconSymbol name="cube.fill" size={64} color="#FFFFFF" />
+          </LinearGradient>
+        </Animated.View>
 
-        {/* 3D 模型占位符 */}
-        <View style={[styles.modelPlaceholder, { backgroundColor: cardBackground, borderColor }]}>
-          <View style={styles.loadingIndicator}>
-            <IconSymbol name="cube.fill" size={64} color="#007AFF" />
-            <Text style={[styles.loadingText, { color: textColor }]}>处理中</Text>
-          </View>
-        </View>
+        {/* 进度百分比 */}
+        <Text style={[styles.progressPercent, { color: textColor }]}>{progress}%</Text>
 
         {/* 进度条 */}
-        <View style={[styles.progressContainer, { backgroundColor: borderColor }]}>
-          <View style={[styles.progressBar, { width: `${progress}%` }]} />
-        </View>
-        <Text style={[styles.progressText, { color: secondaryTextColor }]}>{progress}%</Text>
-
-        {/* 预计时间 */}
-        <View style={[styles.tipCard, { backgroundColor: cardBackground, borderColor }]}>
-          <IconSymbol name="clock.fill" size={20} color="#007AFF" />
-          <View style={styles.tipTextContainer}>
-            <Text style={[styles.tipText, { color: textColor }]}>
-              预计还需 {estimatedMinutes} 分钟
-            </Text>
-            <Text style={[styles.tipSubText, { color: secondaryTextColor }]}>
-              您可以先去其他页面，完成后会通知您
-            </Text>
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBarBackground, { backgroundColor: borderColor }]}>
+            <LinearGradient
+              colors={['#667EEA', '#764BA2']}
+              style={[styles.progressBarFill, { width: `${progress}%` }]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            />
           </View>
         </View>
 
-        {/* 取消按钮 */}
+        {/* 阶段指示点 */}
+        <View style={styles.stageDotsContainer}>
+          {[0, 1, 2, 3].map(index => {
+            const isCompleted = currentStage > index;
+            const isCurrent = currentStage === index;
+            return (
+              <View key={index} style={styles.stageDotWrapper}>
+                <View
+                  style={[
+                    styles.stageDot,
+                    {
+                      backgroundColor:
+                        isCompleted || isCurrent
+                          ? '#667EEA'
+                          : isDark
+                            ? Colors.dark.border
+                            : Colors.light.border,
+                      width: isCurrent ? 32 : 8,
+                    },
+                  ]}
+                />
+              </View>
+            );
+          })}
+        </View>
+
+        {/* 阶段文字提示 */}
+        <Text style={[styles.stageText, { color: secondaryTextColor }]}>
+          第 {currentStage + 1}/4 步
+        </Text>
+      </Animated.View>
+
+      {/* 底部按钮 */}
+      <Animated.View
+        style={[
+          styles.bottomContainer,
+          {
+            paddingBottom: paddingBottom || Spacing.lg,
+            opacity: fadeAnim,
+          },
+        ]}
+      >
         <TouchableOpacity
-          style={[styles.cancelButton, { borderColor }]}
+          style={[
+            styles.cancelButton,
+            {
+              backgroundColor: isDark ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 59, 48, 0.05)',
+            },
+          ]}
           onPress={onCancel}
           activeOpacity={0.7}
         >
           <Text style={[styles.cancelButtonText, { color: '#FF3B30' }]}>取消生成</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // 主容器
   container: {
-    flex: 1,
+    flex: 1, // 占满空间
+    justifyContent: 'space-between', // 上下分布
   },
-  imageContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
+
+  // 头部区域
+  header: {
+    paddingHorizontal: Spacing.lg, // 水平内边距
+    paddingTop: Spacing.xl, // 顶部内边距
+    paddingBottom: Spacing.md, // 底部内边距
   },
-  imageCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: 'hidden',
-    position: 'relative',
+
+  // 标题样式
+  title: {
+    fontSize: 28, // 大标题
+    fontWeight: '700', // 粗体
+    letterSpacing: -0.5, // 紧凑字间距
+    marginBottom: Spacing.xs, // 底部间距
   },
-  image: {
-    width: '100%',
-    aspectRatio: 16 / 9,
+
+  // 副标题样式
+  subtitle: {
+    fontSize: FontSize.md, // 中等字号
+    fontWeight: FontWeight.medium, // 中等字重
+    opacity: 0.7, // 透明度
   },
-  imageBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 6,
+
+  // 中心容器
+  centerContainer: {
+    flex: 1, // 占据剩余空间
+    paddingHorizontal: Spacing.lg, // 水平内边距
+    justifyContent: 'center', // 垂直居中
+    alignItems: 'center', // 水平居中
+    gap: Spacing.xl, // 间距
   },
-  imageBadgeText: {
-    fontSize: 14,
-    fontWeight: '600',
+
+  // 立方体包裹器
+  cubeWrapper: {
+    width: 140, // 宽度
+    height: 140, // 高度
+    justifyContent: 'center', // 水平居中
+    alignItems: 'center', // 垂直居中
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
+
+  // 立方体渐变
+  cubeGradient: {
+    width: 130, // 宽度
+    height: 130, // 高度
+    borderRadius: BorderRadius.xl, // 大圆角
+    justifyContent: 'center', // 水平居中
+    alignItems: 'center', // 垂直居中
   },
-  statusTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 20,
+
+  // 进度百分比
+  progressPercent: {
+    fontSize: 48, // 超大字号
+    fontWeight: '700', // 粗体
+    letterSpacing: -1, // 紧凑字间距
   },
-  modelPlaceholder: {
-    aspectRatio: 1,
-    borderRadius: 12,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
+
+  // 进度条容器
+  progressBarContainer: {
+    width: '100%', // 宽度
+    maxWidth: 320, // 最大宽度
+    height: 8, // 高度
   },
-  loadingIndicator: {
-    alignItems: 'center',
-    gap: 12,
+
+  // 进度条背景
+  progressBarBackground: {
+    height: '100%', // 高度
+    borderRadius: 4, // 圆角
+    overflow: 'hidden', // 隐藏溢出
   },
-  loadingText: {
-    fontSize: 16,
-    fontWeight: '500',
+
+  // 进度条填充
+  progressBarFill: {
+    height: '100%', // 高度
+    borderRadius: 4, // 圆角
   },
-  progressContainer: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: 8,
+
+  // 阶段点容器
+  stageDotsContainer: {
+    flexDirection: 'row', // 横向排列
+    gap: Spacing.sm, // 间距
+    alignItems: 'center', // 垂直居中
+    marginTop: Spacing.md, // 顶部间距
   },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#007AFF',
-    borderRadius: 2,
+
+  // 阶段点包裹器
+  stageDotWrapper: {
+    // 无额外样式
   },
-  progressText: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 32,
+
+  // 阶段点
+  stageDot: {
+    height: 8, // 高度
+    borderRadius: 4, // 圆角
   },
-  tipCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 24,
+
+  // 阶段文字
+  stageText: {
+    fontSize: FontSize.sm, // 小字号
+    fontWeight: FontWeight.medium, // 中等字重
+    marginTop: Spacing.sm, // 顶部间距
   },
-  tipTextContainer: {
-    flex: 1,
-    marginLeft: 12,
+
+  // 底部容器
+  bottomContainer: {
+    paddingHorizontal: Spacing.lg, // 水平内边距
+    paddingTop: Spacing.lg, // 顶部内边距
   },
-  tipText: {
-    fontSize: 15,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  tipSubText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
+
+  // 取消按钮
   cancelButton: {
-    paddingVertical: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: 'center',
+    paddingVertical: Spacing.lg, // 垂直内边距
+    borderRadius: BorderRadius.md, // 中等圆角
+    alignItems: 'center', // 水平居中
   },
+
+  // 取消按钮文字
   cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: FontSize.md, // 中等字号
+    fontWeight: FontWeight.semibold, // 半粗体
   },
 });

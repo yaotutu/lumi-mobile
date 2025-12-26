@@ -4,7 +4,15 @@
  */
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, StyleSheet, TouchableOpacity, StatusBar, ActivityIndicator, Text, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+  Text,
+  Platform,
+} from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Viewer3D } from '@/components/3d-viewer';
@@ -125,7 +133,10 @@ export default function ModelViewer3DScreen() {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="dark-content" />
         <Stack.Screen options={{ headerShown: false }} />
-        <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.background }]}>
+        <SafeAreaView
+          edges={['top']}
+          style={[styles.header, { backgroundColor: colors.background }]}
+        >
           <View style={styles.headerContent}>
             <TouchableOpacity
               style={[styles.backButton, { backgroundColor: colors.background }]}
@@ -161,7 +172,10 @@ export default function ModelViewer3DScreen() {
 
       {/* 顶部导航栏 - 仅 iOS 显示 */}
       {Platform.OS === 'ios' && (
-        <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: colors.background }]}>
+        <SafeAreaView
+          edges={['top']}
+          style={[styles.header, { backgroundColor: colors.background }]}
+        >
           <View style={styles.headerContent}>
             <TouchableOpacity
               style={[styles.backButton, { backgroundColor: colors.background }]}

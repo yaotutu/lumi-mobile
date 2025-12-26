@@ -41,15 +41,8 @@ interface UseModelLoaderResult {
   cancel: () => void;
 }
 
-export const useModelLoader = (
-  options: UseModelLoaderOptions = {}
-): UseModelLoaderResult => {
-  const {
-    timeout = ViewerConfig.loading.timeout,
-    onLoad,
-    onProgress,
-    onError,
-  } = options;
+export const useModelLoader = (options: UseModelLoaderOptions = {}): UseModelLoaderResult => {
+  const { timeout = ViewerConfig.loading.timeout, onLoad, onProgress, onError } = options;
 
   const [state, setState] = useState<ModelLoadingState>('idle');
   const [progress, setProgress] = useState<ModelLoadProgress>({

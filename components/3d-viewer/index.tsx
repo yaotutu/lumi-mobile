@@ -75,7 +75,7 @@ const selectViewerMode = (requestedMode: ViewerMode = 'auto'): 'native' | 'webvi
 /**
  * 3D 查看器主组件
  */
-export const Viewer3D: React.FC<ExtendedViewerProps> = (props) => {
+export const Viewer3D: React.FC<ExtendedViewerProps> = props => {
   const { mode = 'auto', ...viewerProps } = props;
   const [selectedMode, setSelectedMode] = useState<'native' | 'webview'>('webview');
   const [isReady, setIsReady] = useState(false);

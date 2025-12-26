@@ -3,12 +3,15 @@
 ## 📚 背景知识
 
 ### 什么是 Safe Area？
+
 Safe Area（安全区域）是指屏幕上不会被系统UI遮挡的区域，包括：
+
 - **顶部**：刘海屏、状态栏、动态岛
 - **底部**：Home Indicator（iOS）
 - **左右**：折叠屏、圆角屏幕
 
 ### 为什么需要 Safe Area？
+
 ```
 ┌─────────────────────────┐
 │   ⚫ 刘海屏 / 状态栏      │ ← 系统UI会遮挡内容
@@ -26,6 +29,7 @@ Safe Area（安全区域）是指屏幕上不会被系统UI遮挡的区域，包
 ## 🎯 React Native 中的处理方式
 
 ### 1️⃣ 传统方式（React Navigation）
+
 ```typescript
 // ✅ 可以在顶层统一包裹
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,6 +44,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 ```
 
 ### 2️⃣ Expo Router 方式（本项目）
+
 ```typescript
 // ❌ 无法在顶层统一包裹
 // Expo Router 是文件路由系统，每个页面是独立文件
@@ -76,6 +81,7 @@ export function ScreenWrapper({
 ### 使用方式
 
 #### ✅ 基础使用（推荐）
+
 ```typescript
 export default function CreateScreen() {
   return (
@@ -88,6 +94,7 @@ export default function CreateScreen() {
 ```
 
 #### 🎨 全屏页面（不需要安全区域）
+
 ```typescript
 export default function FullScreenImage() {
   return (
@@ -100,6 +107,7 @@ export default function FullScreenImage() {
 ```
 
 #### 🔧 自定义安全区域边缘
+
 ```typescript
 export default function ModalScreen() {
   return (
@@ -123,18 +131,19 @@ edges?: Edge[] = ['top', 'bottom', 'left', 'right']
 
 ### 常见配置：
 
-| 配置 | 说明 | 使用场景 |
-|------|------|----------|
-| `['top']` | 只处理顶部 | **Tab 页面**（底部由 Tab Bar 处理） |
-| `['top', 'bottom']` | 顶部和底部 | 全屏页面、模态框 |
-| `[]` | 不处理任何边 | 全屏图片、视频 |
-| `['left', 'right']` | 左右边缘 | 横屏内容 |
+| 配置                | 说明         | 使用场景                            |
+| ------------------- | ------------ | ----------------------------------- |
+| `['top']`           | 只处理顶部   | **Tab 页面**（底部由 Tab Bar 处理） |
+| `['top', 'bottom']` | 顶部和底部   | 全屏页面、模态框                    |
+| `[]`                | 不处理任何边 | 全屏图片、视频                      |
+| `['left', 'right']` | 左右边缘     | 横屏内容                            |
 
 ---
 
 ## 🎯 本项目的使用规范
 
 ### Tab 页面
+
 ```typescript
 // ✅ 使用 ScreenWrapper，只处理顶部
 <ScreenWrapper edges={['top']}>
@@ -143,6 +152,7 @@ edges?: Edge[] = ['top', 'bottom', 'left', 'right']
 ```
 
 ### 有导航栏的页面
+
 ```typescript
 // ✅ 不需要 ScreenWrapper
 // Stack.Screen 会自动处理
@@ -157,6 +167,7 @@ export default function TaskDetailScreen() {
 ```
 
 ### 全屏页面
+
 ```typescript
 // ✅ 使用 edges={[]} 让内容延伸到边缘
 <ScreenWrapper edges={[]}>
@@ -169,6 +180,7 @@ export default function TaskDetailScreen() {
 ## 💡 优势对比
 
 ### 之前（手动处理）
+
 ```typescript
 // ❌ 每个页面都要写这些代码
 const { topInset } = useSafeAreaInsets();
@@ -180,6 +192,7 @@ return (
 ```
 
 ### 现在（使用 ScreenWrapper）
+
 ```typescript
 // ✅ 一行搞定
 return (
@@ -196,6 +209,7 @@ return (
 如果现有页面使用了手动处理，可以这样迁移：
 
 ### 迁移前
+
 ```typescript
 export default function MyScreen() {
   const { topInset } = useSafeAreaInsets();
@@ -209,6 +223,7 @@ export default function MyScreen() {
 ```
 
 ### 迁移后
+
 ```typescript
 export default function MyScreen() {
   return (
@@ -240,10 +255,12 @@ export default function MyScreen() {
 ## 🎓 总结
 
 **Expo Router 的设计理念：**
+
 - ❌ 不是在顶层统一处理
 - ✅ 每个页面独立控制，更灵活
 
 **我们的解决方案：**
+
 - ✅ 创建 `ScreenWrapper` 组件
 - ✅ 统一接口，简化使用
 - ✅ 灵活配置，满足各种场景

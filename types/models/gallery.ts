@@ -48,7 +48,14 @@ export interface GalleryModel {
   favoriteCount: number;
   downloadCount: number;
   sliceTaskId: string | null;
-  printStatus: 'NOT_STARTED' | 'SLICING' | 'SLICE_COMPLETE' | 'PRINTING' | 'PRINT_COMPLETE' | 'FAILED' | null;
+  printStatus:
+    | 'NOT_STARTED'
+    | 'SLICING'
+    | 'SLICE_COMPLETE'
+    | 'PRINTING'
+    | 'PRINT_COMPLETE'
+    | 'FAILED'
+    | null;
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;

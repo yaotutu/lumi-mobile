@@ -5,7 +5,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { useCreateStore } from '@/stores';
 import { ImageGenerating } from '@/components/pages/create/image-generating';
-import { ImageSelector } from '@/components/pages/create/image-selector';
 import { ModelGenerating } from '@/components/pages/create/model-generating';
 import { ModelComplete } from '@/components/pages/create/model-complete';
 import { logger } from '@/utils/logger';
@@ -13,8 +12,8 @@ import { logger } from '@/utils/logger';
 /**
  * 任务详情页面
  * 根据任务状态显示不同的UI：
- * - generating_images: 图片生成中
- * - images_ready: 图片选择器
+ * - generating_images: 图片生成中（骨架屏）
+ * - images_ready: 图片已生成（显示真实图片供选择）
  * - generating_model: 3D模型生成中
  * - model_ready: 生成完成
  * - failed: 失败页面
@@ -113,17 +112,9 @@ export default function TaskDetailScreen() {
       />
 
       {/* 根据任务状态渲染不同的组件 */}
-      {task?.status === 'generating_images' && (
+      {/* 图片生成中或图片已生成（在同一组件中处理） */}
+      {(task?.status === 'generating_images' || task?.status === 'images_ready') && (
         <ImageGenerating
-          task={task}
-          onCancel={handleCancel}
-          paddingBottom={contentPaddingBottom}
-          isDark={isDark}
-        />
-      )}
-
-      {task?.status === 'images_ready' && (
-        <ImageSelector
           task={task}
           onSelectImage={handleSelectImage}
           onGenerateModel={handleGenerateModel}
@@ -153,9 +144,7 @@ export default function TaskDetailScreen() {
       )}
 
       {task?.status === 'failed' && (
-        <View
-          style={[styles.centerContent, { paddingBottom: contentPaddingBottom }]}
-        >
+        <View style={[styles.centerContent, { paddingBottom: contentPaddingBottom }]}>
           <Text style={[styles.errorTitle, { color: '#FF3B30' }]}>生成失败</Text>
           <Text style={[styles.errorMessage, { color: textColor }]}>{task.error}</Text>
         </View>

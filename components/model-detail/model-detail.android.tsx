@@ -32,222 +32,242 @@ const formatFileSize = (bytes: number | null | undefined): string => {
   return `${mb.toFixed(1)} MB`;
 };
 
-export const ModelDetail = React.memo(({
-  model,
-  onShare,
-  onBookmark,
-  onDownload,
-  onAddToQueue,
-  on3DPreview,
-}: ModelDetailProps) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+export const ModelDetail = React.memo(
+  ({ model, onShare, onBookmark, onDownload, onAddToQueue, on3DPreview }: ModelDetailProps) => {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
 
-  // 处理分享
-  const handleShare = () => {
-    logger.info('分享模型:', model.name);
-    onShare?.();
-  };
+    // 处理分享
+    const handleShare = () => {
+      logger.info('分享模型:', model.name);
+      onShare?.();
+    };
 
-  // 处理书签
-  const handleBookmark = () => {
-    logger.info('收藏模型:', model.name);
-    onBookmark?.();
-  };
+    // 处理书签
+    const handleBookmark = () => {
+      logger.info('收藏模型:', model.name);
+      onBookmark?.();
+    };
 
-  // 处理下载
-  const handleDownload = () => {
-    logger.info('下载模型:', model.name);
-    onDownload?.();
-  };
+    // 处理下载
+    const handleDownload = () => {
+      logger.info('下载模型:', model.name);
+      onDownload?.();
+    };
 
-  // 处理加入队列
-  const handleAddToQueue = () => {
-    logger.info('加入队列:', model.name);
-    onAddToQueue?.();
-  };
+    // 处理加入队列
+    const handleAddToQueue = () => {
+      logger.info('加入队列:', model.name);
+      onAddToQueue?.();
+    };
 
-  // 处理 3D 预览
-  const handle3DPreview = () => {
-    logger.info('预览 3D 模型:', model.name);
-    on3DPreview?.();
-  };
+    // 处理 3D 预览
+    const handle3DPreview = () => {
+      logger.info('预览 3D 模型:', model.name);
+      on3DPreview?.();
+    };
 
-  // 预计算样式
-  const dynamicStyles = useMemo(
-    () => ({
-      card: {
-        backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
-        elevation: 4,
-      },
-      primaryButton: {
-        backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint,
-        elevation: 4,
-      },
-      secondaryButton: {
-        backgroundColor: isDark ? 'rgba(74, 144, 226, 0.15)' : 'rgba(0, 122, 255, 0.08)',
-        borderColor: isDark ? Colors.dark.tint : Colors.light.tint,
-      },
-    }),
-    [isDark]
-  );
+    // 预计算样式
+    const dynamicStyles = useMemo(
+      () => ({
+        card: {
+          backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+          elevation: 4,
+        },
+        primaryButton: {
+          backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint,
+          elevation: 4,
+        },
+        secondaryButton: {
+          backgroundColor: isDark ? 'rgba(74, 144, 226, 0.15)' : 'rgba(0, 122, 255, 0.08)',
+          borderColor: isDark ? Colors.dark.tint : Colors.light.tint,
+        },
+      }),
+      [isDark]
+    );
 
-  // 转换图片URL为绝对路径
-  const absoluteImageUrl = useMemo(() => getImageUrl(model.previewImageUrl), [model.previewImageUrl]);
+    // 转换图片URL为绝对路径
+    const absoluteImageUrl = useMemo(
+      () => getImageUrl(model.previewImageUrl),
+      [model.previewImageUrl]
+    );
 
-  return (
-    <ThemedView style={styles.container}>
-      {/* 状态栏 */}
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor="transparent"
-        translucent
-      />
+    return (
+      <ThemedView style={styles.container}>
+        {/* 状态栏 */}
+        <StatusBar
+          barStyle={isDark ? 'light-content' : 'dark-content'}
+          backgroundColor="transparent"
+          translucent
+        />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* 主图 */}
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: absoluteImageUrl }}
-            style={styles.mainImage}
-            resizeMode="cover"
-          />
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* 主图 */}
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: absoluteImageUrl }} style={styles.mainImage} resizeMode="cover" />
 
-          {/* 3D 预览按钮 */}
-          <View style={styles.previewButtonContainer}>
-            <TouchableOpacity
-              style={[styles.previewButton, dynamicStyles.primaryButton]}
-              onPress={handle3DPreview}
-              activeOpacity={0.85}
-            >
-              <IconSymbol name="cube" size={20} color="#fff" />
-              <Text style={styles.previewButtonText}>预览 3D 模型</Text>
-            </TouchableOpacity>
+            {/* 3D 预览按钮 */}
+            <View style={styles.previewButtonContainer}>
+              <TouchableOpacity
+                style={[styles.previewButton, dynamicStyles.primaryButton]}
+                onPress={handle3DPreview}
+                activeOpacity={0.85}
+              >
+                <IconSymbol name="cube" size={20} color="#fff" />
+                <Text style={styles.previewButtonText}>预览 3D 模型</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* 内容区域 */}
-        <View style={styles.content}>
-          {/* 标题 */}
-          <ThemedText style={styles.title}>{model.name}</ThemedText>
+          {/* 内容区域 */}
+          <View style={styles.content}>
+            {/* 标题 */}
+            <ThemedText style={styles.title}>{model.name}</ThemedText>
 
-          {/* 创作者信息 */}
-          <View style={styles.creatorSection}>
-            <View style={styles.creatorInfo}>
-              <View style={[styles.avatar, { backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint }]}>
-                <Text style={styles.avatarText}>
-                  {(model.user?.name || 'A').charAt(0).toUpperCase()}
+            {/* 创作者信息 */}
+            <View style={styles.creatorSection}>
+              <View style={styles.creatorInfo}>
+                <View
+                  style={[
+                    styles.avatar,
+                    { backgroundColor: isDark ? Colors.dark.tint : Colors.light.tint },
+                  ]}
+                >
+                  <Text style={styles.avatarText}>
+                    {(model.user?.name || 'A').charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+                <ThemedText style={styles.creatorName}>{model.user?.name || '匿名用户'}</ThemedText>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.followButton, dynamicStyles.primaryButton]}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.followButtonText}>Follow</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* 统计数据卡片 */}
+            <View style={[styles.statsCard, dynamicStyles.card]}>
+              <View style={styles.statItem}>
+                <IconSymbol
+                  name="heart"
+                  size={20}
+                  color={isDark ? Colors.dark.icon : Colors.light.icon}
+                />
+                <View style={styles.statInfo}>
+                  <ThemedText style={styles.statValue}>{formatNumber(model.likeCount)}</ThemedText>
+                  <ThemedText style={styles.statLabel}>Likes</ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.statDivider} />
+
+              <View style={styles.statItem}>
+                <IconSymbol
+                  name="arrow.down.circle"
+                  size={20}
+                  color={isDark ? Colors.dark.icon : Colors.light.icon}
+                />
+                <View style={styles.statInfo}>
+                  <ThemedText style={styles.statValue}>
+                    {formatNumber(model.downloadCount)}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>DLs</ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.statDivider} />
+
+              <View style={styles.statItem}>
+                <IconSymbol
+                  name="clock"
+                  size={20}
+                  color={isDark ? Colors.dark.icon : Colors.light.icon}
+                />
+                <View style={styles.statInfo}>
+                  <ThemedText style={styles.statValue}>5h 30m</ThemedText>
+                  <ThemedText style={styles.statLabel}>Est.</ThemedText>
+                </View>
+              </View>
+            </View>
+
+            {/* 描述 */}
+            {model.description && (
+              <View style={styles.descriptionSection}>
+                <ThemedText style={styles.description}>{model.description}</ThemedText>
+              </View>
+            )}
+
+            {/* 技术规格卡片 */}
+            <View style={[styles.specsCard, dynamicStyles.card]}>
+              <ThemedText style={styles.sectionTitle}>技术规格</ThemedText>
+
+              <View style={styles.specRow}>
+                <ThemedText style={styles.specLabel}>格式</ThemedText>
+                <ThemedText style={styles.specValue}>{model.format || 'STL'}</ThemedText>
+              </View>
+
+              <View style={styles.specRow}>
+                <ThemedText style={styles.specLabel}>文件大小</ThemedText>
+                <ThemedText style={styles.specValue}>{formatFileSize(model.fileSize)}</ThemedText>
+              </View>
+
+              {model.faceCount && (
+                <View style={styles.specRow}>
+                  <ThemedText style={styles.specLabel}>面数</ThemedText>
+                  <ThemedText style={styles.specValue}>{formatNumber(model.faceCount)}</ThemedText>
+                </View>
+              )}
+
+              {model.vertexCount && (
+                <View style={styles.specRow}>
+                  <ThemedText style={styles.specLabel}>顶点数</ThemedText>
+                  <ThemedText style={styles.specValue}>
+                    {formatNumber(model.vertexCount)}
+                  </ThemedText>
+                </View>
+              )}
+            </View>
+
+            {/* 操作按钮 */}
+            <View style={styles.actionsSection}>
+              <TouchableOpacity
+                style={[styles.secondaryActionButton, dynamicStyles.secondaryButton]}
+                onPress={handleDownload}
+                activeOpacity={0.7}
+              >
+                <IconSymbol
+                  name="arrow.down.circle"
+                  size={20}
+                  color={isDark ? Colors.dark.tint : Colors.light.tint}
+                />
+                <Text
+                  style={[
+                    styles.secondaryActionText,
+                    { color: isDark ? Colors.dark.tint : Colors.light.tint },
+                  ]}
+                >
+                  Download .{model.format || 'STL'}
                 </Text>
-              </View>
-              <ThemedText style={styles.creatorName}>
-                {model.user?.name || '匿名用户'}
-              </ThemedText>
-            </View>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.followButton, dynamicStyles.primaryButton]}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.followButtonText}>
-                Follow
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* 统计数据卡片 */}
-          <View style={[styles.statsCard, dynamicStyles.card]}>
-            <View style={styles.statItem}>
-              <IconSymbol name="heart" size={20} color={isDark ? Colors.dark.icon : Colors.light.icon} />
-              <View style={styles.statInfo}>
-                <ThemedText style={styles.statValue}>{formatNumber(model.likeCount)}</ThemedText>
-                <ThemedText style={styles.statLabel}>Likes</ThemedText>
-              </View>
-            </View>
-
-            <View style={styles.statDivider} />
-
-            <View style={styles.statItem}>
-              <IconSymbol name="arrow.down.circle" size={20} color={isDark ? Colors.dark.icon : Colors.light.icon} />
-              <View style={styles.statInfo}>
-                <ThemedText style={styles.statValue}>{formatNumber(model.downloadCount)}</ThemedText>
-                <ThemedText style={styles.statLabel}>DLs</ThemedText>
-              </View>
-            </View>
-
-            <View style={styles.statDivider} />
-
-            <View style={styles.statItem}>
-              <IconSymbol name="clock" size={20} color={isDark ? Colors.dark.icon : Colors.light.icon} />
-              <View style={styles.statInfo}>
-                <ThemedText style={styles.statValue}>5h 30m</ThemedText>
-                <ThemedText style={styles.statLabel}>Est.</ThemedText>
-              </View>
+              <TouchableOpacity
+                style={[styles.primaryActionButton, dynamicStyles.primaryButton]}
+                onPress={handleAddToQueue}
+                activeOpacity={0.8}
+              >
+                <IconSymbol name="plus.circle" size={20} color="#fff" />
+                <Text style={styles.primaryActionText}>Add to Queue</Text>
+              </TouchableOpacity>
             </View>
           </View>
-
-          {/* 描述 */}
-          {model.description && (
-            <View style={styles.descriptionSection}>
-              <ThemedText style={styles.description}>{model.description}</ThemedText>
-            </View>
-          )}
-
-          {/* 技术规格卡片 */}
-          <View style={[styles.specsCard, dynamicStyles.card]}>
-            <ThemedText style={styles.sectionTitle}>技术规格</ThemedText>
-
-            <View style={styles.specRow}>
-              <ThemedText style={styles.specLabel}>格式</ThemedText>
-              <ThemedText style={styles.specValue}>{model.format || 'STL'}</ThemedText>
-            </View>
-
-            <View style={styles.specRow}>
-              <ThemedText style={styles.specLabel}>文件大小</ThemedText>
-              <ThemedText style={styles.specValue}>{formatFileSize(model.fileSize)}</ThemedText>
-            </View>
-
-            {model.faceCount && (
-              <View style={styles.specRow}>
-                <ThemedText style={styles.specLabel}>面数</ThemedText>
-                <ThemedText style={styles.specValue}>{formatNumber(model.faceCount)}</ThemedText>
-              </View>
-            )}
-
-            {model.vertexCount && (
-              <View style={styles.specRow}>
-                <ThemedText style={styles.specLabel}>顶点数</ThemedText>
-                <ThemedText style={styles.specValue}>{formatNumber(model.vertexCount)}</ThemedText>
-              </View>
-            )}
-          </View>
-
-          {/* 操作按钮 */}
-          <View style={styles.actionsSection}>
-            <TouchableOpacity
-              style={[styles.secondaryActionButton, dynamicStyles.secondaryButton]}
-              onPress={handleDownload}
-              activeOpacity={0.7}
-            >
-              <IconSymbol name="arrow.down.circle" size={20} color={isDark ? Colors.dark.tint : Colors.light.tint} />
-              <Text style={[styles.secondaryActionText, { color: isDark ? Colors.dark.tint : Colors.light.tint }]}>
-                Download .{model.format || 'STL'}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.primaryActionButton, dynamicStyles.primaryButton]}
-              onPress={handleAddToQueue}
-              activeOpacity={0.8}
-            >
-              <IconSymbol name="plus.circle" size={20} color="#fff" />
-              <Text style={styles.primaryActionText}>Add to Queue</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </ThemedView>
-  );
-});
+        </ScrollView>
+      </ThemedView>
+    );
+  }
+);
 
 ModelDetail.displayName = 'ModelDetail';
 

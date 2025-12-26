@@ -26,52 +26,54 @@ const createCardStyles = (isDark: boolean) => ({
   },
 });
 
-export const ModelCard = React.memo(({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const router = useRouter();
+export const ModelCard = React.memo(
+  ({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
+    const router = useRouter();
 
-  // 预计算样式对象，避免每次渲染时重新创建
-  const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
+    // 预计算样式对象，避免每次渲染时重新创建
+    const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
 
-  // 处理点击
-  const handlePress = () => {
-    if (onPress) {
-      onPress(modelId);
-    } else {
-      router.push(`/model/${modelId}`);
-    }
-  };
+    // 处理点击
+    const handlePress = () => {
+      if (onPress) {
+        onPress(modelId);
+      } else {
+        router.push(`/model/${modelId}`);
+      }
+    };
 
-  // 转换图片URL为绝对路径
-  const absoluteImageUrl = useMemo(() => getImageUrl(imageUrl), [imageUrl]);
+    // 转换图片URL为绝对路径
+    const absoluteImageUrl = useMemo(() => getImageUrl(imageUrl), [imageUrl]);
 
-  return (
-    <Pressable
-      onPress={handlePress}
-      style={({ pressed }) => [
-        styles.card,
-        {
-          backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
-          opacity: pressed ? 0.85 : 1,
-        },
-        cardStyles.card,
-      ]}
-      android_ripple={{
-        color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-      }}
-    >
-      {/* 图片 */}
-      <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
+    return (
+      <Pressable
+        onPress={handlePress}
+        style={({ pressed }) => [
+          styles.card,
+          {
+            backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
+            opacity: pressed ? 0.85 : 1,
+          },
+          cardStyles.card,
+        ]}
+        android_ripple={{
+          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        {/* 图片 */}
+        <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
 
-      {/* Android Material Design内容区 */}
-      <View style={[styles.content, cardStyles.content]}>
-        <CardContent title={title} creator={creator} likes={likes} />
-        <CardActions likes={likes} />
-      </View>
-    </Pressable>
-  );
-});
+        {/* Android Material Design内容区 */}
+        <View style={[styles.content, cardStyles.content]}>
+          <CardContent title={title} creator={creator} likes={likes} />
+          <CardActions likes={likes} />
+        </View>
+      </Pressable>
+    );
+  }
+);
 
 ModelCard.displayName = 'ModelCard';
 
