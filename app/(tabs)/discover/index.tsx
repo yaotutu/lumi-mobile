@@ -90,8 +90,15 @@ export default function DiscoverScreen() {
       {/* 搜索栏 */}
       <SearchBar placeholder="Search for models..." />
 
-      {/* 加载状态 */}
-      {loading && !refreshing && (
+      {/* 全局加载指示器 - 显示在顶部,不遮挡内容 */}
+      {loading && !refreshing && models.length > 0 && (
+        <View style={styles.topLoadingIndicator}>
+          <ActivityIndicator size="small" color={isDark ? Colors.dark.tint : Colors.light.tint} />
+        </View>
+      )}
+
+      {/* 首次加载 - 没有数据时才显示全屏 loading */}
+      {loading && !refreshing && models.length === 0 && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
           <ThemedText style={styles.loadingText}>加载中...</ThemedText>
@@ -133,7 +140,7 @@ export default function DiscoverScreen() {
       )}
 
       {/* 模型网格 */}
-      {!loading && !errorInfo && (
+      {!errorInfo && (
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: contentPaddingBottom }]}
@@ -204,6 +211,11 @@ const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
+  },
+  topLoadingIndicator: {
+    paddingVertical: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingContainer: {
     flex: 1,

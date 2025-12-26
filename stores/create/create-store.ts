@@ -3,6 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { CreateState, StyleOption, Generation } from './types';
 import { logger } from '@/utils/logger';
+import { zustandStorage } from '@/utils/storage';
 
 // 模拟的风格选项数据
 const mockStyleOptions: StyleOption[] = [
@@ -240,6 +241,7 @@ export const useCreateStore = create<CreateState>()(
       })),
       {
         name: 'create-store',
+        storage: zustandStorage,
         partialize: state => ({
           generationHistory: state.generationHistory,
           showAdvancedOptions: state.showAdvancedOptions,

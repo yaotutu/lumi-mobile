@@ -5,9 +5,11 @@ import type { GalleryState, FetchOptions } from './types';
 import type { ModelSummary } from '@/types';
 import { fetchGalleryModels } from '@/services';
 import { logger } from '@/utils/logger';
+import { zustandStorage } from '@/utils/storage';
 
 // 缓存配置
-const CACHE_DURATION = 5 * 60 * 1000; // 5分钟
+// 注意:对于信息流页面,我们使用"先显示缓存,立即刷新"的策略
+// 缓存只用于避免白屏,实际数据总是尽快刷新
 const DEFAULT_PAGE_SIZE = 20;
 
 export const useGalleryStore = create<GalleryState>()(
@@ -32,7 +34,6 @@ export const useGalleryStore = create<GalleryState>()(
 
         // 缓存控制
         lastFetchTime: 0,
-        cacheDuration: CACHE_DURATION,
 
         // 获取模型列表
         fetchModels: async (
@@ -40,35 +41,29 @@ export const useGalleryStore = create<GalleryState>()(
           options: FetchOptions = {},
           abortController?: AbortController
         ) => {
-          const {
-            models: existingModels,
-            currentPage: existingPage,
-            lastFetchTime,
-            cacheDuration,
-            pageSize,
-          } = get();
+          const { models: existingModels, pageSize } = get();
 
-          const now = Date.now();
-
-          // 检查缓存(仅在请求第一页且没有特定选项时使用缓存)
-          if (
-            page === 1 &&
-            !options.sort &&
-            !options.category &&
-            now - lastFetchTime < cacheDuration &&
-            existingModels.length > 0
-          ) {
-            logger.debug('使用缓存的模型数据');
-            return;
-          }
+          // 信息流设计:总是获取最新数据
+          // 不使用缓存时间判断,每次都刷新
+          // 持久化的数据只在应用启动时显示,避免白屏
 
           // 设置加载状态
           if (page === 1) {
-            set({
-              loading: true,
-              error: null,
-              refreshing: false,
-            });
+            // 如果正在刷新,保持 refreshing 状态,不设置 loading
+            const currentRefreshing = get().refreshing;
+            if (currentRefreshing) {
+              // 下拉刷新中,不设置 loading
+              set({
+                error: null,
+              });
+            } else {
+              // 普通加载,设置 loading
+              set({
+                loading: true,
+                error: null,
+                refreshing: false,
+              });
+            }
           } else {
             set({ loading: true });
           }
@@ -115,7 +110,7 @@ export const useGalleryStore = create<GalleryState>()(
               state.currentPage = page;
               // 根据返回的数据量判断是否还有更多
               state.hasMore = newModels.length >= pageSize;
-              state.lastFetchTime = now;
+              state.lastFetchTime = Date.now();
               state.loading = false;
               state.error = null;
             });
@@ -200,6 +195,7 @@ export const useGalleryStore = create<GalleryState>()(
       })),
       {
         name: 'gallery-store',
+        storage: zustandStorage,
         partialize: state => ({
           models: state.models,
           lastFetchTime: state.lastFetchTime,
