@@ -57,13 +57,17 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 本项目采用"就近原则"(Colocation)组织代码,页面相关的组件放在页面目录下,只有全局共享的组件才放在 components 文件夹中。
 
 - **app/**: Expo Router 文件路由目录
-  - `_layout.tsx`: 根布局,配置主题和导航栈
-  - `index.tsx`: 应用入口页面
+  - `_layout.tsx`: 根布局,配置主题和导航栈 (使用 `screenOptions={{ headerShown: false }}` 全局隐藏导航栏)
+  - `index.tsx`: 应用入口页面 (重定向到初始路由)
   - `(tabs)/`: 标签导航组
     - `_layout.tsx`: 标签布局配置
     - `discover/`: 发现页面
       - `index.tsx`: 页面主文件
     - `create/`: AI 创作页面
+      - `index.tsx`: 页面主文件
+    - `task/`: AI 创作任务详情页面
+      - `[id].tsx`: 动态路由页面 (配置 `href: null` 隐藏在 Tab 栏中但保持底部 Tab 可见)
+    - `printer/`: 打印页面
       - `index.tsx`: 页面主文件
     - `profile.tsx`: 个人中心页面
   - `model/`: 模型详情页面
@@ -111,6 +115,12 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
     - `types.ts`: 类型定义
   - `pages/`: 页面级组件
     - `create/`: 创作页面组件
+      - `image-generating.tsx`: 图片生成中页面
+      - `image-selector.tsx`: 图片选择页面
+      - `model-generating.tsx`: 模型生成中页面
+      - `model-complete.tsx`: 模型生成完成页面
+  - `screen-wrapper/`: 安全区域包裹组件
+    - `index.tsx`: ScreenWrapper 组件 (统一处理 Safe Area)
   - `ui/`: UI 基础组件
     - `icon-symbol.tsx`: 跨平台图标组件
     - `icon-symbol.ios.tsx`: iOS 平台特定图标实现
@@ -211,6 +221,32 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 - `(tabs)` 等括号包裹的目录是路由组,不影响 URL
 - `modal.tsx` 等特殊页面可配置为模态显示
 
+#### 路由配置最佳实践
+
+**根布局配置** (`app/_layout.tsx`):
+```typescript
+// 使用 screenOptions 全局隐藏导航栏,避免启动时闪现
+<Stack screenOptions={{ headerShown: false }}>
+  <Stack.Screen name="index" />
+  <Stack.Screen name="(tabs)" />
+</Stack>
+```
+
+**入口重定向** (`app/index.tsx`):
+```typescript
+// 明确指定应用启动时的初始路由,防止 Expo Router 选择错误的入口
+export default function Index() {
+  return <Redirect href="/(tabs)/discover" />;
+}
+```
+
+**重要说明:**
+- `app/index.tsx` 是必需的,作为应用的根入口
+- 使用 `screenOptions={{ headerShown: false }}` 在根 Stack 中全局隐藏导航栏
+- 这样可以避免从 `index.tsx` 重定向到 `(tabs)` 时出现导航栏闪现
+- `(tabs)` 路由组不能直接作为入口,因为它不是可访问的路由路径
+- 这是 Expo Router 官方推荐的最佳实践
+
 ### 主题系统
 
 - 支持亮暗双主题,定义在 `constants/theme.ts`
@@ -284,7 +320,11 @@ components/
 
 ## 开发注意事项
 
-1. **路由**: 在 `app/` 目录添加新页面时,Expo Router 会自动生成路由
+1. **路由配置**:
+   - 在 `app/` 目录添加新页面时,Expo Router 会自动生成路由
+   - 必须在根 `_layout.tsx` 中配置所有路由的 Screen,否则会使用默认配置
+   - 使用 `screenOptions` 全局配置避免重复,例如 `screenOptions={{ headerShown: false }}`
+   - `app/index.tsx` 是必需的应用入口,通常用于重定向到初始页面
 2. **类型安全**: 启用了类型化路由,使用 `href` 时会有类型提示
 3. **生成文件**: `expo-env.d.ts` 和 `.expo/` 目录是自动生成的,已被 git 忽略
 4. **原生目录**: `/ios` 和 `/android` 目录会在构建时生成,不要提交到版本控制
@@ -295,6 +335,12 @@ components/
 9. **代码格式化**: 使用 Prettier 统一代码风格,提交前应运行 `npm run format`
 10. **环境变量**: 通过 `config/env.ts` 管理,使用 TypeScript 提供类型安全
 11. **图片处理**: 使用 `expo-image` 组件以获得更好的性能,支持图片代理服务避免 CORS 问题
+12. **Safe Area 处理**:
+    - 使用 `ScreenWrapper` 组件统一处理安全区域
+    - Tab 页面使用 `edges={['top']}` (底部由 Tab Bar 处理)
+    - 有导航栏的页面不需要 ScreenWrapper (Stack.Screen 自动处理)
+    - 全屏页面使用 `edges={[]}` 让内容延伸到边缘
+    - 参考 `docs/safe-area-guide.md` 了解详细说明
 
 ## API 接口规范
 
