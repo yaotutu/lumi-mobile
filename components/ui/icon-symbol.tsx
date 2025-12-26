@@ -31,6 +31,7 @@ const MAPPING = {
   'arrow.down.circle': 'cloud-download',
   clock: 'schedule',
   'plus.circle': 'add-circle-outline',
+  'cube.box.fill': 'view-in-ar', // 3D 打印机图标 - 使用 AR 立方体图标
 } as IconMapping;
 
 /**

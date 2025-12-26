@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ScreenWrapper } from '@/components/screen-wrapper';
 import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
@@ -25,7 +25,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 export default function DiscoverScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { topInset, contentPaddingBottom } = useSafeAreaSpacing();
+  const { contentPaddingBottom } = useSafeAreaSpacing();
   const router = useRouter();
 
   // 异步操作控制器
@@ -70,21 +70,11 @@ export default function DiscoverScreen() {
   }, [error]);
 
   return (
-    <ThemedView style={styles.container}>
+    <ScreenWrapper>
       {/* 状态栏 */}
       <StatusBar
         barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor={isDark ? Colors.dark.background : Colors.light.background}
-      />
-
-      {/* 顶部安全区域 - 使用背景色 */}
-      <View
-        style={[
-          { paddingTop: topInset },
-          {
-            backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
-          },
-        ]}
       />
 
       {/* 搜索栏 */}
@@ -190,14 +180,11 @@ export default function DiscoverScreen() {
           )}
         </ScrollView>
       )}
-    </ThemedView>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollView: {
     flex: 1,
   },

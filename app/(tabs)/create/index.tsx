@@ -1,177 +1,189 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ExamplePrompts } from '@/components/pages/create/example-prompts';
-import { GenerationButton } from '@/components/pages/create/generation-button';
-import { PromptInput } from '@/components/pages/create/prompt-input';
-import { StyleSelector } from '@/components/pages/create/style-selector';
 import { WelcomeSection } from '@/components/pages/create/welcome-section';
+import { ScreenWrapper } from '@/components/screen-wrapper';
 import { useCreateStore } from '@/stores';
+import { logger } from '@/utils/logger';
 
+/**
+ * AI 创作首页
+ * 用户输入提示词后，创建任务并导航到任务详情页
+ */
 export default function CreateScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { headerPaddingTop, contentPaddingBottom } = useSafeAreaSpacing();
+  const { contentPaddingBottom } = useSafeAreaSpacing();
 
-  // 从 Create Store 获取状态和方法
-  const {
-    prompt,
-    selectedStyle,
-    showStyles,
-    isGenerating,
-    generationProgress,
-    setPrompt,
-    selectStyle,
-    showStyleSelector,
-    startGeneration,
-  } = useCreateStore();
+  const [prompt, setPrompt] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const backgroundColor = isDark ? '#000000' : '#F5F5F7';
+  const createTask = useCreateStore(state => state.createTask);
+
   const cardBackground = isDark ? '#1C1C1E' : '#FFFFFF';
   const textColor = isDark ? '#FFFFFF' : '#000000';
   const secondaryTextColor = isDark ? '#98989D' : '#86868B';
   const borderColor = isDark ? '#38383A' : '#D1D1D6';
 
-  const handleGenerateStyles = () => {
-    showStyleSelector();
-  };
+  // 处理提交
+  const handleSubmit = async () => {
+    if (!prompt.trim() || isSubmitting) return;
 
-  const handleGenerate3DModel = async () => {
     try {
-      await startGeneration();
-      // 生成成功后的处理可以在这里添加
-    } catch {
-      // 错误处理已在 Store 中完成
+      setIsSubmitting(true);
+      logger.info('创建生成任务:', prompt);
+
+      // 创建任务
+      const taskId = await createTask(prompt.trim());
+
+      // 导航到任务详情页（在 tabs 内部）
+      router.push(`/(tabs)/task/${taskId}`);
+
+      // 清空输入
+      setPrompt('');
+    } catch (error) {
+      logger.error('创建任务失败:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <View style={[styles.container, { backgroundColor }]}>
-      {/* Header */}
-      <View style={[styles.header, { paddingTop: headerPaddingTop }]}>
-        <Text style={[styles.title, { color: textColor }]}>AI Creation Studio</Text>
-      </View>
+  // 选择示例提示词
+  const handleSelectExample = (example: string) => {
+    setPrompt(example);
+  };
 
+  return (
+    <ScreenWrapper>
       <KeyboardAwareScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
-          !showStyles && [
-            styles.scrollContentCentered,
-            { paddingBottom: contentPaddingBottom + 30 },
-          ],
+          { paddingBottom: contentPaddingBottom + 30 },
         ]}
         showsVerticalScrollIndicator={false}
-        bottomOffset={showStyles ? 100 : 0}
       >
-        {/* Initial State - 渐变色装饰、欢迎文字、示例提示词 */}
-        {!showStyles && (
-          <View style={styles.inputSectionCenter}>
-            <WelcomeSection
-              isDark={isDark}
-              textColor={textColor}
-              secondaryTextColor={secondaryTextColor}
-            />
+        {/* 欢迎区域 */}
+        <WelcomeSection
+          isDark={isDark}
+          textColor={textColor}
+          secondaryTextColor={secondaryTextColor}
+        />
 
-            <ExamplePrompts
-              onPromptSelect={setPrompt}
-              cardBackground={cardBackground}
-              borderColor={borderColor}
-              textColor={textColor}
-            />
+        {/* 示例提示词 */}
+        <ExamplePrompts
+          onPromptSelect={handleSelectExample}
+          cardBackground={cardBackground}
+          borderColor={borderColor}
+          textColor={textColor}
+        />
 
-            <PromptInput
-              value={prompt}
-              onChangeText={setPrompt}
-              onSubmit={handleGenerateStyles}
-              placeholder="描述你想要的3D模型..."
-              cardBackground={cardBackground}
-              borderColor={borderColor}
-              textColor={textColor}
-              secondaryTextColor={secondaryTextColor}
-            />
-          </View>
-        )}
-
-        {/* Style Selection - 只在生成后显示 */}
-        {showStyles && (
-          <StyleSelector
-            selectedStyle={selectedStyle}
-            onStyleSelect={selectStyle}
-            textColor={textColor}
-          />
-        )}
-
-        {/* Generate Button - 只在选择风格后显示 */}
-        {showStyles && selectedStyle !== null && (
-          <GenerationButton
-            onPress={handleGenerate3DModel}
-            disabled={isGenerating}
-            isGenerating={isGenerating}
-            generationProgress={generationProgress}
-          />
-        )}
-      </KeyboardAwareScrollView>
-
-      {/* Prompt Input - 显示风格后固定在底部 */}
-      {showStyles && (
-        <View
-          style={[
-            styles.inputSectionBottom,
-            { backgroundColor, paddingBottom: contentPaddingBottom },
-          ]}
-        >
-          <PromptInput
+        {/* 输入区域 */}
+        <View style={[styles.inputCard, { backgroundColor: cardBackground, borderColor }]}>
+          <TextInput
+            style={[styles.input, { color: textColor }]}
+            placeholder="描述你想要的 3D 模型..."
+            placeholderTextColor={secondaryTextColor}
             value={prompt}
             onChangeText={setPrompt}
-            onSubmit={handleGenerateStyles}
-            placeholder="A low-poly fox sitting on a rock..."
-            cardBackground={cardBackground}
-            borderColor={borderColor}
-            textColor={textColor}
-            secondaryTextColor={secondaryTextColor}
+            multiline
+            maxLength={500}
+            returnKeyType="default"
+            blurOnSubmit={false}
           />
+          <View style={styles.inputFooter}>
+            <Text style={[styles.charCount, { color: secondaryTextColor }]}>
+              {prompt.length}/500
+            </Text>
+          </View>
         </View>
-      )}
-    </View>
+
+        {/* 生成按钮 */}
+        <TouchableOpacity
+          style={[
+            styles.generateButton,
+            {
+              backgroundColor: prompt.trim() && !isSubmitting ? '#007AFF' : borderColor,
+            },
+          ]}
+          onPress={handleSubmit}
+          disabled={!prompt.trim() || isSubmitting}
+          activeOpacity={0.7}
+        >
+          <Text
+            style={[
+              styles.generateButtonText,
+              { color: prompt.trim() && !isSubmitting ? '#FFFFFF' : secondaryTextColor },
+            ]}
+          >
+            {isSubmitting ? '创建中...' : '开始生成'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* 提示信息 */}
+        <View style={styles.hintContainer}>
+          <Text style={[styles.hintText, { color: secondaryTextColor }]}>
+            💡 生成过程需要几分钟时间
+          </Text>
+          <Text style={[styles.hintText, { color: secondaryTextColor }]}>
+            您可以在生成过程中离开页面
+          </Text>
+        </View>
+      </KeyboardAwareScrollView>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
-  },
-  scrollContentCentered: {
+    paddingHorizontal: 20,
     flexGrow: 1,
     justifyContent: 'center',
-    // paddingBottom 通过 useSafeAreaSpacing 动态设置
   },
-  header: {
-    // paddingTop 通过 useSafeAreaSpacing 动态设置
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    alignItems: 'center',
+  inputCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    marginTop: 24,
+    marginBottom: 20,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -0.5,
+  input: {
+    fontSize: 16,
+    lineHeight: 22,
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
-  inputSectionCenter: {
-    paddingHorizontal: 20,
+  inputFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 8,
   },
-  inputSectionBottom: {
-    paddingHorizontal: 20,
+  charCount: {
+    fontSize: 13,
+  },
+  generateButton: {
     paddingVertical: 16,
-    // paddingBottom 通过 useSafeAreaSpacing 动态设置
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  generateButtonText: {
+    fontSize: 17,
+    fontWeight: '600',
+  },
+  hintContainer: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  hintText: {
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

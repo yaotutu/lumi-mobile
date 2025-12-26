@@ -65,12 +65,28 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="printer/index"
+        options={{
+          title: '打印',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="cube.box.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: '我的',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={24} name="person.crop.circle" color={color} />
           ),
+        }}
+      />
+      {/* 任务详情页 - 隐藏在 Tab 栏中，但保持底部 Tab 可见 */}
+      <Tabs.Screen
+        name="task/[id]"
+        options={{
+          href: null, // 不在 Tab 栏中显示
+          headerShown: true, // 显示导航栏（由页面内的 Stack.Screen 控制）
+          title: 'AI 创作',
         }}
       />
     </Tabs>
