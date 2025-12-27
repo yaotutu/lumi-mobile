@@ -21,17 +21,13 @@ export function useSafeAreaSpacing() {
 
     // 底部安全区域 + 标签栏高度
     const tabBarHeight = Platform.select({
-      ios: 49 + insets.bottom, // iOS: 内容高度 49 + 底部安全区域
-      android: 70, // Android: 固定高度（通常无底部安全区域）
-      default: 70,
+      ios: 56 + insets.bottom, // iOS: 系统默认高度 + 底部安全区
+      android: 60 + insets.bottom, // Android: 略高一些并考虑安全区
+      default: 60 + insets.bottom,
     });
 
-    // 内容区域底部间距（为标签栏留出空间 + 额外间距）
-    const contentPaddingBottom = Platform.select({
-      ios: tabBarHeight + Spacing.sm, // 标签栏高度 + 小间距
-      android: 85, // 固定值
-      default: 85,
-    });
+    // 内容区域底部间距（只保留安全区+小间距，Tab 不再浮在内容上）
+    const contentPaddingBottom = insets.bottom + Spacing.lg;
 
     // 页面顶部安全区域（简单版本，不含额外间距）
     const topInset = insets.top;

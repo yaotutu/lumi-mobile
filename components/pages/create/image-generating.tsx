@@ -552,6 +552,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md, // 间距
     minHeight: 44, // 固定最小高度，保持布局一致
     marginTop: Spacing.md, // 与 hintContainer 保持一致
+    marginBottom: Spacing.sm,
   },
 
   // 进度点容器
@@ -640,6 +641,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs, // 间距
     minHeight: 44, // 固定最小高度，保持布局一致
     marginTop: Spacing.md, // 与 progressHint 保持一致
+    marginBottom: Spacing.sm,
   },
 
   // 提示文字
@@ -652,6 +654,7 @@ const styles = StyleSheet.create({
   hintPlaceholder: {
     height: 44, // 固定高度，与 hintContainer 和 progressHint 一致
     marginTop: Spacing.md, // 与其他容器保持一致
+    marginBottom: Spacing.sm,
   },
 
   // 主按钮包裹器

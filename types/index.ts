@@ -12,6 +12,17 @@ export type {
   SortParams,
 } from './api/common';
 export type { GalleryDetailResponse, GalleryListResponse, GalleryQueryParams } from './api/gallery';
+export type {
+  JSendResponse,
+  JSendSuccess,
+  JSendFail,
+  JSendError,
+  LoginRequest,
+  LoginResponseData,
+  RegisterRequest,
+  SendVerificationCodeRequest,
+  VerificationCodeType,
+} from './api/auth';
 
 // 模型类型
 export type {

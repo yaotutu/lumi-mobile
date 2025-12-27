@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 
@@ -47,36 +47,37 @@ export function ExamplePrompts({
       {/* 标题 */}
       <Text style={[styles.sectionTitle, { color: textColor }]}>试试这些创意</Text>
 
-      {/* 示例卡片列表 */}
-      <View style={styles.cardsContainer}>
-        {EXAMPLE_PROMPTS.map((example, index) => (
+      {/* 示例卡片列表（水平滚动） */}
+      <FlatList
+        data={EXAMPLE_PROMPTS}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={item => item.text}
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
           <TouchableOpacity
-            key={index}
             style={styles.cardWrapper}
-            onPress={() => onPromptSelect(example.fullPrompt)}
-            activeOpacity={0.7}
+            onPress={() => onPromptSelect(item.fullPrompt)}
+            activeOpacity={0.8}
           >
             <View style={[styles.card, { backgroundColor: cardBackground }]}>
-              {/* 渐变图标背景 */}
               <View style={styles.iconContainer}>
                 <LinearGradient
-                  colors={example.gradient}
+                  colors={item.gradient}
                   style={styles.iconBackground}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <IconSymbol name={example.icon} size={20} color="#FFFFFF" />
+                  <IconSymbol name={item.icon} size={18} color="#FFFFFF" />
                 </LinearGradient>
               </View>
-
-              {/* 提示词文本 */}
-              <Text style={[styles.cardText, { color: textColor }]} numberOfLines={2}>
-                {example.text}
+              <Text style={[styles.cardText, { color: textColor }]} numberOfLines={1}>
+                {item.text}
               </Text>
             </View>
           </TouchableOpacity>
-        ))}
-      </View>
+        )}
+      />
     </View>
   );
 }
@@ -95,36 +96,21 @@ const styles = StyleSheet.create({
     opacity: 0.7, // 透明度
   },
 
-  // 卡片容器样式
-  cardsContainer: {
-    flexDirection: 'row', // 横向排列
-    gap: Spacing.sm, // 使用主题间距
+  listContent: {
+    gap: Spacing.sm,
   },
 
-  // 卡片外层包裹器
   cardWrapper: {
-    flex: 1, // 等分空间
+    width: 110,
   },
 
   // 卡片样式
   card: {
-    paddingVertical: Spacing.md, // 使用主题间距
-    paddingHorizontal: Spacing.sm, // 使用主题间距
-    borderRadius: BorderRadius.md, // 使用主题圆角
-    alignItems: 'center', // 水平居中
-    minHeight: 90, // 最小高度
-    justifyContent: 'space-between', // 两端对齐
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000', // iOS 阴影颜色
-        shadowOffset: { width: 0, height: 2 }, // iOS 阴影偏移
-        shadowOpacity: 0.06, // iOS 阴影透明度
-        shadowRadius: 8, // iOS 阴影半径
-      },
-      android: {
-        elevation: 2, // Android 阴影高度
-      },
-    }),
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // 图标背景样式

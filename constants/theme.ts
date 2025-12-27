@@ -23,6 +23,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     border: 'rgba(0, 0, 0, 0.08)', // 更轻的边框
     separator: 'rgba(60, 60, 67, 0.29)',
+    ripple: 'rgba(0, 0, 0, 0.06)', // Android 涟漪效果颜色
   },
   dark: {
     text: '#FFFFFF',
@@ -38,6 +39,7 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     border: 'rgba(255, 255, 255, 0.1)',
     separator: 'rgba(84, 84, 88, 0.65)',
+    ripple: 'rgba(255, 255, 255, 0.08)', // Android 涟漪效果颜色（暗模式）
   },
 };
 

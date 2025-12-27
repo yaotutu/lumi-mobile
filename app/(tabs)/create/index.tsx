@@ -6,11 +6,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ExamplePrompts } from '@/components/pages/create/example-prompts';
-import { WelcomeSection } from '@/components/pages/create/welcome-section';
 import { ImageGenerating } from '@/components/pages/create/image-generating';
 import { ModelGenerating } from '@/components/pages/create/model-generating';
 import { ModelComplete } from '@/components/pages/create/model-complete';
 import { ScreenWrapper } from '@/components/screen-wrapper';
+import { SimpleTabHeader } from '@/components/layout/simple-tab-header';
 import { useCreateStore } from '@/stores';
 import { logger } from '@/utils/logger';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -121,13 +121,6 @@ export default function CreateScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          {/* 标题区域 */}
-          <WelcomeSection
-            isDark={isDark}
-            textColor={textColor}
-            secondaryTextColor={secondaryTextColor}
-          />
-
           {/* 主输入卡片 */}
           <View
             style={[
@@ -189,7 +182,14 @@ export default function CreateScreen() {
             </View>
 
             {/* 示例提示词 */}
-            <View style={styles.examplesSection}>
+            <View
+              style={[
+                styles.examplesWrapper,
+                {
+                  backgroundColor: isDark ? 'rgba(23, 24, 42, 0.75)' : '#FFFFFF',
+                },
+              ]}
+            >
               <ExamplePrompts
                 onPromptSelect={handleSelectExample}
                 cardBackground={inputBackground}
@@ -330,10 +330,18 @@ export default function CreateScreen() {
     return null;
   };
 
-  return <ScreenWrapper style={{ backgroundColor }}>{renderContent()}</ScreenWrapper>;
+  return (
+    <ScreenWrapper edges={['top']} style={{ backgroundColor }}>
+      <SimpleTabHeader title="AI 创作" subtitle="描述驱动 3D 模型" />
+      {renderContent()}
+    </ScreenWrapper>
+  );
 }
 
 const styles = StyleSheet.create({
+  screenBody: {
+    flex: 1,
+  },
   // ScrollView 样式
   scrollView: {
     flex: 1, // 占满空间
@@ -346,9 +354,9 @@ const styles = StyleSheet.create({
 
   // 主卡片样式
   mainCard: {
-    borderRadius: BorderRadius.lg, // 使用主题圆角
-    padding: Spacing.xl, // 使用主题间距
-    marginBottom: Spacing.xl, // 使用主题间距
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
 
   // 输入区域样式
@@ -365,9 +373,9 @@ const styles = StyleSheet.create({
 
   // 输入框包裹器样式
   inputWrapper: {
-    borderRadius: BorderRadius.md, // 使用主题圆角
-    borderWidth: 1.5, // 边框宽度
-    padding: Spacing.lg, // 使用主题间距
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    padding: Spacing.md,
   },
 
   // 输入框样式
@@ -392,8 +400,21 @@ const styles = StyleSheet.create({
   },
 
   // 示例区域样式
-  examplesSection: {
-    // 无额外样式
+  examplesWrapper: {
+    marginTop: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
 
   // 底部区域样式

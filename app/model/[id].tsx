@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ModelDetail } from '@/components/model-detail';
-import { useGalleryStore } from '@/stores';
 import { fetchModelDetail } from '@/services';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import { Colors, Spacing, BorderRadius } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { logger } from '@/utils/logger';
+import { createImmersiveHeaderOptions } from '@/utils/navigation';
 import type { GalleryModel } from '@/types';
 
 export default function ModelDetailScreen() {
@@ -18,7 +16,6 @@ export default function ModelDetailScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { headerPaddingTop } = useSafeAreaSpacing();
 
   // 状态管理
   const [model, setModel] = useState<GalleryModel | null>(null);
@@ -56,41 +53,18 @@ export default function ModelDetailScreen() {
     loadModelDetail();
   }, [id]);
 
-  // 自定义导航栏
-  const renderHeader = () => (
-    <View style={[headerStyles.container, { paddingTop: headerPaddingTop }]}>
-      <TouchableOpacity
-        onPress={() => router.back()}
-        style={headerStyles.button}
-        activeOpacity={0.7}
-      >
-        <IconSymbol name="chevron.left" size={24} color="#000" />
-      </TouchableOpacity>
-
-      <View style={headerStyles.actions}>
-        <TouchableOpacity
-          onPress={() => logger.info('收藏功能待实现')}
-          style={headerStyles.button}
-          activeOpacity={0.7}
-        >
-          <IconSymbol name="bookmark" size={22} color="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => logger.info('分享功能待实现')}
-          style={headerStyles.button}
-          activeOpacity={0.7}
-        >
-          <IconSymbol name="square.and.arrow.up" size={22} color="#000" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const getHeaderOptions = (title?: string, options?: { transparent?: boolean }) =>
+    createImmersiveHeaderOptions({
+      title,
+      colorScheme,
+      transparent: options?.transparent ?? false,
+    });
 
   // 如果模型不存在，显示错误页面
   if (loading) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ headerShown: false }} />
+        <Stack.Screen options={getHeaderOptions('模型详情')} />
         <View style={styles.errorContainer}>
           <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
           <ThemedText style={styles.loadingText}>加载中...</ThemedText>
@@ -103,7 +77,7 @@ export default function ModelDetailScreen() {
     logger.warn('模型未找到:', id);
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ headerShown: false }} />
+        <Stack.Screen options={getHeaderOptions('模型详情')} />
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>😕</Text>
           <ThemedText style={styles.errorTitle}>模型未找到</ThemedText>
@@ -130,9 +104,10 @@ export default function ModelDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={getHeaderOptions(model.name, { transparent: true })} />
       <ModelDetail
         model={model}
+        showFloatingHeader={false}
         onBack={() => router.back()}
         onShare={() => logger.info('分享功能待实现')}
         onBookmark={() => logger.info('收藏功能待实现')}
@@ -146,34 +121,6 @@ export default function ModelDetailScreen() {
     </>
   );
 }
-
-const headerStyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // paddingTop 通过 useSafeAreaSpacing 动态设置
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
-  },
-  button: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-});
 
 const styles = StyleSheet.create({
   container: {

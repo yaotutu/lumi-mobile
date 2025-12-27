@@ -37,6 +37,7 @@ export const ModelDetail = React.memo(
     onDownload,
     onAddToQueue,
     on3DPreview,
+    showFloatingHeader = true,
   }: ModelDetailProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
@@ -290,30 +291,32 @@ export const ModelDetail = React.memo(
           </ThemedView>
         </Animated.ScrollView>
 
-        {/* 固定导航栏 - 浮在最上层 */}
-        <View style={[styles.fixedNavBar, { paddingTop: headerPaddingTop }]}>
-          <TouchableOpacity
-            onPress={handleBack}
-            style={styles.navButton}
-            activeOpacity={0.7}
-            disabled={isHandlingBack}
-          >
-            <IconSymbol
-              name="chevron.left"
-              size={24}
-              color={isHandlingBack ? '#ccc' : '#000'}
-            />
-          </TouchableOpacity>
+        {/* 固定导航栏 - 浮在最上层（可选） */}
+        {showFloatingHeader && (
+          <View style={[styles.fixedNavBar, { paddingTop: headerPaddingTop }]}>
+            <TouchableOpacity
+              onPress={handleBack}
+              style={styles.navButton}
+              activeOpacity={0.7}
+              disabled={isHandlingBack}
+            >
+              <IconSymbol name="chevron.left" size={24} color={isHandlingBack ? '#ccc' : '#000'} />
+            </TouchableOpacity>
 
-          <View style={styles.navActions}>
-            <TouchableOpacity onPress={handleBookmark} style={styles.navButton} activeOpacity={0.7}>
-              <IconSymbol name="bookmark" size={22} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleShare} style={styles.navButton} activeOpacity={0.7}>
-              <IconSymbol name="square.and.arrow.up" size={22} color="#000" />
-            </TouchableOpacity>
+            <View style={styles.navActions}>
+              <TouchableOpacity
+                onPress={handleBookmark}
+                style={styles.navButton}
+                activeOpacity={0.7}
+              >
+                <IconSymbol name="bookmark" size={22} color="#000" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleShare} style={styles.navButton} activeOpacity={0.7}>
+                <IconSymbol name="square.and.arrow.up" size={22} color="#000" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* 3D 预览按钮 - 浮在预览图上方 */}
         <View

@@ -164,218 +164,27 @@ paths:
           application/json:
             schema:
               type: object
+              properties:
+                email:
+                  format: email
+                  description: 邮箱地址
+                  type: string
+                type:
+                  description: 验证码类型：login(登录) | register(注册) | modify_password(修改密码)
+                  anyOf:
+                    - type: string
+                      enum:
+                        - login
+                    - type: string
+                      enum:
+                        - register
+                    - type: string
+                      enum:
+                        - modify_password
               required:
                 - email
                 - type
-              properties:
-                email:
-                  type: string
-                  format: email
-                  description: 邮箱地址
-                type:
-                  type: string
-                  enum:
-                    - login
-                    - register
-                    - modify_password
-                  description: 验证码类型
         required: true
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - data
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: 'null'
-                    description: 发送成功
-  /api/auth/register:
-    post:
-      summary: 用户注册
-      tags:
-        - 认证
-      description: 使用邮箱和验证码注册新用户
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - code
-              properties:
-                email:
-                  type: string
-                  format: email
-                  description: 邮箱地址
-                code:
-                  type: string
-                  description: 验证码
-        required: true
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - data
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: 'null'
-                    description: 注册成功
-  /api/auth/login:
-    post:
-      summary: 用户登录
-      tags:
-        - 认证
-      description: 使用邮箱和验证码登录，成功后返回 Bearer Token
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - code
-              properties:
-                email:
-                  type: string
-                  format: email
-                  description: 邮箱地址
-                code:
-                  type: string
-                  description: 验证码
-        required: true
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - data
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: object
-                    properties:
-                      token:
-                        type: string
-                        description: Bearer Token
-                    required:
-                      - token
-  /api/auth/me:
-    get:
-      summary: 获取当前登录用户
-      tags:
-        - 认证
-      description: 通过 Bearer Token 获取当前登录用户信息
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - data
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: object
-                    properties:
-                      status:
-                        type: string
-                        enum:
-                          - authenticated
-                          - unauthenticated
-                          - error
-                        description: 认证状态
-                      user:
-                        oneOf:
-                          - type: object
-                            properties:
-                              id:
-                                type: string
-                                description: 用户 ID
-                              email:
-                                type: string
-                                format: email
-                                description: 邮箱地址
-                              userName:
-                                type: string
-                                description: 用户名
-                              nickName:
-                                type: string
-                                description: 昵称
-                              avatar:
-                                type:
-                                  - string
-                                  - 'null'
-                                description: 头像 URL
-                              gender:
-                                type: string
-                                description: 性别
-                          - type: 'null'
-                        description: 用户信息（未登录时为 null）
-                    required:
-                      - status
-                      - user
-  /api/auth/logout:
-    post:
-      summary: 登出
-      tags:
-        - 认证
-      description: 注销当前登录会话
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - data
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: 'null'
-                    description: 登出成功
-  /api/users/info:
-    get:
-      summary: 获取当前用户信息
-      tags:
-        - 用户
-      description: 获取当前登录用户的详细信息（需要 Bearer Token）
       responses:
         '200':
           description: JSend 成功响应
@@ -391,39 +200,7 @@ paths:
                     enum:
                       - success
                   data:
-                    description: 用户实体
-                    type: object
-                    properties:
-                      id:
-                        description: 用户 ID
-                        type: string
-                      email:
-                        format: email
-                        description: 邮箱
-                        type: string
-                      userName:
-                        description: 用户名
-                        type: string
-                      nickName:
-                        description: 昵称
-                        type: string
-                      avatar:
-                        description: 头像 URL
-                        anyOf:
-                          - format: uri
-                            type: string
-                          - type: 'null'
-                      gender:
-                        description: 性别
-                        type: string
-                    required:
-                      - id
-                      - email
-                      - userName
-                      - nickName
-                      - avatar
-                      - gender
-                    title: UserEntity
+                    type: 'null'
                 required:
                   - status
                   - data
@@ -451,6 +228,611 @@ paths:
                         type: string
                     required:
                       - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+  /api/auth/register:
+    post:
+      summary: 用户注册
+      tags:
+        - 认证
+      description: 使用邮箱和验证码注册新用户
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  format: email
+                  description: 邮箱地址
+                  type: string
+                code:
+                  minLength: 4
+                  maxLength: 6
+                  description: 验证码（4-6位）
+                  type: string
+              required:
+                - email
+                - code
+        required: true
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: 'null'
+                required:
+                  - status
+                  - data
+        '400':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+  /api/auth/login:
+    post:
+      summary: 用户登录
+      tags:
+        - 认证
+      description: 使用邮箱和验证码登录，成功后返回 Bearer Token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  format: email
+                  description: 邮箱地址
+                  type: string
+                code:
+                  minLength: 4
+                  maxLength: 6
+                  description: 验证码（4-6位）
+                  type: string
+              required:
+                - email
+                - code
+        required: true
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        description: Bearer Token（用于后续请求的身份验证）
+                        type: string
+                    required:
+                      - token
+                required:
+                  - status
+                  - data
+        '400':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '401':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+  /api/auth/me:
+    get:
+      summary: 获取当前登录用户
+      tags:
+        - 认证
+      description: 通过 Bearer Token 获取当前登录用户信息
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        description: 认证状态：authenticated(已认证) | unauthenticated(未认证) | error(错误)
+                        anyOf:
+                          - type: string
+                            enum:
+                              - authenticated
+                          - type: string
+                            enum:
+                              - unauthenticated
+                          - type: string
+                            enum:
+                              - error
+                      user:
+                        description: 用户信息（未登录时为 null）
+                        anyOf:
+                          - type: object
+                            properties:
+                              id:
+                                description: 用户 ID
+                                type: string
+                              email:
+                                format: email
+                                description: 邮箱
+                                type: string
+                              userName:
+                                description: 用户名
+                                type: string
+                              nickName:
+                                description: 昵称
+                                type: string
+                              avatar:
+                                description: 头像 URL（可选）
+                                anyOf:
+                                  - type: string
+                                  - type: 'null'
+                              gender:
+                                description: 性别（可选）
+                                type: string
+                            required:
+                              - id
+                              - userName
+                              - nickName
+                          - type: 'null'
+                    required:
+                      - status
+                      - user
+                required:
+                  - status
+                  - data
+  /api/auth/logout:
+    post:
+      summary: 登出
+      tags:
+        - 认证
+      description: 注销当前登录会话
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: 'null'
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+  /api/users/favorites:
+    get:
+      summary: 获取用户收藏的模型列表
+      tags:
+        - 用户
+      description: 获取当前登录用户收藏的所有 3D 模型（需要 Bearer Token）
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: limit
+          required: false
+          description: 每页数量（默认 20）
+        - schema:
+            type: string
+          in: query
+          name: offset
+          required: false
+          description: 偏移量（默认 0）
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: array
+                    items:
+                      description: 3D 模型实体
+                      type: object
+                      properties:
+                        id:
+                          description: 模型 ID
+                          type: string
+                        externalUserId:
+                          description: 所属用户 ID
+                          type: string
+                        source:
+                          description: 模型来源
+                          anyOf:
+                            - type: string
+                              enum:
+                                - AI_GENERATED
+                            - type: string
+                              enum:
+                                - USER_UPLOADED
+                          title: ModelSource
+                        requestId:
+                          description: 关联的生成请求 ID (AI 生成时)
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        sourceImageId:
+                          description: 来源图片 ID (AI 生成时)
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        name:
+                          description: 模型名称
+                          type: string
+                        description:
+                          description: 模型描述
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        modelUrl:
+                          description: 模型文件 URL
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        mtlUrl:
+                          description: MTL 材质文件 URL (OBJ 格式)
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        textureUrl:
+                          description: 纹理图片 URL (OBJ 格式)
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        previewImageUrl:
+                          description: 预览图 URL
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        format:
+                          default: OBJ
+                          description: 模型格式
+                          type: string
+                        fileSize:
+                          description: 文件大小 (字节)
+                          anyOf:
+                            - minimum: 0
+                              type: integer
+                            - type: 'null'
+                        visibility:
+                          description: 模型可见性
+                          anyOf:
+                            - type: string
+                              enum:
+                                - PRIVATE
+                            - type: string
+                              enum:
+                                - PUBLIC
+                          title: ModelVisibility
+                        publishedAt:
+                          description: 发布时间
+                          anyOf:
+                            - format: date-time
+                              type: string
+                            - type: 'null'
+                        viewCount:
+                          minimum: 0
+                          default: 0
+                          description: 浏览次数
+                          type: integer
+                        likeCount:
+                          minimum: 0
+                          default: 0
+                          description: 点赞数
+                          type: integer
+                        favoriteCount:
+                          minimum: 0
+                          default: 0
+                          description: 收藏数
+                          type: integer
+                        downloadCount:
+                          minimum: 0
+                          default: 0
+                          description: 下载次数
+                          type: integer
+                        sliceTaskId:
+                          description: 切片任务 ID
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                        printStatus:
+                          description: 打印状态
+                          anyOf:
+                            - description: 打印状态
+                              anyOf:
+                                - type: string
+                                  enum:
+                                    - NOT_STARTED
+                                - type: string
+                                  enum:
+                                    - SLICING
+                                - type: string
+                                  enum:
+                                    - SLICE_COMPLETE
+                                - type: string
+                                  enum:
+                                    - PRINTING
+                                - type: string
+                                  enum:
+                                    - PRINT_COMPLETE
+                                - type: string
+                                  enum:
+                                    - FAILED
+                              title: PrintStatus
+                            - type: 'null'
+                        createdAt:
+                          format: date-time
+                          description: 创建时间
+                          type: string
+                        updatedAt:
+                          format: date-time
+                          description: 更新时间
+                          type: string
+                        completedAt:
+                          description: 完成时间
+                          anyOf:
+                            - format: date-time
+                              type: string
+                            - type: 'null'
+                        failedAt:
+                          description: 失败时间
+                          anyOf:
+                            - format: date-time
+                              type: string
+                            - type: 'null'
+                        errorMessage:
+                          description: 错误信息
+                          anyOf:
+                            - type: string
+                            - type: 'null'
+                      required:
+                        - id
+                        - externalUserId
+                        - source
+                        - requestId
+                        - sourceImageId
+                        - name
+                        - description
+                        - modelUrl
+                        - mtlUrl
+                        - textureUrl
+                        - previewImageUrl
+                        - format
+                        - fileSize
+                        - visibility
+                        - publishedAt
+                        - viewCount
+                        - likeCount
+                        - favoriteCount
+                        - downloadCount
+                        - sliceTaskId
+                        - printStatus
+                        - createdAt
+                        - updatedAt
+                        - completedAt
+                        - failedAt
+                        - errorMessage
+                      title: ModelEntity
                 required:
                   - status
                   - data
@@ -569,6 +951,7 @@ paths:
                       - nickName
                       - avatar
                       - gender
+                    title: UserEntity
                 required:
                   - status
                   - data
@@ -754,118 +1137,6 @@ paths:
                     required:
                       - message
                       - code
-                required:
-                  - status
-                  - data
-  /api/users/logout:
-    post:
-      summary: 用户登出
-      tags:
-        - 用户
-      description: 注销当前登录会话（需要 Bearer Token）
-      responses:
-        '200':
-          description: JSend 成功响应
-          content:
-            application/json:
-              schema:
-                description: JSend 成功响应
-                type: object
-                properties:
-                  status:
-                    description: 成功状态
-                    type: string
-                    enum:
-                      - success
-                  data:
-                    type: object
-                    properties:
-                      message:
-                        description: 提示信息
-                        type: string
-                    required:
-                      - message
-                required:
-                  - status
-                  - data
-        '400':
-          description: JSend 失败响应（客户端错误）
-          content:
-            application/json:
-              schema:
-                description: JSend 失败响应（客户端错误）
-                type: object
-                properties:
-                  status:
-                    description: 失败状态（客户端错误）
-                    type: string
-                    enum:
-                      - fail
-                  data:
-                    type: object
-                    properties:
-                      message:
-                        description: 错误信息
-                        type: string
-                      code:
-                        description: 错误代码
-                        type: string
-                    required:
-                      - message
-                required:
-                  - status
-                  - data
-        '401':
-          description: JSend 失败响应（客户端错误）
-          content:
-            application/json:
-              schema:
-                description: JSend 失败响应（客户端错误）
-                type: object
-                properties:
-                  status:
-                    description: 失败状态（客户端错误）
-                    type: string
-                    enum:
-                      - fail
-                  data:
-                    type: object
-                    properties:
-                      message:
-                        description: 错误信息
-                        type: string
-                      code:
-                        description: 错误代码
-                        type: string
-                    required:
-                      - message
-                required:
-                  - status
-                  - data
-        '500':
-          description: JSend 失败响应（客户端错误）
-          content:
-            application/json:
-              schema:
-                description: JSend 失败响应（客户端错误）
-                type: object
-                properties:
-                  status:
-                    description: 失败状态（客户端错误）
-                    type: string
-                    enum:
-                      - fail
-                  data:
-                    type: object
-                    properties:
-                      message:
-                        description: 错误信息
-                        type: string
-                      code:
-                        description: 错误代码
-                        type: string
-                    required:
-                      - message
                 required:
                   - status
                   - data
@@ -1693,7 +1964,6 @@ paths:
                                       - type: string
                                         enum:
                                           - USER_UPLOADED
-                                    title: ModelSource
                                   requestId:
                                     description: 关联的生成请求 ID (AI 生成时)
                                     anyOf:
@@ -1751,7 +2021,6 @@ paths:
                                       - type: string
                                         enum:
                                           - PUBLIC
-                                    title: ModelVisibility
                                   publishedAt:
                                     description: 发布时间
                                     anyOf:
@@ -1806,7 +2075,6 @@ paths:
                                           - type: string
                                             enum:
                                               - FAILED
-                                        title: PrintStatus
                                       - type: 'null'
                                   createdAt:
                                     format: date-time
@@ -1860,7 +2128,6 @@ paths:
                                   - completedAt
                                   - failedAt
                                   - errorMessage
-                                title: ModelEntity
                               - type: 'null'
                         required:
                           - model
@@ -3367,20 +3634,1214 @@ paths:
                         description: 用户是否已登录
                         type: boolean
                       interactions:
-                        description:
-                          '交互状态映射 { [modelId]: ["LIKE"] | ["FAVORITE"] | ["LIKE", "FAVORITE"]
-                          | [] }'
+                        description: '交互状态映射 { [modelId]: { isLiked: boolean, isFavorited: boolean } }'
                         type: object
                         additionalProperties:
-                          type: array
-                          items:
-                            type: string
+                          type: object
+                          properties:
+                            isLiked:
+                              description: 是否已点赞
+                              type: boolean
+                            isFavorited:
+                              description: 是否已收藏
+                              type: boolean
+                          required:
+                            - isLiked
+                            - isFavorited
                     required:
                       - isAuthenticated
                       - interactions
                 required:
                   - status
                   - data
+  /api/users/models:
+    get:
+      summary: 获取当前用户的模型列表
+      tags:
+        - 模型管理
+      description: 获取登录用户创建的所有模型，支持按可见性筛选和排序（需要认证）
+      parameters:
+        - schema:
+            anyOf:
+              - type: string
+                enum:
+                  - PRIVATE
+              - type: string
+                enum:
+                  - PUBLIC
+          in: query
+          name: visibility
+          required: false
+          description: 模型可见性
+        - schema:
+            default: latest
+            anyOf:
+              - type: string
+                enum:
+                  - latest
+              - type: string
+                enum:
+                  - name
+              - type: string
+                enum:
+                  - popular
+          in: query
+          name: sortBy
+          required: false
+          description: 排序方式：latest(最新) | name(名称) | popular(热门)
+        - schema:
+            type: string
+          in: query
+          name: limit
+          required: false
+          description: 每页数量（默认 20）
+        - schema:
+            type: string
+          in: query
+          name: offset
+          required: false
+          description: 偏移量（默认 0）
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        description: 模型列表
+                        type: array
+                        items:
+                          description: 3D 模型实体
+                          type: object
+                          properties:
+                            id:
+                              description: 模型 ID
+                              type: string
+                            externalUserId:
+                              description: 所属用户 ID
+                              type: string
+                            source:
+                              description: 模型来源
+                              anyOf:
+                                - type: string
+                                  enum:
+                                    - AI_GENERATED
+                                - type: string
+                                  enum:
+                                    - USER_UPLOADED
+                            requestId:
+                              description: 关联的生成请求 ID (AI 生成时)
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            sourceImageId:
+                              description: 来源图片 ID (AI 生成时)
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            name:
+                              description: 模型名称
+                              type: string
+                            description:
+                              description: 模型描述
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            modelUrl:
+                              description: 模型文件 URL
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            mtlUrl:
+                              description: MTL 材质文件 URL (OBJ 格式)
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            textureUrl:
+                              description: 纹理图片 URL (OBJ 格式)
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            previewImageUrl:
+                              description: 预览图 URL
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            format:
+                              default: OBJ
+                              description: 模型格式
+                              type: string
+                            fileSize:
+                              description: 文件大小 (字节)
+                              anyOf:
+                                - minimum: 0
+                                  type: integer
+                                - type: 'null'
+                            visibility:
+                              description: 模型可见性
+                              anyOf:
+                                - type: string
+                                  enum:
+                                    - PRIVATE
+                                - type: string
+                                  enum:
+                                    - PUBLIC
+                            publishedAt:
+                              description: 发布时间
+                              anyOf:
+                                - format: date-time
+                                  type: string
+                                - type: 'null'
+                            viewCount:
+                              minimum: 0
+                              default: 0
+                              description: 浏览次数
+                              type: integer
+                            likeCount:
+                              minimum: 0
+                              default: 0
+                              description: 点赞数
+                              type: integer
+                            favoriteCount:
+                              minimum: 0
+                              default: 0
+                              description: 收藏数
+                              type: integer
+                            downloadCount:
+                              minimum: 0
+                              default: 0
+                              description: 下载次数
+                              type: integer
+                            sliceTaskId:
+                              description: 切片任务 ID
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                            printStatus:
+                              description: 打印状态
+                              anyOf:
+                                - description: 打印状态
+                                  anyOf:
+                                    - type: string
+                                      enum:
+                                        - NOT_STARTED
+                                    - type: string
+                                      enum:
+                                        - SLICING
+                                    - type: string
+                                      enum:
+                                        - SLICE_COMPLETE
+                                    - type: string
+                                      enum:
+                                        - PRINTING
+                                    - type: string
+                                      enum:
+                                        - PRINT_COMPLETE
+                                    - type: string
+                                      enum:
+                                        - FAILED
+                                - type: 'null'
+                            createdAt:
+                              format: date-time
+                              description: 创建时间
+                              type: string
+                            updatedAt:
+                              format: date-time
+                              description: 更新时间
+                              type: string
+                            completedAt:
+                              description: 完成时间
+                              anyOf:
+                                - format: date-time
+                                  type: string
+                                - type: 'null'
+                            failedAt:
+                              description: 失败时间
+                              anyOf:
+                                - format: date-time
+                                  type: string
+                                - type: 'null'
+                            errorMessage:
+                              description: 错误信息
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                          required:
+                            - id
+                            - externalUserId
+                            - source
+                            - requestId
+                            - sourceImageId
+                            - name
+                            - description
+                            - modelUrl
+                            - mtlUrl
+                            - textureUrl
+                            - previewImageUrl
+                            - format
+                            - fileSize
+                            - visibility
+                            - publishedAt
+                            - viewCount
+                            - likeCount
+                            - favoriteCount
+                            - downloadCount
+                            - sliceTaskId
+                            - printStatus
+                            - createdAt
+                            - updatedAt
+                            - completedAt
+                            - failedAt
+                            - errorMessage
+                      total:
+                        minimum: 0
+                        description: 总数
+                        type: integer
+                      publicCount:
+                        minimum: 0
+                        description: 公开模型数量
+                        type: integer
+                      hasMore:
+                        description: 是否还有更多数据
+                        type: boolean
+                    required:
+                      - items
+                      - total
+                      - publicCount
+                      - hasMore
+                required:
+                  - status
+                  - data
+        '401':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 错误响应（服务端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 错误响应（服务端错误）
+                type: object
+                properties:
+                  status:
+                    description: 错误状态（服务端错误）
+                    type: string
+                    enum:
+                      - error
+                  message:
+                    description: 错误信息
+                    type: string
+                  code:
+                    description: 错误代码
+                    type: string
+                  data:
+                    description: 附加错误数据
+                required:
+                  - status
+                  - message
+  /api/models/{id}:
+    patch:
+      summary: 更新模型信息
+      tags:
+        - 模型管理
+      description: 更新模型的名称和描述（需要认证且为模型拥有者）
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  minLength: 1
+                  maxLength: 100
+                  description: 模型名称（1-100字符）
+                  type: string
+                description:
+                  maxLength: 500
+                  description: 模型描述（最多500字符）
+                  type: string
+      parameters:
+        - schema:
+            minLength: 1
+            type: string
+          in: path
+          name: id
+          required: true
+          description: 资源 ID
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    description: 3D 模型实体
+                    type: object
+                    properties:
+                      id:
+                        description: 模型 ID
+                        type: string
+                      externalUserId:
+                        description: 所属用户 ID
+                        type: string
+                      source:
+                        description: 模型来源
+                        anyOf:
+                          - type: string
+                            enum:
+                              - AI_GENERATED
+                          - type: string
+                            enum:
+                              - USER_UPLOADED
+                      requestId:
+                        description: 关联的生成请求 ID (AI 生成时)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      sourceImageId:
+                        description: 来源图片 ID (AI 生成时)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      name:
+                        description: 模型名称
+                        type: string
+                      description:
+                        description: 模型描述
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      modelUrl:
+                        description: 模型文件 URL
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      mtlUrl:
+                        description: MTL 材质文件 URL (OBJ 格式)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      textureUrl:
+                        description: 纹理图片 URL (OBJ 格式)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      previewImageUrl:
+                        description: 预览图 URL
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      format:
+                        default: OBJ
+                        description: 模型格式
+                        type: string
+                      fileSize:
+                        description: 文件大小 (字节)
+                        anyOf:
+                          - minimum: 0
+                            type: integer
+                          - type: 'null'
+                      visibility:
+                        description: 模型可见性
+                        anyOf:
+                          - type: string
+                            enum:
+                              - PRIVATE
+                          - type: string
+                            enum:
+                              - PUBLIC
+                      publishedAt:
+                        description: 发布时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      viewCount:
+                        minimum: 0
+                        default: 0
+                        description: 浏览次数
+                        type: integer
+                      likeCount:
+                        minimum: 0
+                        default: 0
+                        description: 点赞数
+                        type: integer
+                      favoriteCount:
+                        minimum: 0
+                        default: 0
+                        description: 收藏数
+                        type: integer
+                      downloadCount:
+                        minimum: 0
+                        default: 0
+                        description: 下载次数
+                        type: integer
+                      sliceTaskId:
+                        description: 切片任务 ID
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      printStatus:
+                        description: 打印状态
+                        anyOf:
+                          - description: 打印状态
+                            anyOf:
+                              - type: string
+                                enum:
+                                  - NOT_STARTED
+                              - type: string
+                                enum:
+                                  - SLICING
+                              - type: string
+                                enum:
+                                  - SLICE_COMPLETE
+                              - type: string
+                                enum:
+                                  - PRINTING
+                              - type: string
+                                enum:
+                                  - PRINT_COMPLETE
+                              - type: string
+                                enum:
+                                  - FAILED
+                          - type: 'null'
+                      createdAt:
+                        format: date-time
+                        description: 创建时间
+                        type: string
+                      updatedAt:
+                        format: date-time
+                        description: 更新时间
+                        type: string
+                      completedAt:
+                        description: 完成时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      failedAt:
+                        description: 失败时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      errorMessage:
+                        description: 错误信息
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                    required:
+                      - id
+                      - externalUserId
+                      - source
+                      - requestId
+                      - sourceImageId
+                      - name
+                      - description
+                      - modelUrl
+                      - mtlUrl
+                      - textureUrl
+                      - previewImageUrl
+                      - format
+                      - fileSize
+                      - visibility
+                      - publishedAt
+                      - viewCount
+                      - likeCount
+                      - favoriteCount
+                      - downloadCount
+                      - sliceTaskId
+                      - printStatus
+                      - createdAt
+                      - updatedAt
+                      - completedAt
+                      - failedAt
+                      - errorMessage
+                required:
+                  - status
+                  - data
+        '400':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '401':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '403':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '404':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 错误响应（服务端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 错误响应（服务端错误）
+                type: object
+                properties:
+                  status:
+                    description: 错误状态（服务端错误）
+                    type: string
+                    enum:
+                      - error
+                  message:
+                    description: 错误信息
+                    type: string
+                  code:
+                    description: 错误代码
+                    type: string
+                  data:
+                    description: 附加错误数据
+                required:
+                  - status
+                  - message
+    delete:
+      summary: 删除模型
+      tags:
+        - 模型管理
+      description: 删除指定的模型（需要认证且为模型拥有者）
+      parameters:
+        - schema:
+            minLength: 1
+            type: string
+          in: path
+          name: id
+          required: true
+          description: 资源 ID
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 提示信息
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '401':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '403':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '404':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 错误响应（服务端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 错误响应（服务端错误）
+                type: object
+                properties:
+                  status:
+                    description: 错误状态（服务端错误）
+                    type: string
+                    enum:
+                      - error
+                  message:
+                    description: 错误信息
+                    type: string
+                  code:
+                    description: 错误代码
+                    type: string
+                  data:
+                    description: 附加错误数据
+                required:
+                  - status
+                  - message
+  /api/models/{id}/visibility:
+    patch:
+      summary: 修改模型可见性
+      tags:
+        - 模型管理
+      description: 将模型设置为公开或私有（需要认证且为模型拥有者）
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visibility:
+                  description: 模型可见性
+                  anyOf:
+                    - type: string
+                      enum:
+                        - PRIVATE
+                    - type: string
+                      enum:
+                        - PUBLIC
+              required:
+                - visibility
+        required: true
+      parameters:
+        - schema:
+            minLength: 1
+            type: string
+          in: path
+          name: id
+          required: true
+          description: 资源 ID
+      responses:
+        '200':
+          description: JSend 成功响应
+          content:
+            application/json:
+              schema:
+                description: JSend 成功响应
+                type: object
+                properties:
+                  status:
+                    description: 成功状态
+                    type: string
+                    enum:
+                      - success
+                  data:
+                    description: 3D 模型实体
+                    type: object
+                    properties:
+                      id:
+                        description: 模型 ID
+                        type: string
+                      externalUserId:
+                        description: 所属用户 ID
+                        type: string
+                      source:
+                        description: 模型来源
+                        anyOf:
+                          - type: string
+                            enum:
+                              - AI_GENERATED
+                          - type: string
+                            enum:
+                              - USER_UPLOADED
+                      requestId:
+                        description: 关联的生成请求 ID (AI 生成时)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      sourceImageId:
+                        description: 来源图片 ID (AI 生成时)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      name:
+                        description: 模型名称
+                        type: string
+                      description:
+                        description: 模型描述
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      modelUrl:
+                        description: 模型文件 URL
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      mtlUrl:
+                        description: MTL 材质文件 URL (OBJ 格式)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      textureUrl:
+                        description: 纹理图片 URL (OBJ 格式)
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      previewImageUrl:
+                        description: 预览图 URL
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      format:
+                        default: OBJ
+                        description: 模型格式
+                        type: string
+                      fileSize:
+                        description: 文件大小 (字节)
+                        anyOf:
+                          - minimum: 0
+                            type: integer
+                          - type: 'null'
+                      visibility:
+                        description: 模型可见性
+                        anyOf:
+                          - type: string
+                            enum:
+                              - PRIVATE
+                          - type: string
+                            enum:
+                              - PUBLIC
+                      publishedAt:
+                        description: 发布时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      viewCount:
+                        minimum: 0
+                        default: 0
+                        description: 浏览次数
+                        type: integer
+                      likeCount:
+                        minimum: 0
+                        default: 0
+                        description: 点赞数
+                        type: integer
+                      favoriteCount:
+                        minimum: 0
+                        default: 0
+                        description: 收藏数
+                        type: integer
+                      downloadCount:
+                        minimum: 0
+                        default: 0
+                        description: 下载次数
+                        type: integer
+                      sliceTaskId:
+                        description: 切片任务 ID
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      printStatus:
+                        description: 打印状态
+                        anyOf:
+                          - description: 打印状态
+                            anyOf:
+                              - type: string
+                                enum:
+                                  - NOT_STARTED
+                              - type: string
+                                enum:
+                                  - SLICING
+                              - type: string
+                                enum:
+                                  - SLICE_COMPLETE
+                              - type: string
+                                enum:
+                                  - PRINTING
+                              - type: string
+                                enum:
+                                  - PRINT_COMPLETE
+                              - type: string
+                                enum:
+                                  - FAILED
+                          - type: 'null'
+                      createdAt:
+                        format: date-time
+                        description: 创建时间
+                        type: string
+                      updatedAt:
+                        format: date-time
+                        description: 更新时间
+                        type: string
+                      completedAt:
+                        description: 完成时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      failedAt:
+                        description: 失败时间
+                        anyOf:
+                          - format: date-time
+                            type: string
+                          - type: 'null'
+                      errorMessage:
+                        description: 错误信息
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                    required:
+                      - id
+                      - externalUserId
+                      - source
+                      - requestId
+                      - sourceImageId
+                      - name
+                      - description
+                      - modelUrl
+                      - mtlUrl
+                      - textureUrl
+                      - previewImageUrl
+                      - format
+                      - fileSize
+                      - visibility
+                      - publishedAt
+                      - viewCount
+                      - likeCount
+                      - favoriteCount
+                      - downloadCount
+                      - sliceTaskId
+                      - printStatus
+                      - createdAt
+                      - updatedAt
+                      - completedAt
+                      - failedAt
+                      - errorMessage
+                required:
+                  - status
+                  - data
+        '400':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '401':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '403':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '404':
+          description: JSend 失败响应（客户端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 失败响应（客户端错误）
+                type: object
+                properties:
+                  status:
+                    description: 失败状态（客户端错误）
+                    type: string
+                    enum:
+                      - fail
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        description: 错误信息
+                        type: string
+                      code:
+                        description: 错误代码
+                        type: string
+                    required:
+                      - message
+                required:
+                  - status
+                  - data
+        '500':
+          description: JSend 错误响应（服务端错误）
+          content:
+            application/json:
+              schema:
+                description: JSend 错误响应（服务端错误）
+                type: object
+                properties:
+                  status:
+                    description: 错误状态（服务端错误）
+                    type: string
+                    enum:
+                      - error
+                  message:
+                    description: 错误信息
+                    type: string
+                  code:
+                    description: 错误代码
+                    type: string
+                  data:
+                    description: 附加错误数据
+                required:
+                  - status
+                  - message
   /api/workers/status:
     get:
       summary: 获取 Worker 状态

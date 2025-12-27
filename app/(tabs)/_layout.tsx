@@ -1,18 +1,18 @@
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
-
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const themeColors = isDark ? Colors.dark : Colors.light;
-  const { tabBarHeight } = useSafeAreaSpacing();
+  const insets = useSafeAreaInsets();
+  const tabHeight = 60 + insets.bottom;
 
   return (
     <Tabs
@@ -24,8 +24,9 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#8E8E93',
         tabBarStyle: [
           styles.tabBar,
-          { height: tabBarHeight },
-          Platform.OS === 'android' && {
+          {
+            height: tabHeight,
+            paddingBottom: insets.bottom,
             backgroundColor: themeColors.secondaryBackground,
             borderTopColor: themeColors.border,
             borderTopWidth: StyleSheet.hairlineWidth,
@@ -80,38 +81,21 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* 任务详情页 - 隐藏在 Tab 栏中，但保持底部 Tab 可见 */}
-      <Tabs.Screen
-        name="task/[id]"
-        options={{
-          href: null, // 不在 Tab 栏中显示
-          headerShown: true, // 显示导航栏（由页面内的 Stack.Screen 控制）
-          title: 'AI 创作',
-        }}
-      />
     </Tabs>
   );
 }
 
 const styles = StyleSheet.create({
   tabBar: {
-    position: 'absolute',
-    // height 通过 useSafeAreaSpacing 动态设置
     ...Platform.select({
       ios: {
-        backgroundColor: 'transparent',
         borderTopWidth: 0,
         elevation: 0,
       },
       android: {
-        // backgroundColor 在 screenOptions 中动态设置
-        elevation: 8, // Material Design 阴影
+        elevation: 12,
       },
-      default: {
-        backgroundColor: 'transparent',
-        borderTopWidth: 0,
-        elevation: 0,
-      },
+      default: {},
     }),
   },
   blurView: {

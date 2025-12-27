@@ -754,3 +754,11 @@ logger.error('错误信息', error);
 8. **测试覆盖**: 为关键业务逻辑编写单元测试
 9. **文档维护**: 及时更新 CLAUDE.md 和代码注释
 10. **版本控制**: 使用语义化版本,保持 changelog 更新
+
+<!--以下内容为用户自行填写，禁止修改-->
+# 参考
+/Users/yaotutu/Desktop/code/tope-lumi/lumi-server	 这是我们的服务端代码
+/Users/yaotutu/Desktop/code/tope-lumi/lumi-web-next 这是我们的web页面代码
+
+# 重要提示
+- 禁止私自运行项目，如需要运行项目，让用户自行运行
