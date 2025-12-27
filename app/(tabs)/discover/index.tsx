@@ -1,6 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  BackHandler,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -9,7 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
 import { ScreenWrapper } from '@/components/screen-wrapper';
@@ -21,12 +22,15 @@ import { useAsyncController } from '@/hooks/useAsyncController';
 import { categorizeError, logError } from '@/utils/error-handler';
 import { useGalleryStore } from '@/stores';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { ModelDetail } from '@/components/model-detail';
+import { fetchModelDetail } from '@/services';
+import { logger } from '@/utils/logger';
+import type { GalleryModel } from '@/types';
 
 export default function DiscoverScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { contentPaddingBottom } = useSafeAreaSpacing();
-  const router = useRouter();
 
   // 异步操作控制器
   const { createController } = useAsyncController();
@@ -35,11 +39,31 @@ export default function DiscoverScreen() {
   const { models, loading, refreshing, error, fetchModels, refreshModels, clearError } =
     useGalleryStore();
 
+  // 模型详情相关状态
+  const [selectedModel, setSelectedModel] = useState<GalleryModel | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [isClosing, setIsClosing] = useState(false); // 防止重复点击关闭
+
+  // 详情覆盖层动画
+  const [detailVisible] = useState(new Animated.Value(0));
+
   // 组件挂载时加载数据
   useEffect(() => {
     const controller = createController();
     fetchModels(1, {}, controller);
   }, [fetchModels, createController]);
+
+  // 监听选中模型变化，执行显示动画
+  useEffect(() => {
+    if (selectedModel && !isClosing) {
+      // 显示详情覆盖层
+      Animated.timing(detailVisible, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [selectedModel, isClosing, detailVisible]);
 
   // 下拉刷新
   const handleRefresh = () => {
@@ -52,6 +76,72 @@ export default function DiscoverScreen() {
     clearError();
     fetchModels(1, {}, controller);
   };
+
+  // 处理模型卡片点击 - 在当前页面展开详情
+  const handleModelPress = async (modelId: string) => {
+    logger.info('🔍 点击模型卡片 (覆盖层模式):', modelId);
+
+    // 显示加载状态
+    setDetailLoading(true);
+
+    try {
+      // 获取完整的模型详情
+      const controller = createController();
+      const modelDetail = await fetchModelDetail(modelId);
+
+      // 更新选中模型
+      setSelectedModel(modelDetail);
+      setDetailLoading(false);
+
+      logger.info('✅ 成功加载模型详情:', modelDetail.name);
+    } catch (error) {
+      logger.error('加载模型详情失败:', error);
+      setDetailLoading(false);
+
+      // 显示错误提示（可选）
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      const errorInfo = categorizeError(errorObj);
+      logger.error('模型详情加载失败:', errorInfo.message);
+    }
+  };
+
+  // 关闭模型详情
+  const handleCloseDetail = useCallback(() => {
+    // 防止重复点击
+    if (isClosing || !selectedModel) {
+      logger.debug('正在关闭或已关闭，忽略此次点击');
+      return;
+    }
+
+    logger.info('🔙 关闭模型详情覆盖层');
+    setIsClosing(true);
+
+    // 先执行关闭动画
+    Animated.timing(detailVisible, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      // 动画完成后清除状态
+      setSelectedModel(null);
+      setIsClosing(false);
+      logger.debug('✅ 模型详情已关闭');
+    });
+  }, [isClosing, selectedModel, detailVisible]);
+
+  // 监听 Android 返回键，当覆盖层打开时关闭覆盖层
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (selectedModel && !isClosing) {
+        logger.info('📱 Android 返回键: 关闭模型详情覆盖层');
+        handleCloseDetail();
+        return true; // 拦截返回键，阻止路由返回
+      }
+      return false; // 允许正常的返回行为
+    });
+
+    return () => backHandler.remove();
+  }, [selectedModel, isClosing, handleCloseDetail]);
 
   // 缓存分列计算结果，避免每次渲染都重新计算
   const { leftColumn, rightColumn } = useMemo(
@@ -160,6 +250,7 @@ export default function DiscoverScreen() {
                     title={model.name}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
+                    onPress={handleModelPress}
                   />
                 ))}
               </View>
@@ -173,6 +264,7 @@ export default function DiscoverScreen() {
                     title={model.name}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
+                    onPress={handleModelPress}
                   />
                 ))}
               </View>
@@ -180,6 +272,62 @@ export default function DiscoverScreen() {
           )}
         </ScrollView>
       )}
+
+      {/* 模型详情覆盖层 - 使用绝对定位而非 Modal */}
+      <Animated.View
+        style={[
+          styles.detailOverlay,
+          {
+            backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
+            opacity: detailVisible,
+            transform: [
+              {
+                translateY: detailVisible.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [600, 0], // 从底部滑入
+                }),
+              },
+            ],
+            // 选中模型且不在关闭状态时才响应点击
+            pointerEvents: selectedModel && !isClosing ? 'auto' : 'none',
+          },
+        ]}
+      >
+        {selectedModel && (
+          <ModelDetail
+            model={selectedModel}
+            onBack={handleCloseDetail}
+            onShare={() => {
+              logger.info('分享模型:', selectedModel.name);
+            }}
+            onBookmark={() => {
+              logger.info('收藏模型:', selectedModel.name);
+            }}
+            onDownload={() => {
+              logger.info('下载模型:', selectedModel.name);
+            }}
+            onAddToQueue={() => {
+              logger.info('加入队列:', selectedModel.name);
+            }}
+            on3DPreview={() => {
+              logger.info('预览 3D 模型:', selectedModel.name);
+            }}
+          />
+        )}
+
+        {/* 加载状态 */}
+        {detailLoading && (
+          <View
+            style={[
+              styles.detailLoadingContainer,
+              { backgroundColor: isDark ? Colors.dark.background : Colors.light.background },
+            ]}
+          >
+            <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
+            <ThemedText style={styles.detailLoadingText}>加载中...</ThemedText>
+          </View>
+        )}
+      </Animated.View>
     </ScreenWrapper>
   );
 }
@@ -248,5 +396,27 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     opacity: 0.5,
+  },
+  detailOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100, // 确保在所有内容之上
+    elevation: 100, // Android elevation
+  },
+  detailLoadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  detailLoadingText: {
+    marginTop: Spacing.lg,
+    opacity: 0.6,
   },
 });

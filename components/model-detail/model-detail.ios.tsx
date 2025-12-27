@@ -42,6 +42,9 @@ export const ModelDetail = React.memo(
     const isDark = colorScheme === 'dark';
     const { topInset, headerPaddingTop } = useSafeAreaSpacing();
 
+    // 防止重复点击返回按钮
+    const [isHandlingBack, setIsHandlingBack] = useState(false);
+
     // Stretchy Header: 监听滚动位置
     const [scrollY] = useState(new Animated.Value(0));
 
@@ -64,8 +67,22 @@ export const ModelDetail = React.memo(
 
     // 处理返回
     const handleBack = () => {
+      // 防止重复点击
+      if (isHandlingBack) {
+        logger.debug('正在处理返回操作，忽略此次点击');
+        return;
+      }
+
       logger.info('返回');
+      setIsHandlingBack(true);
+
+      // 调用父组件的返回回调
       onBack?.();
+
+      // 延迟重置状态，给动画留出时间
+      setTimeout(() => {
+        setIsHandlingBack(false);
+      }, 500);
     };
 
     // 处理分享
@@ -275,8 +292,17 @@ export const ModelDetail = React.memo(
 
         {/* 固定导航栏 - 浮在最上层 */}
         <View style={[styles.fixedNavBar, { paddingTop: headerPaddingTop }]}>
-          <TouchableOpacity onPress={handleBack} style={styles.navButton} activeOpacity={0.7}>
-            <IconSymbol name="chevron.left" size={24} color="#000" />
+          <TouchableOpacity
+            onPress={handleBack}
+            style={styles.navButton}
+            activeOpacity={0.7}
+            disabled={isHandlingBack}
+          >
+            <IconSymbol
+              name="chevron.left"
+              size={24}
+              color={isHandlingBack ? '#ccc' : '#000'}
+            />
           </TouchableOpacity>
 
           <View style={styles.navActions}>
