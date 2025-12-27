@@ -5,6 +5,22 @@ import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '@/constants
 import type { GenerationTask } from '@/stores/create/types';
 import { useEffect, useRef } from 'react';
 
+const LIGHT_UI = {
+  background: '#F5F7FB',
+  card: '#FFFFFF',
+  text: '#0F172A',
+  secondary: '#6E7894',
+  border: '#E1E7F4',
+};
+
+const DARK_UI = {
+  background: '#050810',
+  card: '#11182A',
+  text: '#F6F7FF',
+  secondary: '#9CA7C2',
+  border: '#232C41',
+};
+
 interface ModelGeneratingProps {
   task: GenerationTask;
   onCancel: () => void;
@@ -18,12 +34,15 @@ interface ModelGeneratingProps {
  */
 export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: ModelGeneratingProps) {
   // 动态颜色
-  const backgroundColor = isDark ? Colors.dark.background : Colors.light.background;
-  const textColor = isDark ? Colors.dark.text : Colors.light.text;
-  const secondaryTextColor = isDark ? Colors.dark.secondaryText : Colors.light.secondaryText;
-  const borderColor = isDark ? Colors.dark.border : Colors.light.border;
+  const palette = isDark ? DARK_UI : LIGHT_UI;
+  const backgroundColor = palette.background;
+  const textColor = palette.text;
+  const secondaryTextColor = palette.secondary;
+  const borderColor = palette.border;
 
   const progress = task.modelProgress || 0;
+  const gradientColors = isDark ? ['#3B82F6', '#6366F1'] : ['#2680FF', '#5A8BFF'];
+  const primaryShadow = gradientColors[0];
 
   // 淡入动画
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -84,8 +103,18 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
     <View style={[styles.container, { backgroundColor }]}>
       {/* 头部 */}
       <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
-        <Text style={[styles.title, { color: textColor }]}>构建 3D 模型中</Text>
-        <Text style={[styles.subtitle, { color: secondaryTextColor }]}>{stages[currentStage]}</Text>
+        <TouchableOpacity
+          onPress={onCancel}
+          activeOpacity={0.7}
+          style={[styles.headerButton, { borderColor }]}
+        >
+          <IconSymbol name="chevron.left" size={18} color={textColor} />
+        </TouchableOpacity>
+        <View style={styles.headerTitles}>
+          <Text style={[styles.title, { color: textColor }]}>AI Model Builder</Text>
+          <Text style={[styles.subtitle, { color: secondaryTextColor }]}>{stages[currentStage]}</Text>
+        </View>
+        <View style={styles.headerSpacer} />
       </Animated.View>
 
       {/* 中心内容区 */}
@@ -100,12 +129,12 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
           ]}
         >
           <LinearGradient
-            colors={['#667EEA', '#764BA2']}
+            colors={gradientColors}
             style={[
               styles.cubeGradient,
               Platform.select({
                 ios: {
-                  shadowColor: '#667EEA',
+                  shadowColor: primaryShadow,
                   shadowOffset: { width: 0, height: 8 },
                   shadowOpacity: 0.4,
                   shadowRadius: 20,
@@ -129,7 +158,7 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
         <View style={styles.progressBarContainer}>
           <View style={[styles.progressBarBackground, { backgroundColor: borderColor }]}>
             <LinearGradient
-              colors={['#667EEA', '#764BA2']}
+              colors={gradientColors}
               style={[styles.progressBarFill, { width: `${progress}%` }]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -150,7 +179,7 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
                     {
                       backgroundColor:
                         isCompleted || isCurrent
-                          ? '#667EEA'
+                          ? gradientColors[0]
                           : isDark
                             ? Colors.dark.border
                             : Colors.light.border,
@@ -208,6 +237,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg, // 水平内边距
     paddingTop: Spacing.xl, // 顶部内边距
     paddingBottom: Spacing.md, // 底部内边距
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitles: {
+    flex: 1,
+  },
+  headerSpacer: {
+    width: 44,
   },
 
   // 标题样式

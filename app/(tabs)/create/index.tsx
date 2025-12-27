@@ -1,20 +1,87 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
-import { ExamplePrompts } from '@/components/pages/create/example-prompts';
 import { ImageGenerating } from '@/components/pages/create/image-generating';
 import { ModelGenerating } from '@/components/pages/create/model-generating';
 import { ModelComplete } from '@/components/pages/create/model-complete';
 import { ScreenWrapper } from '@/components/screen-wrapper';
-import { SimpleTabHeader } from '@/components/layout/simple-tab-header';
 import { useCreateStore } from '@/stores';
 import { logger } from '@/utils/logger';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
+import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
+
+const QUICK_STYLES = [
+  {
+    id: 'scifi',
+    label: 'Sci-Fi',
+    icon: 'sparkles',
+    prompt: 'A luminous sci-fi corridor for a spaceship interior with volumetric lighting.',
+  },
+  {
+    id: 'nature',
+    label: 'Nature',
+    icon: 'leaf.fill',
+    prompt: 'A tranquil bonsai tree on a stone pedestal rendered in stylized 3D.',
+  },
+  {
+    id: 'characters',
+    label: 'Characters',
+    icon: 'person.crop.circle',
+    prompt: 'A heroic female explorer portrait with cinematic rim lighting, hyper real.',
+  },
+  {
+    id: 'architecture',
+    label: 'Architecture',
+    icon: 'building.columns',
+    prompt: 'A futuristic pavilion made of glass and white concrete with floating steps.',
+  },
+  {
+    id: 'fantasy',
+    label: 'Fantasy',
+    icon: 'wand.and.stars',
+    prompt: 'An enchanted floating island with waterfalls and glowing crystals.',
+  },
+  {
+    id: 'vehicles',
+    label: 'Vehicles',
+    icon: 'car.fill',
+    prompt: 'A low-poly electric concept car with ambient studio lighting.',
+  },
+];
+
+const LIGHT_PALETTE = {
+  background: '#F5F7FB',
+  card: '#FFFFFF',
+  border: '#DDE5F2',
+  text: '#0F172A',
+  secondary: '#5F6B85',
+  tertiary: '#A1B1CE',
+  accent: '#2680FF',
+  divider: '#E5EBF5',
+  sparkleBg: '#E6EEFF',
+  sparkleIcon: '#1E6FEA',
+  pillBorder: '#D7E1F5',
+  disabled: '#B8C7E2',
+};
+
+const DARK_PALETTE = {
+  background: '#0C111F',
+  card: '#151B2C',
+  border: '#2B3550',
+  text: '#F6F7FF',
+  secondary: '#A8B2CE',
+  tertiary: '#6C7698',
+  accent: '#3B82F6',
+  divider: '#1E2538',
+  sparkleBg: 'rgba(59, 130, 246, 0.2)',
+  sparkleIcon: '#9CC4FF',
+  pillBorder: '#2E3852',
+  disabled: '#516089',
+};
 
 /**
  * AI 创作页面
@@ -32,6 +99,7 @@ export default function CreateScreen() {
 
   const [prompt, setPrompt] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeStyleId, setActiveStyleId] = useState<string | null>(null);
 
   // 从 Store 获取当前任务和操作方法
   const currentTask = useCreateStore(state => state.currentTask);
@@ -42,13 +110,11 @@ export default function CreateScreen() {
   const reset = useCreateStore(state => state.reset);
 
   // 动态颜色
-  const backgroundColor = isDark ? Colors.dark.background : Colors.light.background;
-  const cardBackground = isDark ? Colors.dark.cardBackground : Colors.light.cardBackground;
-  const textColor = isDark ? Colors.dark.text : Colors.light.text;
-  const secondaryTextColor = isDark ? Colors.dark.secondaryText : Colors.light.secondaryText;
-  const tertiaryTextColor = isDark ? Colors.dark.tertiaryText : Colors.light.tertiaryText;
-  const borderColor = isDark ? Colors.dark.border : Colors.light.border;
-  const inputBackground = isDark ? Colors.dark.inputBackground : Colors.light.inputBackground;
+  const palette = useMemo(() => (isDark ? DARK_PALETTE : LIGHT_PALETTE), [isDark]);
+  const backgroundColor = palette.background;
+  const textColor = palette.text;
+  const secondaryTextColor = palette.secondary;
+  const tertiaryTextColor = palette.tertiary;
 
   // 处理提交
   const handleSubmit = async () => {
@@ -63,6 +129,7 @@ export default function CreateScreen() {
 
       // 清空输入
       setPrompt('');
+      setActiveStyleId(null);
     } catch (error) {
       logger.error('创建任务失败:', error);
     } finally {
@@ -70,9 +137,16 @@ export default function CreateScreen() {
     }
   };
 
-  // 选择示例提示词
-  const handleSelectExample = (example: string) => {
-    setPrompt(example);
+  const handlePromptChange = (value: string) => {
+    setPrompt(value);
+    if (activeStyleId) {
+      setActiveStyleId(null);
+    }
+  };
+
+  const handleSelectStyle = (styleId: string, value: string) => {
+    setPrompt(value);
+    setActiveStyleId(styleId);
   };
 
   // 处理图片选择
@@ -113,159 +187,159 @@ export default function CreateScreen() {
     // 无任务或任务已取消 - 显示输入界面
     if (!currentTask || currentTask.status === 'cancelled') {
       return (
-        <KeyboardAwareScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: contentPaddingBottom + Spacing.xl },
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* 主输入卡片 */}
+        <View style={styles.creatorContainer}>
           <View
             style={[
-              styles.mainCard,
-              {
-                backgroundColor: cardBackground,
-                ...Platform.select({
-                  ios: {
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: isDark ? 0.3 : 0.08,
-                    shadowRadius: 12,
-                  },
-                  android: {
-                    elevation: 3,
-                  },
-                }),
-              },
+              styles.pageHeader,
+              { borderBottomColor: palette.divider, backgroundColor: palette.background },
             ]}
           >
-            {/* 输入区域 */}
-            <View style={styles.inputSection}>
-              <Text style={[styles.inputLabel, { color: textColor }]}>创作描述</Text>
+            <Text style={[styles.pageTitle, { color: textColor }]}>AI Creation Studio</Text>
+          </View>
 
-              <View
-                style={[
-                  styles.inputWrapper,
-                  {
-                    borderColor: prompt.length > 0 ? Colors.light.tint : borderColor,
-                    backgroundColor: inputBackground,
-                  },
-                ]}
-              >
-                <TextInput
-                  style={[styles.input, { color: textColor }]}
-                  placeholder="描述你想要的 3D 模型,越详细越好..."
-                  placeholderTextColor={tertiaryTextColor}
-                  value={prompt}
-                  onChangeText={setPrompt}
-                  multiline
-                  maxLength={500}
-                  returnKeyType="default"
-                  blurOnSubmit={false}
-                />
-              </View>
-
-              <View style={styles.inputMeta}>
-                <Text
-                  style={[
-                    styles.charCount,
-                    {
-                      color: prompt.length > 450 ? '#FF3B30' : secondaryTextColor,
-                    },
-                  ]}
-                >
-                  {prompt.length}/500 字符
-                </Text>
-              </View>
-            </View>
-
-            {/* 示例提示词 */}
+          <KeyboardAwareScrollView
+            style={styles.scrollView}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { paddingBottom: contentPaddingBottom + Spacing.xxl },
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
             <View
               style={[
-                styles.examplesWrapper,
+                styles.promptCard,
                 {
-                  backgroundColor: isDark ? 'rgba(23, 24, 42, 0.75)' : '#FFFFFF',
+                  backgroundColor: palette.card,
+                  borderColor: palette.border,
+                  ...Platform.select({
+                    ios: {
+                      shadowColor: '#0B1A3A',
+                      shadowOffset: { width: 0, height: 8 },
+                      shadowOpacity: isDark ? 0.25 : 0.08,
+                      shadowRadius: 16,
+                    },
+                    android: {
+                      elevation: 3,
+                    },
+                  }),
                 },
               ]}
             >
-              <ExamplePrompts
-                onPromptSelect={handleSelectExample}
-                cardBackground={inputBackground}
-                borderColor={borderColor}
-                textColor={textColor}
-              />
-            </View>
-          </View>
-
-          {/* 底部固定区域 */}
-          <View style={styles.bottomSection}>
-            {/* 提示信息 */}
-            <View style={styles.tipContainer}>
-              <View
+              <TextInput
                 style={[
-                  styles.tipBadge,
+                  styles.input,
                   {
-                    backgroundColor: isDark ? 'rgba(255, 149, 0, 0.15)' : 'rgba(255, 149, 0, 0.1)',
+                    color: textColor,
                   },
                 ]}
+                placeholder="A low-poly fox sitting on a rock..."
+                placeholderTextColor={tertiaryTextColor}
+                value={prompt}
+                onChangeText={handlePromptChange}
+                multiline
+                maxLength={500}
+                returnKeyType="default"
+                blurOnSubmit
+              />
+              <TouchableOpacity
+                style={[
+                  styles.sparkleButton,
+                  {
+                    backgroundColor: palette.sparkleBg,
+                    opacity: isButtonActive ? 1 : 0.65,
+                  },
+                ]}
+                onPress={handleSubmit}
+                disabled={!isButtonActive}
+                activeOpacity={0.8}
               >
-                <IconSymbol name="lightbulb.fill" size={14} color="#FF9500" />
-                <Text style={[styles.tipText, { color: '#FF9500' }]}>
-                  生成需要 2-3 分钟,可随时离开
-                </Text>
-              </View>
+                <IconSymbol name="sparkles" size={22} color={palette.sparkleIcon} />
+              </TouchableOpacity>
             </View>
 
-            {/* 生成按钮 */}
-            <TouchableOpacity
-              style={styles.generateButtonWrapper}
-              onPress={handleSubmit}
-              disabled={!isButtonActive}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={isButtonActive ? ['#667EEA', '#764BA2'] : [borderColor, borderColor]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+            <View style={styles.quickStylesSection}>
+              <View style={styles.quickStylesHeader}>
+                <View
+                  style={[
+                    styles.quickStylesIcon,
+                    {
+                      backgroundColor: isDark ? 'rgba(38, 128, 255, 0.15)' : 'rgba(38, 128, 255, 0.1)',
+                    },
+                  ]}
+                >
+                  <IconSymbol name="triangle.fill" size={12} color={palette.accent} />
+                </View>
+                <Text style={[styles.quickStylesTitle, { color: textColor }]}>Quick Styles</Text>
+              </View>
+
+              <View style={styles.quickStylesGrid}>
+                {QUICK_STYLES.map(style => {
+                  const isActive = activeStyleId === style.id;
+                  return (
+                    <TouchableOpacity
+                      key={style.id}
+                      style={[
+                        styles.quickStylePill,
+                        {
+                          borderColor: isActive ? palette.accent : palette.pillBorder,
+                          backgroundColor: isActive ? 'rgba(38, 128, 255, 0.06)' : palette.card,
+                        },
+                      ]}
+                      onPress={() => handleSelectStyle(style.id, style.prompt)}
+                      activeOpacity={0.85}
+                    >
+                      <IconSymbol
+                        name={style.icon as any}
+                        size={16}
+                        color={isActive ? palette.accent : secondaryTextColor}
+                      />
+                      <Text
+                        style={[
+                          styles.quickStyleText,
+                          { color: isActive ? palette.accent : secondaryTextColor },
+                        ]}
+                      >
+                        {style.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              <Text style={[styles.tipText, { color: tertiaryTextColor }]}>
+                Tip: Tap a tag to auto-fill a starter prompt.
+              </Text>
+            </View>
+            <View style={[styles.actionSection, { paddingBottom: Spacing.lg }]}>
+              <TouchableOpacity
                 style={[
-                  styles.generateButton,
+                  styles.primaryButton,
                   {
-                    opacity: isButtonActive ? 1 : 0.5,
+                    backgroundColor: isButtonActive ? palette.accent : palette.disabled,
                     ...Platform.select({
-                      ios: isButtonActive
-                        ? {
-                            shadowColor: '#667EEA',
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 12,
-                          }
-                        : {},
-                      android: isButtonActive
-                        ? {
-                            elevation: 6,
-                          }
-                        : {},
+                      ios: {
+                        shadowColor: palette.accent,
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: isButtonActive ? 0.3 : 0,
+                        shadowRadius: 20,
+                      },
+                      android: {
+                        elevation: isButtonActive ? 6 : 0,
+                      },
                     }),
                   },
                 ]}
+                onPress={handleSubmit}
+                disabled={!isButtonActive}
+                activeOpacity={0.85}
               >
-                {isSubmitting ? (
-                  <>
-                    <IconSymbol name="hourglass" size={20} color="#FFFFFF" />
-                    <Text style={styles.generateButtonText}>创建中...</Text>
-                  </>
-                ) : (
-                  <>
-                    <IconSymbol name="wand.and.stars" size={20} color="#FFFFFF" />
-                    <Text style={styles.generateButtonText}>开始创作</Text>
-                  </>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAwareScrollView>
+                <Text style={styles.primaryButtonText}>
+                  {isSubmitting ? 'Creating…' : 'Generate Images'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
       );
     }
 
@@ -331,141 +405,111 @@ export default function CreateScreen() {
   };
 
   return (
-    <ScreenWrapper edges={['top']} style={{ backgroundColor }}>
-      <SimpleTabHeader title="AI 创作" subtitle="描述驱动 3D 模型" />
+    <ScreenWrapper edges={['top']} style={{ flex: 1, backgroundColor }}>
       {renderContent()}
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  screenBody: {
+  creatorContainer: {
     flex: 1,
   },
-  // ScrollView 样式
+  pageHeader: {
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+  },
+  pageTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
   scrollView: {
-    flex: 1, // 占满空间
+    flex: 1,
   },
-
-  // ScrollView 内容容器样式
   scrollContent: {
-    padding: Spacing.lg, // 使用主题间距
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
+    gap: Spacing.xl,
   },
-
-  // 主卡片样式
-  mainCard: {
-    borderRadius: BorderRadius.md,
+  promptCard: {
+    borderRadius: 26,
+    borderWidth: 1,
     padding: Spacing.lg,
-    marginBottom: Spacing.lg,
+    minHeight: 160,
   },
-
-  // 输入区域样式
-  inputSection: {
-    marginBottom: Spacing.xxl, // 使用主题间距
-  },
-
-  // 输入标签样式
-  inputLabel: {
-    fontSize: FontSize.sm, // 使用主题字号
-    fontWeight: FontWeight.semibold, // 使用主题字重
-    marginBottom: Spacing.md, // 使用主题间距
-  },
-
-  // 输入框包裹器样式
-  inputWrapper: {
-    borderRadius: BorderRadius.md,
-    borderWidth: 1.5,
-    padding: Spacing.md,
-  },
-
-  // 输入框样式
   input: {
-    fontSize: FontSize.md, // 使用主题字号
-    lineHeight: 22, // 行高
-    minHeight: 120, // 最小高度
-    textAlignVertical: 'top', // 顶部对齐
+    fontSize: FontSize.md,
+    lineHeight: 24,
+    minHeight: 120,
+    textAlignVertical: 'top',
   },
-
-  // 输入元信息样式
-  inputMeta: {
-    flexDirection: 'row', // 横向排列
-    justifyContent: 'flex-end', // 右对齐
-    marginTop: Spacing.sm, // 使用主题间距
+  sparkleButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-
-  // 字符计数样式
-  charCount: {
-    fontSize: FontSize.xs, // 使用主题字号
-    fontWeight: FontWeight.medium, // 使用主题字重
+  quickStylesSection: {
+    gap: Spacing.md,
   },
-
-  // 示例区域样式
-  examplesWrapper: {
-    marginTop: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+  quickStylesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
-
-  // 底部区域样式
-  bottomSection: {
-    gap: Spacing.md, // 使用主题间距
+  quickStylesIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-
-  // 提示容器样式
-  tipContainer: {
-    alignItems: 'center', // 水平居中
+  quickStylesTitle: {
+    fontSize: 16,
+    fontWeight: FontWeight.semibold,
   },
-
-  // 提示徽章样式
-  tipBadge: {
-    flexDirection: 'row', // 横向排列
-    alignItems: 'center', // 垂直居中
-    paddingVertical: Spacing.sm, // 使用主题间距
-    paddingHorizontal: Spacing.md, // 使用主题间距
-    borderRadius: BorderRadius.full, // 使用主题圆角
-    gap: 6, // 间距
+  quickStylesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
   },
-
-  // 提示文字样式
+  quickStylePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    gap: 8,
+  },
+  quickStyleText: {
+    fontSize: 14,
+    fontWeight: FontWeight.semibold,
+  },
   tipText: {
-    fontSize: FontSize.xs, // 使用主题字号
-    fontWeight: FontWeight.medium, // 使用主题字重
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.medium,
   },
-
-  // 生成按钮外层包裹器
-  generateButtonWrapper: {
-    // 无额外样式
+  actionSection: {
+    paddingHorizontal: Spacing.lg,
   },
-
-  // 生成按钮样式
-  generateButton: {
-    flexDirection: 'row', // 横向排列
-    alignItems: 'center', // 垂直居中
-    justifyContent: 'center', // 水平居中
-    paddingVertical: Spacing.lg, // 使用主题间距
-    borderRadius: BorderRadius.md, // 使用主题圆角
-    gap: Spacing.sm, // 使用主题间距
+  primaryButton: {
+    borderRadius: 20,
+    paddingVertical: 18,
+    alignItems: 'center',
   },
-
-  // 生成按钮文字样式
-  generateButtonText: {
-    color: '#FFFFFF', // 白色文字
-    fontSize: FontSize.md, // 使用主题字号
-    fontWeight: FontWeight.semibold, // 使用主题字重
-    letterSpacing: 0.3, // 字间距
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: FontWeight.semibold,
   },
-
   // 错误容器样式
   errorContainer: {
     flex: 1, // 占满空间

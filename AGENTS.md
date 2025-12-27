@@ -1,19 +1,26 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Source routes live under `app/` using Expo Router; each folder maps to a screen and may include `(group)` segments for layout control. Shared UI sits in `components/ui/`, while feature-scoped widgets stay inside `components/pages/`. Global state, services, and utility logic live in `stores/`, `services/`, and `utils/` respectively, with API clients configured through `services/api-client.ts`. Keep theme assets in `constants/` and cross-platform styles in `styles/`. Platform builds are tracked by `ios/` and `android/`, and tests plus diagnostics scripts sit in `__tests__/`.
+Routes and screens live under `app/` using Expo Router; each folder maps to a screen and may include layout groups such as `(auth)` or `(tabs)`. Shared primitives belong in `components/ui/`, while feature widgets stay in `components/pages/`. Global data flows through `stores/` (Zustand) and `services/` (API clients in `services/api-client.ts`). Cross-cutting helpers sit in `utils/`, `constants/`, and `styles/`. Native build artifacts remain under `ios/` and `android/`, and regression helpers plus diagnostics scripts reside in `__tests__/`.
 
 ## Build, Test, and Development Commands
-Run `npm start` (Expo) for the Metro server, or `npm run ios` / `npm run android` to launch native simulators. Use `npm run web` for browser previews. Lint locally with `npm run lint`, auto-fix via `npm run lint:fix`, and format markdown/JSON with `npm run format`. Reset a broken workspace with `npm run reset-project`, which re-applies the Expo template files.
+- `npm start` — boot the Expo Metro server for local development.
+- `npm run ios` / `npm run android` — launch the native simulators through Expo.
+- `npm run web` — verify responsive behavior in a browser shell.
+- `npm run lint` / `npm run lint:fix` — inspect or auto-fix ESLint violations.
+- `npm run format` — normalize Markdown/JSON; `npm run reset-project` restores the Expo template when the workspace drifts.
 
 ## Coding Style & Naming Conventions
-We code in strict TypeScript with ES2023 modules. Favor functional, file-scoped components and keep layout props declarative. Follow the established folder-based namespaces—e.g., `components/ui/Button.tsx` and `services/auth/login.ts`. Use camelCase for variables/functions, PascalCase for components and Zustand stores, and kebab-case for file names unless Expo Router requires `PascalCase`. Formatting is enforced by Prettier (`prettier.config`) and lint rules come from `eslint.config.js` extending `eslint-config-expo`. Indentation is 2 spaces to match the current codebase.
+Write strict TypeScript and ES2023 modules with functional, file-scoped components. Keep layout props declarative and colocate hooks in `hooks/` or feature folders. Use camelCase for variables/functions, PascalCase for components and Zustand stores, and kebab-case for files unless Expo Router mandates PascalCase segments. Indent with 2 spaces, run Prettier via the provided config, and respect the shared ESLint rules that extend `eslint-config-expo`.
 
 ## Testing Guidelines
-Smoke and integration checks live in `__tests__/*`. Mirror the `auth.test.ts` style: export granular helpers and a `runAllTests` orchestrator. Execute tests via `npx ts-node __tests__/auth.test.ts` (install `ts-node` if it is missing) and capture console output in the pull request. Add new files with the `*.test.ts` suffix and mock async stores through Zustand's `useXXXStore.getState()`. Until automated CI is added, aim for manual coverage of critical flows—auth, routing, and token persistence.
+All smoke and integration coverage belongs under `__tests__/`, following the `auth.test.ts` pattern of exporting helper routines plus a `runAllTests` orchestrator. Execute suites with `npx ts-node __tests__/auth.test.ts` (install `ts-node` locally if missing) and capture console output for PR comments. Name new specs `*.test.ts`, favor deterministic mocks through `useXYZStore.getState()`, and prioritize flows touching auth, routing, and token persistence until CI lands.
 
 ## Commit & Pull Request Guidelines
-Commits follow the short, imperative convention visible in `git log` (e.g., `Add model detail overlay with slide animation`). Keep subjects under 72 characters and use additional commits for grouped changes instead of long descriptions. For PRs, include purpose summary, screenshots or recordings for UI updates, reproduction steps, and references to tracked issues. Confirm that linting passes, Expo starts cleanly, and relevant tests have been executed (`npx ts-node __tests__/auth.test.ts`). Tag reviewers who own the affected folder (services, UI, routing) to speed up review.
+Commits should be short, present tense, and imperative (e.g., `Improve onboarding carousel spacing`) and stay under 72 characters. For PRs, include a concise purpose summary, reproduction steps, and screenshots or screen recordings whenever UI changes occur. Confirm `npm run lint` and the manual test suite succeed, ensure Expo boots cleanly (`npm start`), and tag maintainers responsible for the touched folders (services, routing, UI) so reviews stay focused.
+
+## Security & Configuration Tips
+Do not check secrets into the repo—load them through secure Expo config or local `.env` files referenced in `config/`. When integrating new services, register endpoints inside `services/api-client.ts` and gate experimental features behind environment flags to avoid leaking unfinished flows in production builds.
 
 
 
