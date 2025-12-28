@@ -125,11 +125,10 @@ export function ImageGenerating({
     onGenerateModel?.();
   };
 
-  const headerTitle = 'AI Image Selection';
-  const statusTitle = isGenerating ? 'Generating your images…' : 'Select one image to continue';
-  const statusCaption = isGenerating
-    ? 'This may take a few seconds'
-    : 'These images are AI-generated';
+  const headerTitle = 'AI 图像选择';
+  const headerSubtitle = isGenerating ? '请稍候，正在生成新的预览图' : '请选择一张最符合需求的图';
+  const statusTitle = isGenerating ? '正在生成图片…' : '选择一张图片继续';
+  const statusCaption = isGenerating ? '预计几秒内完成' : '';
   const regenerateColor = isGenerating ? secondaryTextColor : palette.accent;
   const regenerateIcon = isGenerating ? 'hourglass' : 'arrow.clockwise';
 
@@ -139,13 +138,11 @@ export function ImageGenerating({
         <TouchableOpacity onPress={onCancel} activeOpacity={0.7} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>{headerTitle}</Text>
+        <View style={styles.headerTitles}>
+          <Text style={[styles.headerTitle, { color: textColor }]}>{headerTitle}</Text>
+          <Text style={[styles.headerSubtitle, { color: secondaryTextColor }]}>{headerSubtitle}</Text>
+        </View>
         <View style={styles.headerSpacer} />
-      </Animated.View>
-
-      <Animated.View style={[styles.statusBlock, { opacity: fadeAnim }]}>
-        <Text style={[styles.statusTitle, { color: palette.accent }]}>{statusTitle}</Text>
-        <Text style={[styles.statusCaption, { color: secondaryTextColor }]}>{statusCaption}</Text>
       </Animated.View>
 
       <Animated.ScrollView
@@ -269,10 +266,10 @@ export function ImageGenerating({
               activeOpacity={0.8}
             >
               <IconSymbol name={regenerateIcon as any} size={18} color={regenerateColor} />
-              <Text style={[styles.secondaryButtonText, { color: regenerateColor }]}>
-                {isGenerating ? 'Regenerating…' : 'Regenerate Images'}
-              </Text>
-            </TouchableOpacity>
+            <Text style={[styles.secondaryButtonText, { color: regenerateColor }]}>
+              {isGenerating ? '重新生成中…' : '重新生成'}
+            </Text>
+          </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.primaryButtonWrapper, { flex: 1 }]}
@@ -288,14 +285,14 @@ export function ImageGenerating({
                   style={styles.primaryButton}
                 >
                   <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
-                  <Text style={styles.primaryButtonText}>Generate 3D Model</Text>
-                </LinearGradient>
-              ) : (
-                <View style={[styles.primaryButton, { backgroundColor: palette.disabled }]}>
-                  <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
-                  <Text style={styles.primaryButtonText}>Generate 3D Model</Text>
-                </View>
-              )}
+                <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
+              </LinearGradient>
+            ) : (
+              <View style={[styles.primaryButton, { backgroundColor: palette.disabled }]}>
+                <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
+                <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
+              </View>
+            )}
             </TouchableOpacity>
           </View>
         </View>
@@ -315,6 +312,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: Spacing.sm,
   },
   backButton: {
     width: 44,
@@ -323,22 +321,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerTitles: {
+    flex: 1,
+    gap: 2,
+  },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: FontWeight.bold,
+  },
+  headerSubtitle: {
+    fontSize: FontSize.sm,
   },
   headerSpacer: {
     width: 44,
   },
   statusBlock: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    gap: 6,
-    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    gap: 4,
+    borderWidth: 1,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.sm,
+    borderRadius: 20,
+    alignItems: 'flex-start',
   },
   statusTitle: {
     fontSize: 18,
     fontWeight: FontWeight.bold,
+  },
+  statusTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   statusCaption: {
     fontSize: FontSize.sm,

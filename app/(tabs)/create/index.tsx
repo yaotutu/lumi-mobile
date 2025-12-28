@@ -17,39 +17,39 @@ import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 const QUICK_STYLES = [
   {
     id: 'scifi',
-    label: 'Sci-Fi',
+    label: '科幻',
     icon: 'sparkles',
-    prompt: 'A luminous sci-fi corridor for a spaceship interior with volumetric lighting.',
+    prompt: '一条泛着体积光的太空飞船走廊，金属细节精致。',
   },
   {
     id: 'nature',
-    label: 'Nature',
+    label: '自然',
     icon: 'leaf.fill',
-    prompt: 'A tranquil bonsai tree on a stone pedestal rendered in stylized 3D.',
+    prompt: '一棵摆放在石台上的小型盆景树，柔和晨光照射。',
   },
   {
     id: 'characters',
-    label: 'Characters',
+    label: '角色',
     icon: 'person.crop.circle',
-    prompt: 'A heroic female explorer portrait with cinematic rim lighting, hyper real.',
+    prompt: '一位科幻探险者的半身像，冷暖对比光与精致皮肤。',
   },
   {
     id: 'architecture',
-    label: 'Architecture',
+    label: '建筑',
     icon: 'building.columns',
-    prompt: 'A futuristic pavilion made of glass and white concrete with floating steps.',
+    prompt: '一座悬浮的未来白色展馆，玻璃与曲线结构交错。',
   },
   {
     id: 'fantasy',
-    label: 'Fantasy',
+    label: '幻想',
     icon: 'wand.and.stars',
-    prompt: 'An enchanted floating island with waterfalls and glowing crystals.',
+    prompt: '一个漂浮的奇幻岛屿，瀑布和发光水晶环绕。',
   },
   {
     id: 'vehicles',
-    label: 'Vehicles',
+    label: '载具',
     icon: 'car.fill',
-    prompt: 'A low-poly electric concept car with ambient studio lighting.',
+    prompt: '低多边形的电动概念车，工作室柔光照亮车身。',
   },
 ];
 
@@ -194,7 +194,10 @@ export default function CreateScreen() {
               { borderBottomColor: palette.divider, backgroundColor: palette.background },
             ]}
           >
-            <Text style={[styles.pageTitle, { color: textColor }]}>AI Creation Studio</Text>
+            <Text style={[styles.pageTitle, { color: textColor }]}>AI 创作工作室</Text>
+            <Text style={[styles.pageSubtitle, { color: secondaryTextColor }]}>
+              描述灵感，我们帮你生成精致的 3D 模型
+            </Text>
           </View>
 
           <KeyboardAwareScrollView
@@ -232,7 +235,7 @@ export default function CreateScreen() {
                     color: textColor,
                   },
                 ]}
-                placeholder="A low-poly fox sitting on a rock..."
+                placeholder="描述你想要的 3D 模型细节..."
                 placeholderTextColor={tertiaryTextColor}
                 value={prompt}
                 onChangeText={handlePromptChange}
@@ -269,7 +272,7 @@ export default function CreateScreen() {
                 >
                   <IconSymbol name="triangle.fill" size={12} color={palette.accent} />
                 </View>
-                <Text style={[styles.quickStylesTitle, { color: textColor }]}>Quick Styles</Text>
+                <Text style={[styles.quickStylesTitle, { color: textColor }]}>快速灵感</Text>
               </View>
 
               <View style={styles.quickStylesGrid}>
@@ -307,7 +310,7 @@ export default function CreateScreen() {
               </View>
 
               <Text style={[styles.tipText, { color: tertiaryTextColor }]}>
-                Tip: Tap a tag to auto-fill a starter prompt.
+                小提示：点击标签即可自动填入示例描述
               </Text>
             </View>
             <View style={[styles.actionSection, { paddingBottom: Spacing.lg }]}>
@@ -334,7 +337,7 @@ export default function CreateScreen() {
                 activeOpacity={0.85}
               >
                 <Text style={styles.primaryButtonText}>
-                  {isSubmitting ? 'Creating…' : 'Generate Images'}
+                  {isSubmitting ? '生成中…' : '生成图片'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -419,12 +422,17 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    gap: Spacing.xs,
   },
   pageTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
+  },
+  pageSubtitle: {
+    fontSize: FontSize.sm,
+    lineHeight: 18,
   },
   scrollView: {
     flex: 1,
