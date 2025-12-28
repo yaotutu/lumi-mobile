@@ -41,7 +41,7 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
   const borderColor = palette.border;
 
   const progress = task.modelProgress || 0;
-  const gradientColors = isDark ? ['#3B82F6', '#6366F1'] : ['#2680FF', '#5A8BFF'];
+  const gradientColors: [string, string] = isDark ? ['#3B82F6', '#6366F1'] : ['#2680FF', '#5A8BFF'];
   const primaryShadow = gradientColors[0];
 
   // 淡入动画
@@ -112,7 +112,9 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
         </TouchableOpacity>
         <View style={styles.headerTitles}>
           <Text style={[styles.title, { color: textColor }]}>AI Model Builder</Text>
-          <Text style={[styles.subtitle, { color: secondaryTextColor }]}>{stages[currentStage]}</Text>
+          <Text style={[styles.subtitle, { color: secondaryTextColor }]}>
+            {stages[currentStage]}
+          </Text>
         </View>
         <View style={styles.headerSpacer} />
       </Animated.View>

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Platform, Image, StyleSheet, View, Pressable } from 'react-native';
+import { Platform, Image, StyleSheet, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Colors, BorderRadius, Spacing } from '@/constants/theme';

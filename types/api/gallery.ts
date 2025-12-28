@@ -18,6 +18,7 @@ export interface GalleryQueryParams {
   sort?: 'latest' | 'popular' | 'liked';
   limit?: number;
   offset?: number;
+  category?: string;
 }
 
 // 画廊模型详情响应 (JSend 格式)

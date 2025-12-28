@@ -9,7 +9,7 @@
  */
 
 import { StyleSheet, Pressable, Animated } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/themed-text';
@@ -29,7 +29,6 @@ export function MenuItem({
 }: MenuItemProps) {
   // 获取主题颜色
   const tint = useThemeColor({}, 'tint');
-  const text = useThemeColor({}, 'text');
   const secondaryText = useThemeColor({}, 'secondaryText');
   const cardBackground = useThemeColor({}, 'background');
   const border = useThemeColor({}, 'border');
@@ -82,7 +81,7 @@ export function MenuItem({
       >
         {/* 左侧图标 */}
         <ThemedView style={styles.iconContainer}>
-          <IconSymbol name={icon as any} size={24} color={tint} />
+          <IconSymbol name={icon} size={24} color={tint} />
         </ThemedView>
 
         {/* 中间文本区域 */}

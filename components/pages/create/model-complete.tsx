@@ -36,7 +36,13 @@ interface ModelCompleteProps {
   isDark: boolean;
 }
 
-export function ModelComplete({ task, onView3D, onCreateNew, paddingBottom, isDark }: ModelCompleteProps) {
+export function ModelComplete({
+  task,
+  onView3D,
+  onCreateNew,
+  paddingBottom,
+  isDark,
+}: ModelCompleteProps) {
   const palette = useMemo(() => (isDark ? DARK_PALETTE : LIGHT_PALETTE), [isDark]);
   const backgroundColor = palette.background;
   const textColor = palette.text;
@@ -60,7 +66,8 @@ export function ModelComplete({ task, onView3D, onCreateNew, paddingBottom, isDa
     }).start();
   }, [fadeAnim, scaleAnim]);
 
-  const selectedImage = task.images?.find(img => img.id === task.selectedImageId) ?? task.images?.[0];
+  const selectedImage =
+    task.images?.find(img => img.id === task.selectedImageId) ?? task.images?.[0];
   const heroSource = selectedImage ? { uri: selectedImage.url || selectedImage.thumbnail } : null;
   const modelFormat = (task.modelUrl?.split('.').pop() || 'OBJ').toUpperCase();
 
@@ -117,7 +124,9 @@ export function ModelComplete({ task, onView3D, onCreateNew, paddingBottom, isDa
           ) : (
             <View style={[styles.heroPlaceholder, { backgroundColor: palette.badge }]}>
               <IconSymbol name="cube" size={48} color={secondaryTextColor} />
-              <Text style={[styles.heroPlaceholderText, { color: secondaryTextColor }]}>等待预览</Text>
+              <Text style={[styles.heroPlaceholderText, { color: secondaryTextColor }]}>
+                等待预览
+              </Text>
             </View>
           )}
           <View style={[styles.heroBadge, { backgroundColor: palette.badge }]}>
@@ -156,7 +165,11 @@ export function ModelComplete({ task, onView3D, onCreateNew, paddingBottom, isDa
       <View
         style={[
           styles.bottomBar,
-          { backgroundColor, borderTopColor: palette.border, paddingBottom: paddingBottom + Spacing.md },
+          {
+            backgroundColor,
+            borderTopColor: palette.border,
+            paddingBottom: paddingBottom + Spacing.md,
+          },
         ]}
       >
         <TouchableOpacity

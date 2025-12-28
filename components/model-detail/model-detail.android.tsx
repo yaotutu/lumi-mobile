@@ -35,8 +35,6 @@ const formatFileSize = (bytes: number | null | undefined): string => {
 export const ModelDetail = React.memo(
   ({
     model,
-    onShare,
-    onBookmark,
     onDownload,
     onAddToQueue,
     on3DPreview,
@@ -44,18 +42,6 @@ export const ModelDetail = React.memo(
   }: ModelDetailProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
-
-    // 处理分享
-    const handleShare = () => {
-      logger.info('分享模型:', model.name);
-      onShare?.();
-    };
-
-    // 处理书签
-    const handleBookmark = () => {
-      logger.info('收藏模型:', model.name);
-      onBookmark?.();
-    };
 
     // 处理下载
     const handleDownload = () => {

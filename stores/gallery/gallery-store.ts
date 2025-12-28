@@ -74,7 +74,7 @@ export const useGalleryStore = create<GalleryState>()(
           try {
             logger.info(`获取模型数据: page=${page}, options=`, options);
 
-            const response = await fetchGalleryModels(
+            const data = await fetchGalleryModels(
               {
                 sort: options.sort || 'latest',
                 limit: pageSize,
@@ -86,20 +86,7 @@ export const useGalleryStore = create<GalleryState>()(
               }
             );
 
-            // JSend 格式验证
-            if (response.status !== 'success') {
-              throw new Error('获取数据失败');
-            }
-
-            const newModels = response.data.items;
-
-            // 调试日志：查看图片URL
-            logger.debug('模型数据示例:', newModels[0]);
-            if (newModels[0]?.previewImageUrl) {
-              logger.debug('原始图片URL:', newModels[0].previewImageUrl);
-              const baseURL = 'http://192.168.100.100:4000';
-              logger.debug('完整图片URL应为:', `${baseURL}${newModels[0].previewImageUrl}`);
-            }
+            const newModels = data.items ?? [];
 
             set(state => {
               if (page === 1) {

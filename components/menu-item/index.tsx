@@ -5,11 +5,8 @@
  */
 
 import { Platform } from 'react-native';
-import type { MenuItemProps } from './types';
-
-// 平台特定导入
-const MenuItemIOS = require('./menu-item.ios').MenuItem;
-const MenuItemAndroid = require('./menu-item.android').MenuItem;
+import { MenuItem as MenuItemIOS } from './menu-item.ios';
+import { MenuItem as MenuItemAndroid } from './menu-item.android';
 
 /**
  * MenuItem 组件
@@ -18,13 +15,15 @@ const MenuItemAndroid = require('./menu-item.android').MenuItem;
  * - iOS: 使用毛玻璃效果和 SF Symbols
  * - Android: 使用 Material Design 和涟漪效果
  */
-export const MenuItem = Platform.select({
-  ios: () => MenuItemIOS,
-  android: () => MenuItemAndroid,
-  // Web 平台默认使用 Android 版本
-  web: () => MenuItemAndroid,
-  default: () => MenuItemAndroid,
-})();
+const MenuItemComponent =
+  Platform.select({
+    ios: MenuItemIOS,
+    android: MenuItemAndroid,
+    web: MenuItemAndroid,
+    default: MenuItemAndroid,
+  }) || MenuItemAndroid;
+
+export const MenuItem = MenuItemComponent;
 
 // 导出类型
 export type { MenuItemProps } from './types';

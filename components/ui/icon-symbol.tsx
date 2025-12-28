@@ -6,7 +6,7 @@ import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
 type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
+export type IconSymbolName = keyof typeof MAPPING;
 
 /**
  * Add your SF Symbols to Material Icons mappings here.
@@ -31,6 +31,21 @@ const MAPPING = {
   'arrow.down.circle': 'cloud-download',
   clock: 'schedule',
   'plus.circle': 'add-circle-outline',
+  'triangle.fill': 'change-history',
+  'arrow.clockwise': 'autorenew',
+  'cube.fill': 'view-in-ar',
+  cube: 'view-in-ar',
+  'printer.fill': 'print',
+  ellipsis: 'more-horiz',
+  'exclamationmark.triangle.fill': 'warning',
+  'photo.on.rectangle': 'photo',
+  hourglass: 'hourglass-bottom',
+  'pawprint.fill': 'pets',
+  'building.2.fill': 'apartment',
+  'cpu.fill': 'memory',
+  'leaf.fill': 'eco',
+  'building.columns': 'account-balance',
+  'car.fill': 'directions-car',
   'cube.box.fill': 'view-in-ar', // 3D 打印机图标 - 使用 AR 立方体图标
 } as IconMapping;
 

@@ -7,24 +7,11 @@ import React, { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import type { ExtendedViewerProps, ViewerMode } from './types';
 import { logger } from '@/utils/logger';
+import { ObjViewer } from './native/obj-viewer';
+import { ObjViewerWebView } from './web/obj-viewer-webview';
 
-// 动态导入查看器组件
-let NativeViewer: any = null;
-let WebViewViewer: any = null;
-
-// 尝试导入原生查看器
-try {
-  NativeViewer = require('./native/obj-viewer').ObjViewer;
-} catch (error) {
-  logger.warn('Native viewer not available', '3DViewer');
-}
-
-// 导入 WebView 查看器
-try {
-  WebViewViewer = require('./web/obj-viewer-webview').ObjViewerWebView;
-} catch (error) {
-  logger.error('WebView viewer not available', '3DViewer');
-}
+const NativeViewer = ObjViewer;
+const WebViewViewer = ObjViewerWebView;
 
 /**
  * 检测是否可以使用原生查看器
@@ -107,7 +94,4 @@ export const Viewer3D: React.FC<ExtendedViewerProps> = props => {
 
 // 默认导出
 export default Viewer3D;
-
-// 导出类型
-export type { ExtendedViewerProps, ViewerMode };
 export * from './types';

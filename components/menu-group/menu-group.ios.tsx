@@ -8,7 +8,7 @@
  * - 支持可选的分组标题
  */
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';

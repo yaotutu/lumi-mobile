@@ -12,7 +12,6 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import type { MenuItemProps } from './types';
@@ -28,7 +27,6 @@ export function MenuItem({
 }: MenuItemProps) {
   // 获取主题颜色
   const tint = useThemeColor({}, 'tint');
-  const text = useThemeColor({}, 'text');
   const secondaryText = useThemeColor({}, 'secondaryText');
   const cardBackground = useThemeColor({}, 'background');
   const rippleColor = useThemeColor({}, 'ripple');
@@ -55,7 +53,7 @@ export function MenuItem({
     >
       {/* 左侧图标 */}
       <View style={styles.iconContainer}>
-        <IconSymbol name={icon as any} size={24} color={tint} />
+        <IconSymbol name={icon} size={24} color={tint} />
       </View>
 
       {/* 中间文本区域 */}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Colors } from '@/constants/theme';
-import type { ColorSchemeName } from 'react-native';
+import type { ColorSchemeName, TextStyle } from 'react-native';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { HeaderGradientBackground } from '@/components/navigation/header-gradient';
 
 interface ImmersiveHeaderOptions {
@@ -21,7 +22,7 @@ export function createImmersiveHeaderOptions({
   colorScheme,
   transparent = false,
   transparentTintColor,
-}: ImmersiveHeaderOptions) {
+}: ImmersiveHeaderOptions): NativeStackNavigationOptions {
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
   const palette = Colors[scheme];
 
@@ -32,10 +33,9 @@ export function createImmersiveHeaderOptions({
     headerTitle: title || '',
     headerTitleStyle: {
       color: tintColor,
-      fontWeight: '600',
-    },
+      fontWeight: '600' as TextStyle['fontWeight'],
+    } satisfies TextStyle,
     headerTintColor: tintColor,
-    headerBackTitleVisible: false,
     headerTransparent: transparent,
     headerStyle: {
       backgroundColor: transparent ? 'transparent' : palette.background,

@@ -256,8 +256,12 @@ export const ObjViewerWebView: React.FC<ViewerProps> = ({
           // 可以在这里处理进度更新
           break;
       }
-    } catch (err) {
+    } catch (parseError) {
       logger.error('Failed to parse WebView message', 'ObjViewerWebView');
+      logger.error(
+        parseError instanceof Error ? parseError.message : String(parseError),
+        'ObjViewerWebView'
+      );
     }
   };
 

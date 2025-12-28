@@ -378,7 +378,6 @@ export const ObjViewer: React.FC<ViewerProps> = ({
         modelLoaderRef.current.cancel();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

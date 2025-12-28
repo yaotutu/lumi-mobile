@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol, type IconSymbolName } from '@/components/ui/icon-symbol';
 import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 import type { GenerationTask } from '@/stores/create/types';
 
@@ -127,10 +127,8 @@ export function ImageGenerating({
 
   const headerTitle = 'AI 图像选择';
   const headerSubtitle = isGenerating ? '请稍候，正在生成新的预览图' : '请选择一张最符合需求的图';
-  const statusTitle = isGenerating ? '正在生成图片…' : '选择一张图片继续';
-  const statusCaption = isGenerating ? '预计几秒内完成' : '';
   const regenerateColor = isGenerating ? secondaryTextColor : palette.accent;
-  const regenerateIcon = isGenerating ? 'hourglass' : 'arrow.clockwise';
+  const regenerateIcon: IconSymbolName = isGenerating ? 'hourglass' : 'arrow.clockwise';
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -140,7 +138,9 @@ export function ImageGenerating({
         </TouchableOpacity>
         <View style={styles.headerTitles}>
           <Text style={[styles.headerTitle, { color: textColor }]}>{headerTitle}</Text>
-          <Text style={[styles.headerSubtitle, { color: secondaryTextColor }]}>{headerSubtitle}</Text>
+          <Text style={[styles.headerSubtitle, { color: secondaryTextColor }]}>
+            {headerSubtitle}
+          </Text>
         </View>
         <View style={styles.headerSpacer} />
       </Animated.View>
@@ -183,7 +183,10 @@ export function ImageGenerating({
                     >
                       {isCurrent && (
                         <Animated.View
-                          style={[styles.shimmer, { transform: [{ translateX: shimmerTranslate }] }]}
+                          style={[
+                            styles.shimmer,
+                            { transform: [{ translateX: shimmerTranslate }] },
+                          ]}
                         >
                           <LinearGradient
                             colors={['transparent', 'rgba(38,128,255,0.35)', 'transparent']}
@@ -265,11 +268,11 @@ export function ImageGenerating({
               disabled={isGenerating}
               activeOpacity={0.8}
             >
-              <IconSymbol name={regenerateIcon as any} size={18} color={regenerateColor} />
-            <Text style={[styles.secondaryButtonText, { color: regenerateColor }]}>
-              {isGenerating ? '重新生成中…' : '重新生成'}
-            </Text>
-          </TouchableOpacity>
+              <IconSymbol name={regenerateIcon} size={18} color={regenerateColor} />
+              <Text style={[styles.secondaryButtonText, { color: regenerateColor }]}>
+                {isGenerating ? '重新生成中…' : '重新生成'}
+              </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.primaryButtonWrapper, { flex: 1 }]}
@@ -285,14 +288,14 @@ export function ImageGenerating({
                   style={styles.primaryButton}
                 >
                   <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
-                <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
-              </LinearGradient>
-            ) : (
-              <View style={[styles.primaryButton, { backgroundColor: palette.disabled }]}>
-                <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
-                <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
-              </View>
-            )}
+                  <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
+                </LinearGradient>
+              ) : (
+                <View style={[styles.primaryButton, { backgroundColor: palette.disabled }]}>
+                  <IconSymbol name="cube.fill" size={18} color="#FFFFFF" />
+                  <Text style={styles.primaryButtonText}>生成 3D 模型</Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>

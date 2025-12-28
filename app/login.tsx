@@ -14,7 +14,6 @@ import { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -26,9 +25,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
@@ -50,9 +47,6 @@ const COUNTDOWN_SECONDS = 60; // 验证码倒计时时长（秒）
 // ============================================
 
 export default function LoginScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-
   // 获取主题颜色
   const tint = useThemeColor({}, 'tint');
   const background = useThemeColor({}, 'background');

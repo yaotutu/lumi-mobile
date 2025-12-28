@@ -6,13 +6,14 @@
  */
 
 import type { StyleProp, ViewStyle } from 'react-native';
+import type { IconSymbolName } from '@/components/ui/icon-symbol';
 
 /**
  * 菜单项 Props 接口
  */
 export interface MenuItemProps {
   /** 菜单项图标名称（SF Symbols 或 Material Icons） */
-  icon: string;
+  icon: IconSymbolName;
   /** 菜单项标题文本 */
   title: string;
   /** 可选的描述文本（显示在标题下方） */

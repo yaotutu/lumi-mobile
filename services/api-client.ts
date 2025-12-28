@@ -95,6 +95,36 @@ export class ApiError extends Error {
 }
 
 /**
+ * 未授权回调
+ */
+type UnauthorizedHandler = () => void | Promise<void>;
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+let isHandlingUnauthorized = false;
+
+async function handleUnauthorizedNavigation() {
+  if (isHandlingUnauthorized) {
+    return;
+  }
+  isHandlingUnauthorized = true;
+
+  try {
+    if (unauthorizedHandler) {
+      await unauthorizedHandler();
+    } else {
+      router.replace('/login');
+    }
+  } catch (navigationError) {
+    logger.warn('跳转登录页面失败:', navigationError);
+  } finally {
+    isHandlingUnauthorized = false;
+  }
+}
+
+export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
+  unauthorizedHandler = handler;
+};
+
+/**
  * Token 管理工具
  */
 export const tokenManager = {
@@ -206,9 +236,8 @@ async function apiClient(url: string, options: ApiClientOptions = {}): Promise<R
         // 清除无效 Token
         await tokenManager.clearToken();
 
-        // 跳转到登录页面
-        // 注意：登录页面暂时使用 alert 提示，后续会创建实际页面
-        // router.push('/login' as any);
+        // 通知未授权处理器
+        await handleUnauthorizedNavigation();
 
         // 返回一个特殊的错误，由调用方处理
         throw new ApiError(401, '未登录，请先登录', 'UNAUTHORIZED');

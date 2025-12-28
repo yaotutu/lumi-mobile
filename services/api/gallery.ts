@@ -5,7 +5,7 @@
 import { API_ENDPOINTS } from '@/config/api';
 import type { GalleryListResponse, GalleryModel, GalleryQueryParams } from '@/types';
 import { logger } from '@/utils/logger';
-import { get, post } from '../http/client';
+import { apiGet, apiPost } from '../api-client';
 
 /**
  * 获取画廊模型列表
@@ -13,28 +13,43 @@ import { get, post } from '../http/client';
 export async function fetchGalleryModels(
   params: GalleryQueryParams = {},
   options?: { signal?: AbortSignal }
-): Promise<GalleryListResponse> {
+): Promise<GalleryListResponse['data']> {
   const { sort = 'latest', limit = 20, offset = 0 } = params;
 
-  return get<GalleryListResponse>(
-    API_ENDPOINTS.gallery.models,
+  const query = new URLSearchParams({
+    sort,
+    limit: String(limit),
+    offset: String(offset),
+    ...(params.category ? { category: params.category } : {}),
+  });
+
+  const result = await apiGet<GalleryListResponse['data']>(
+    `${API_ENDPOINTS.gallery.models}?${query.toString()}`,
     {
-      sort,
-      limit,
-      offset,
-    },
-    options
+      signal: options?.signal,
+    }
   );
+
+  if (!result.success) {
+    logger.error('获取画廊列表失败:', result.error);
+    throw result.error;
+  }
+
+  return result.data;
 }
 
 /**
  * 获取单个模型详情
  */
 export async function fetchModelDetail(id: string): Promise<GalleryModel> {
-  const response = await get<{ status: 'success'; data: GalleryModel }>(
-    API_ENDPOINTS.gallery.modelDetail(id)
-  );
-  return response.data;
+  const result = await apiGet<GalleryModel>(API_ENDPOINTS.gallery.modelDetail(id));
+
+  if (!result.success) {
+    logger.error('获取模型详情失败:', result.error);
+    throw result.error;
+  }
+
+  return result.data;
 }
 
 /**
@@ -42,7 +57,10 @@ export async function fetchModelDetail(id: string): Promise<GalleryModel> {
  */
 export async function recordModelDownload(id: string): Promise<void> {
   try {
-    await post(API_ENDPOINTS.gallery.modelDownload(id));
+    const result = await apiPost<null>(API_ENDPOINTS.gallery.modelDownload(id), {});
+    if (!result.success) {
+      logger.error('记录下载失败:', result.error);
+    }
   } catch (error) {
     logger.error('记录下载失败:', error);
     // 不抛出错误,下载计数失败不应影响用户体验

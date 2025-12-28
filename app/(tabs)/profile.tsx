@@ -48,7 +48,7 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   const profile = {
     name: user?.nickName || user?.userName || DEFAULT_PROFILE.name,
@@ -66,8 +66,11 @@ export default function ProfileScreen() {
 
   return (
     <ScreenWrapper edges={['top']}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={[styles.card, styles.sectionSpacing, { backgroundColor: colors.card }]}>
           <Image source={{ uri: profile.avatar }} style={styles.avatar} />
           <View>
@@ -75,7 +78,9 @@ export default function ProfileScreen() {
             <ThemedText style={[styles.email, { color: colors.secondaryText }]}>
               {profile.email}
             </ThemedText>
-            <ThemedText style={[styles.id, { color: colors.secondaryText }]}>{profile.id}</ThemedText>
+            <ThemedText style={[styles.id, { color: colors.secondaryText }]}>
+              {profile.id}
+            </ThemedText>
           </View>
         </View>
 
@@ -95,7 +100,9 @@ export default function ProfileScreen() {
               <ThemedText style={[styles.statValue, { color: colors.headerText }]}>
                 {item.value}
               </ThemedText>
-              <ThemedText style={[styles.statLabel, { color: colors.link }]}>{item.label}</ThemedText>
+              <ThemedText style={[styles.statLabel, { color: colors.link }]}>
+                {item.label}
+              </ThemedText>
             </View>
           ))}
         </View>
@@ -114,7 +121,9 @@ export default function ProfileScreen() {
                   {item.label}
                 </ThemedText>
                 <Ionicons name="chevron-forward" size={20} color={colors.chevron} />
-                {index !== group.length - 1 && <View style={[styles.rowDivider, { backgroundColor: colors.divider }]} />}
+                {index !== group.length - 1 && (
+                  <View style={[styles.rowDivider, { backgroundColor: colors.divider }]} />
+                )}
               </TouchableOpacity>
             ))}
           </View>

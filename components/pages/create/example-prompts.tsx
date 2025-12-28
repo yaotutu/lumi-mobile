@@ -1,27 +1,34 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol, type IconSymbolName } from '@/components/ui/icon-symbol';
 import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 
+interface ExamplePrompt {
+  icon: IconSymbolName; // 图标
+  text: string;
+  fullPrompt: string;
+  gradient: readonly [string, string];
+}
+
 // 示例提示词配置
-const EXAMPLE_PROMPTS = [
+const EXAMPLE_PROMPTS: ExamplePrompt[] = [
   {
     icon: 'pawprint.fill', // 图标名称
     text: '低多边形狐狸', // 提示词文本
     fullPrompt: '一只坐在石头上的低多边形狐狸', // 完整提示词
-    gradient: ['#FF6B6B', '#FF8E53'], // 渐变色
+    gradient: ['#FF6B6B', '#FF8E53'] as const, // 渐变色
   },
   {
     icon: 'building.2.fill', // 图标名称
     text: '赛博朋克城市', // 提示词文本
     fullPrompt: '赛博朋克风格的未来城市建筑', // 完整提示词
-    gradient: ['#4FACFE', '#00F2FE'], // 渐变色
+    gradient: ['#4FACFE', '#00F2FE'] as const, // 渐变色
   },
   {
     icon: 'cpu.fill', // 图标名称
     text: '可爱机器人', // 提示词文本
     fullPrompt: '卡通风格的可爱机器人', // 完整提示词
-    gradient: ['#43E97B', '#38F9D7'], // 渐变色
+    gradient: ['#43E97B', '#38F9D7'] as const, // 渐变色
   },
 ];
 

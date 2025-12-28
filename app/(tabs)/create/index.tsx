@@ -11,10 +11,17 @@ import { ModelComplete } from '@/components/pages/create/model-complete';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { useCreateStore } from '@/stores';
 import { logger } from '@/utils/logger';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol, type IconSymbolName } from '@/components/ui/icon-symbol';
 import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 
-const QUICK_STYLES = [
+type QuickStyle = {
+  id: string;
+  label: string;
+  icon: IconSymbolName;
+  prompt: string;
+};
+
+const QUICK_STYLES: QuickStyle[] = [
   {
     id: 'scifi',
     label: '科幻',
@@ -187,12 +194,7 @@ export default function CreateScreen() {
     if (!currentTask || currentTask.status === 'cancelled') {
       return (
         <View style={styles.creatorContainer}>
-          <View
-            style={[
-              styles.pageHeader,
-              { borderBottomColor: palette.divider },
-            ]}
-          >
+          <View style={[styles.pageHeader, { borderBottomColor: palette.divider }]}>
             <View style={styles.pageLogo}>
               <LinearGradient
                 colors={[palette.accent, isDark ? '#3B68FF' : '#5A8BFF']}
@@ -277,7 +279,9 @@ export default function CreateScreen() {
                   style={[
                     styles.quickStylesIcon,
                     {
-                      backgroundColor: isDark ? 'rgba(38, 128, 255, 0.15)' : 'rgba(38, 128, 255, 0.1)',
+                      backgroundColor: isDark
+                        ? 'rgba(38, 128, 255, 0.15)'
+                        : 'rgba(38, 128, 255, 0.1)',
                     },
                   ]}
                 >
@@ -303,7 +307,7 @@ export default function CreateScreen() {
                       activeOpacity={0.85}
                     >
                       <IconSymbol
-                        name={style.icon as any}
+                        name={style.icon}
                         size={16}
                         color={isActive ? palette.accent : secondaryTextColor}
                       />

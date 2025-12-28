@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import type { StyleOption } from '@/stores/style';
-import { getStyleOptions } from '@/stores';
+import type { IconSymbolName } from '@/components/ui/icon-symbol';
 
 // 获取风格对应的颜色
 function getStyleColor(category: string): string {
@@ -16,6 +14,20 @@ function getStyleColor(category: string): string {
   return colors[category] || '#666666';
 }
 
+interface StyleOption {
+  id: string;
+  name: string;
+  category: string;
+  icon: IconSymbolName;
+}
+
+const STYLE_OPTIONS: StyleOption[] = [
+  { id: 'realistic', name: '真实写实', category: 'realistic', icon: 'cube' },
+  { id: 'cartoon', name: '卡通手绘', category: 'cartoon', icon: 'sparkles' },
+  { id: 'lowpoly', name: '低多边形', category: 'lowpoly', icon: 'cube.fill' },
+  { id: 'cyberpunk', name: '赛博朋克', category: 'cyberpunk', icon: 'triangle.fill' },
+];
+
 interface StyleSelectorProps {
   selectedStyle: StyleOption | null;
   onStyleSelect: (style: StyleOption) => void;
@@ -23,17 +35,11 @@ interface StyleSelectorProps {
 }
 
 export function StyleSelector({ selectedStyle, onStyleSelect, textColor }: StyleSelectorProps) {
-  const [styleOptions, setStyleOptions] = useState<StyleOption[]>([]);
-
-  useEffect(() => {
-    setStyleOptions(getStyleOptions());
-  }, []);
-
   return (
     <View style={styles.container}>
       <Text style={[styles.title, { color: textColor }]}>Choose a style</Text>
       <View style={styles.grid}>
-        {styleOptions.map(style => (
+        {STYLE_OPTIONS.map(style => (
           <TouchableOpacity
             key={style.id}
             style={[styles.styleCard, selectedStyle?.id === style.id && styles.styleCardSelected]}
