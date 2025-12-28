@@ -13,7 +13,6 @@ import { ThemedText } from '@/components/themed-text';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
-import { SimpleTabHeader } from '@/components/layout/simple-tab-header';
 
 const DEFAULT_PROFILE = {
   name: 'Alex Chroma',
@@ -67,12 +66,7 @@ export default function ProfileScreen() {
 
   return (
     <ScreenWrapper edges={['top']}>
-      <SimpleTabHeader title="我的" subtitle="管理账号、设备与创作" />
-      <ScrollView
-        style={{ flex: 1, backgroundColor: colors.screen }}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         <View style={[styles.card, styles.sectionSpacing, { backgroundColor: colors.card }]}>
           <Image source={{ uri: profile.avatar }} style={styles.avatar} />

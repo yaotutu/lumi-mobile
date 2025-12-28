@@ -111,7 +111,6 @@ export default function CreateScreen() {
 
   // 动态颜色
   const palette = useMemo(() => (isDark ? DARK_PALETTE : LIGHT_PALETTE), [isDark]);
-  const backgroundColor = palette.background;
   const textColor = palette.text;
   const secondaryTextColor = palette.secondary;
   const tertiaryTextColor = palette.tertiary;
@@ -191,9 +190,20 @@ export default function CreateScreen() {
           <View
             style={[
               styles.pageHeader,
-              { borderBottomColor: palette.divider, backgroundColor: palette.background },
+              { borderBottomColor: palette.divider },
             ]}
           >
+            <View style={styles.pageLogo}>
+              <LinearGradient
+                colors={[palette.accent, isDark ? '#3B68FF' : '#5A8BFF']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.pageLogoGradient}
+              >
+                <IconSymbol name="wand.and.stars" size={18} color="#FFFFFF" />
+              </LinearGradient>
+              <Text style={[styles.pageLabel, { color: palette.accent }]}>AI 创作</Text>
+            </View>
             <Text style={[styles.pageTitle, { color: textColor }]}>AI 创作工作室</Text>
             <Text style={[styles.pageSubtitle, { color: secondaryTextColor }]}>
               描述灵感，我们帮你生成精致的 3D 模型
@@ -207,6 +217,7 @@ export default function CreateScreen() {
               { paddingBottom: contentPaddingBottom + Spacing.xxl },
             ]}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
           >
             <View
               style={[
@@ -408,7 +419,7 @@ export default function CreateScreen() {
   };
 
   return (
-    <ScreenWrapper edges={['top']} style={{ flex: 1, backgroundColor }}>
+    <ScreenWrapper edges={['top']} style={{ flex: 1 }}>
       {renderContent()}
     </ScreenWrapper>
   );
@@ -422,17 +433,34 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: Spacing.lg,
     alignItems: 'flex-start',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   pageTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
     letterSpacing: 0.2,
   },
   pageSubtitle: {
     fontSize: FontSize.sm,
     lineHeight: 18,
+  },
+  pageLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  pageLogoGradient: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pageLabel: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
   },
   scrollView: {
     flex: 1,
