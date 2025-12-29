@@ -7,10 +7,12 @@
 import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { ThemedText } from '@/components/themed-text';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
 
@@ -45,6 +47,8 @@ type IoniconName = keyof typeof Ionicons.glyphMap;
 export default function ProfileScreen() {
   const isDark = useColorScheme() === 'dark';
   const { user, checkAuth, logout } = useAuthStore();
+  // 使用静默认证守卫，作为额外的防护层
+  useAuthGuard({ pageName: '个人中心页面' });
 
   useEffect(() => {
     checkAuth();
@@ -61,7 +65,11 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     logger.info('用户点击退出登录');
+    // 调用 Store 的 logout 方法，清除认证状态和 Token
     await logout();
+    // 退出后立即跳转到登录页
+    // 使用 replace 而不是 push，避免用户通过返回按钮回到个人中心
+    router.replace('/login');
   };
 
   return (

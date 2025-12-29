@@ -10,6 +10,7 @@ import type {
   RegisterRequest,
   SendVerificationCodeRequest,
 } from '@/types/api/auth';
+import type { UserProfile } from '@/stores/auth/types';
 import { logger } from '@/utils/logger';
 
 /**
@@ -85,10 +86,10 @@ export async function logout(): Promise<ApiResult<null>> {
 /**
  * 获取用户信息（需要 Token）
  */
-export async function getUserProfile(): Promise<ApiResult<any>> {
+export async function getUserProfile(): Promise<ApiResult<UserProfile>> {
   logger.info('获取用户信息');
 
-  const result = await apiGet<any>('/api/auth/me');
+  const result = await apiGet<UserProfile>('/api/auth/me');
 
   if (result.success) {
     logger.info('获取用户信息成功');

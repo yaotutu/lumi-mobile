@@ -201,24 +201,49 @@ export const useAuthStore = create<AuthStore>()(
 
       // 检查登录状态
       checkAuth: async () => {
-        const token = await tokenManager.getToken();
+        // 设置加载状态
+        set(
+          produce((state: AuthStore) => {
+            state.isLoading = true;
+          })
+        );
 
-        if (token) {
-          set(
-            produce((state: AuthStore) => {
-              state.isAuthenticated = true;
-              state.token = token;
-            })
-          );
+        try {
+          const token = await tokenManager.getToken();
 
-          // 获取用户信息
-          await get().fetchProfile();
-        } else {
+          if (token) {
+            set(
+              produce((state: AuthStore) => {
+                state.isAuthenticated = true;
+                state.token = token;
+              })
+            );
+
+            // 获取用户信息
+            await get().fetchProfile();
+          } else {
+            set(
+              produce((state: AuthStore) => {
+                state.isAuthenticated = false;
+                state.token = null;
+                state.user = null;
+              })
+            );
+          }
+        } catch (error) {
+          logger.error('检查登录状态失败', error);
           set(
             produce((state: AuthStore) => {
               state.isAuthenticated = false;
               state.token = null;
               state.user = null;
+            })
+          );
+        } finally {
+          // 清除加载状态
+          set(
+            produce((state: AuthStore) => {
+              state.isLoading = false;
             })
           );
         }

@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { SimpleTabHeader } from '@/components/layout/simple-tab-header';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { Colors } from '@/constants/theme';
 
 /**
@@ -17,6 +18,8 @@ import { Colors } from '@/constants/theme';
 export default function PrinterScreen() {
   const isDark = useColorScheme() === 'dark';
   const background = isDark ? Colors.dark.background : Colors.light.background;
+  // 使用静默认证守卫，作为额外的防护层
+  useAuthGuard({ pageName: '打印页面' });
 
   return (
     <ScreenWrapper edges={['top']}>

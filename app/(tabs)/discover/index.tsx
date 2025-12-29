@@ -61,8 +61,8 @@ export default function DiscoverScreen() {
   // 缓存分列计算结果，避免每次渲染都重新计算
   const { leftColumn, rightColumn } = useMemo(
     () => ({
-      leftColumn: models?.filter((_: any, index: number) => index % 2 === 0) || [],
-      rightColumn: models?.filter((_: any, index: number) => index % 2 === 1) || [],
+      leftColumn: models?.filter((_, index) => index % 2 === 0) || [],
+      rightColumn: models?.filter((_, index) => index % 2 === 1) || [],
     }),
     [models]
   );

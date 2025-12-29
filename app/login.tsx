@@ -194,7 +194,7 @@ export default function LoginScreen() {
       if (success) {
         // 登录成功，跳转到首页
         logger.info('登录成功，跳转到首页');
-        router.replace('/(tabs)/discover' as any);
+        router.replace('/(tabs)/discover');
       } else {
         setSubmitError('登录失败，请检查邮箱和验证码');
       }
@@ -207,7 +207,7 @@ export default function LoginScreen() {
         success = await login(email.trim(), code.trim());
 
         if (success) {
-          router.replace('/(tabs)/discover' as any);
+          router.replace('/(tabs)/discover');
         }
       } else {
         setSubmitError('注册失败，请检查邮箱和验证码');

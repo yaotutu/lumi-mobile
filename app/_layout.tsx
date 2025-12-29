@@ -11,12 +11,14 @@ import { ErrorBoundary, setupGlobalErrorHandlers } from '@/components/error-boun
 import { setUnauthorizedHandler } from '@/services/api-client';
 import { useAuthStore } from '@/stores';
 
-export const unstable_settings = {
-  initialRouteName: '(tabs)',
-};
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { checkAuth } = useAuthStore();
+
+  // 应用启动时恢复登录状态
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   // 设置全局错误处理器（仅执行一次）
   useEffect(() => {
