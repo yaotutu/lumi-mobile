@@ -762,3 +762,7 @@ logger.error('错误信息', error);
 
 # 重要提示
 - 禁止私自运行项目，如需要运行项目，让用户自行运行
+
+
+## Rules
+- [2025-01-29] Expo Router/React Navigation：如果页面从 Tabs 导航器跳转到外部 Stack 页面（即app/(tabs) 之外的页面），必须在 Stack.Screen 的 options 中自定义headerLeft返回按钮并明确绑定 router.back()，不能依赖默认的 header 返回按钮

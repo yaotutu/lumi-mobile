@@ -41,6 +41,7 @@ export function createImmersiveHeaderOptions({
       backgroundColor: transparent ? 'transparent' : palette.background,
     },
     headerShadowVisible: !transparent,
+    headerBackVisible: true, // 强制显示返回按钮
     headerBackground: transparent
       ? function HeaderBackground() {
           return React.createElement(HeaderGradientBackground, null);

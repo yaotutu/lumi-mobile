@@ -33,13 +33,7 @@ const formatFileSize = (bytes: number | null | undefined): string => {
 };
 
 export const ModelDetail = React.memo(
-  ({
-    model,
-    onDownload,
-    onAddToQueue,
-    on3DPreview,
-    showFloatingHeader: _showFloatingHeader = true, // 兼容 iOS API，Android 不使用该参数
-  }: ModelDetailProps) => {
+  ({ model, onDownload, onAddToQueue, on3DPreview }: ModelDetailProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
 

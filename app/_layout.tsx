@@ -49,7 +49,10 @@ export default function RootLayout() {
                   headerShown: false,
                 }}
               />
-              <Stack.Screen name="model/[id]" />
+              <Stack.Screen
+                name="model/[id]"
+                options={{ headerShown: true }}
+              />
               <Stack.Screen name="model-viewer/[id]" />
             </Stack>
             <StatusBar style="auto" />

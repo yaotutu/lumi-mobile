@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ModelDetail } from '@/components/model-detail';
 import { fetchModelDetail } from '@/services';
 import { ThemedView } from '@/components/themed-view';
@@ -53,12 +54,35 @@ export default function ModelDetailScreen() {
     loadModelDetail();
   }, [id]);
 
-  const getHeaderOptions = (title?: string, options?: { transparent?: boolean }) =>
-    createImmersiveHeaderOptions({
+  const getHeaderOptions = (title?: string, options?: { transparent?: boolean }) => {
+    const baseOptions = createImmersiveHeaderOptions({
       title,
       colorScheme,
       transparent: options?.transparent ?? false,
     });
+
+    return {
+      ...baseOptions,
+      // 隐藏系统默认的返回按钮
+      headerBackVisible: false,
+      // 自定义返回按钮，修复 iOS 第二次进入返回失效的问题
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            logger.info('Header 返回按钮被点击');
+            router.back();
+          }}
+          style={{ marginLeft: 8 }}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={28}
+            color={colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}
+          />
+        </TouchableOpacity>
+      ),
+    };
+  };
 
   // 如果模型不存在，显示错误页面
   if (loading) {
@@ -104,13 +128,9 @@ export default function ModelDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={getHeaderOptions(model.name, { transparent: true })} />
+      <Stack.Screen options={getHeaderOptions(model.name, { transparent: false })} />
       <ModelDetail
         model={model}
-        showFloatingHeader={false}
-        onBack={() => router.back()}
-        onShare={() => logger.info('分享功能待实现')}
-        onBookmark={() => logger.info('收藏功能待实现')}
         onDownload={() => logger.info('下载功能待实现')}
         onAddToQueue={() => logger.info('加入队列功能待实现')}
         on3DPreview={() => {
