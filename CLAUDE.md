@@ -345,32 +345,44 @@ components/
 ## API 接口规范
 
 ### HTTP 客户端
-项目使用统一封装的 HTTP 客户端 (`services/http/client.ts`),基于 `fetch` API。
+项目使用统一封装的 API 客户端 (`services/api-client.ts`),基于 `fetch` API。
 
 **特性**:
-- 自动处理请求/响应拦截
+- 自动拦截 401 并跳转登录
+- 自动添加 Bearer Token
 - 统一错误处理和日志记录
 - 支持请求取消 (AbortController)
-- 自动添加通用请求头
 - 支持 JSend 响应格式
+- 自动转换相对路径为完整 URL
 
 **使用示例**:
 ```typescript
-import { httpClient } from '@/services/http/client';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/services/api-client';
 
 // GET 请求
-const data = await httpClient.get('/api/endpoint');
+const result = await apiGet<DataType>('/api/endpoint');
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.error(result.error);
+}
 
 // POST 请求
-const result = await httpClient.post('/api/endpoint', {
-  body: { key: 'value' }
+const result = await apiPost<ResponseType>('/api/endpoint', {
+  body: JSON.stringify({ key: 'value' })
 });
 
 // 带取消控制器的请求
 const controller = new AbortController();
-const data = await httpClient.get('/api/endpoint', {
+const result = await apiGet<DataType>('/api/endpoint', {
   signal: controller.signal
 });
+
+// Token 管理
+import { tokenManager } from '@/services/api-client';
+await tokenManager.setToken('your-token');
+const token = await tokenManager.getToken();
+await tokenManager.removeToken();
 ```
 
 ### API 服务层
@@ -378,14 +390,33 @@ const data = await httpClient.get('/api/endpoint', {
 
 ```typescript
 // services/api/gallery.ts
-export const galleryApi = {
-  getList: async (params) => {
-    return httpClient.get('/gallery/list', { params });
-  },
-  getDetail: async (id) => {
-    return httpClient.get(`/gallery/${id}`);
-  },
-};
+import { apiGet, apiPost } from '@/services/api-client';
+import { API_ENDPOINTS } from '@/config/api';
+
+export async function fetchGalleryModels(params) {
+  const result = await apiGet<GalleryListResponse>(
+    `${API_ENDPOINTS.gallery.models}?${query.toString()}`,
+    { signal: options?.signal }
+  );
+
+  if (!result.success) {
+    throw result.error;
+  }
+
+  return result.data;
+}
+
+export async function fetchModelDetail(id: string) {
+  const result = await apiGet<GalleryModel>(
+    API_ENDPOINTS.gallery.modelDetail(id)
+  );
+
+  if (!result.success) {
+    throw result.error;
+  }
+
+  return result.data;
+}
 ```
 
 ### JSend 响应格式
@@ -762,6 +793,7 @@ logger.error('错误信息', error);
 
 # 重要提示
 - 禁止私自运行项目，如需要运行项目，让用户自行运行
+- 项目稳定性可靠性优先，不需要炫酷的技巧，优先保证的功能的实现。
 
 
 ## Rules
