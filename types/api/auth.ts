@@ -39,6 +39,15 @@ export interface LoginResponseData {
 }
 
 /**
+ * 获取用户信息响应数据
+ */
+export interface GetUserProfileResponseData {
+  status: 'authenticated' | 'unauthenticated';
+  /** 用户信息（仅在 authenticated 状态下存在） */
+  user: import('@/stores/auth/types').UserProfile | null;
+}
+
+/**
  * JSend 成功响应格式
  */
 export interface JSendSuccess<T = any> {

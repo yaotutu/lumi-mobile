@@ -3,6 +3,36 @@
  */
 
 /**
+ * 用户统计数据
+ */
+export interface UserStats {
+  /** 模型总数 */
+  totalModels: number;
+  /** 公开模型数 */
+  publicModels: number;
+  /** 私有模型数 */
+  privateModels: number;
+  /** 获赞总数 */
+  totalLikes: number;
+  /** 收藏总数 */
+  totalFavorites: number;
+  /** 浏览总数 */
+  totalViews: number;
+  /** 下载总数 */
+  totalDownloads: number;
+  /** 点赞的模型数 */
+  likedModelsCount: number;
+  /** 收藏的模型数 */
+  favoritedModelsCount: number;
+  /** 请求总数 */
+  totalRequests: number;
+  /** 完成的请求数 */
+  completedRequests: number;
+  /** 失败的请求数 */
+  failedRequests: number;
+}
+
+/**
  * 用户信息（匹配后端外部用户服务 UserInfoData 结构）
  */
 export interface UserProfile {
@@ -14,6 +44,8 @@ export interface UserProfile {
   gender?: string;
   createdAt?: number; // Unix 时间戳（秒）
   updatedAt?: number; // Unix 时间戳（秒）
+  /** 用户统计数据 */
+  stats?: UserStats;
 }
 
 /**
@@ -47,7 +79,7 @@ export interface AuthActions {
   /** 登出 */
   logout: () => Promise<void>;
   /** 获取用户信息 */
-  fetchProfile: () => Promise<void>;
+  fetchProfile: () => Promise<boolean>;
   /** 检查登录状态 */
   checkAuth: () => Promise<void>;
   /** 重置状态 */

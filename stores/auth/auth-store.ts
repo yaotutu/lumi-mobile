@@ -188,14 +188,25 @@ export const useAuthStore = create<AuthStore>()(
           const result = await authApi.getUserProfile();
 
           if (result.success) {
+            // 打印获取到的用户数据，用于调试
+            logger.info('✅ 用户信息获取成功');
+            logger.info('👤 用户 ID:', result.data.id);
+            logger.info('👤 用户昵称:', result.data.nickName);
+            logger.info('📊 统计数据:', JSON.stringify(result.data.stats, null, 2));
+
             set(
               produce((state: AuthStore) => {
                 state.user = result.data;
               })
             );
+            return true; // 返回成功状态
+          } else {
+            logger.warn('❌ 获取用户信息失败:', result.error.message);
+            return false; // 返回失败状态
           }
         } catch (error) {
           logger.error('获取用户信息失败:', error);
+          return false; // 返回失败状态
         }
       },
 
@@ -210,6 +221,7 @@ export const useAuthStore = create<AuthStore>()(
 
         try {
           const token = await tokenManager.getToken();
+          logger.info('📌 当前 Token:', token ? token.substring(0, 50) + '...' : 'null');
 
           if (token) {
             set(
@@ -220,7 +232,20 @@ export const useAuthStore = create<AuthStore>()(
             );
 
             // 获取用户信息
-            await get().fetchProfile();
+            const success = await get().fetchProfile();
+
+            // 如果获取用户信息失败（Token 无效），清除认证状态
+            if (!success) {
+              logger.warn('Token 无效，清除认证状态');
+              await tokenManager.clearToken();
+              set(
+                produce((state: AuthStore) => {
+                  state.isAuthenticated = false;
+                  state.token = null;
+                  state.user = null;
+                })
+              );
+            }
           } else {
             set(
               produce((state: AuthStore) => {

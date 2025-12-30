@@ -210,10 +210,10 @@ async function apiClient(url: string, options: ApiClientOptions = {}): Promise<R
     ...(headers as Record<string, string>),
   };
 
-  // 自动添加 Token
+  // 自动添加 Token（后端返回的 token 已包含 "Bearer " 前缀，直接使用）
   const token = await tokenManager.getToken();
   if (token) {
-    finalHeaders['Authorization'] = `Bearer ${token}`;
+    finalHeaders['Authorization'] = token;
   }
 
   // 发送请求

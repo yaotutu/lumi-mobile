@@ -4,17 +4,18 @@
  * Mock 数据即可，无需接入真实 API。
  */
 
-import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { useEffect } from 'react';
+import { StyleSheet, View, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import { useRef, useState, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 
 import { ScreenWrapper } from '@/components/screen-wrapper';
+import { AuthGuard } from '@/components/auth';
 import { ThemedText } from '@/components/themed-text';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
+import { LoadingScreen } from '@/components/ui/loading-screen';
 
 const DEFAULT_PROFILE = {
   name: 'Alex Chroma',
@@ -23,10 +24,18 @@ const DEFAULT_PROFILE = {
   avatar: 'https://images.unsplash.com/illustrations/2?auto=format&fit=crop&w=120&h=120&q=80',
 };
 
-const MOCK_STATS = [
-  { label: 'Creations', value: '128' },
-  { label: 'Favorites', value: '256' },
-  { label: 'Tasks', value: '3' },
+// 默认统计数据（当 API 未返回时使用）
+const DEFAULT_STATS = {
+  totalModels: 0,
+  totalFavorites: 0,
+  totalViews: 0,
+};
+
+// 统计数据配置（标签）
+const STATS_CONFIG = [
+  { key: 'totalModels' as const, label: '3D模型' },
+  { key: 'totalFavorites' as const, label: '收藏' },
+  { key: 'totalViews' as const, label: '浏览量' },
 ];
 
 const MENU_SECTIONS = [
@@ -46,13 +55,48 @@ type IoniconName = keyof typeof Ionicons.glyphMap;
 
 export default function ProfileScreen() {
   const isDark = useColorScheme() === 'dark';
-  const { user, checkAuth, logout } = useAuthStore();
-  // 使用静默认证守卫，作为额外的防护层
-  useAuthGuard({ pageName: '个人中心页面' });
+  const { user, fetchProfile, logout } = useAuthStore();
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  // 使用 ref 标记是否是首次加载
+  const isFirstLoadRef = useRef(!user);
+  // 用于触发重新渲染的状态
+  const [, forceUpdate] = useState(0);
+
+  // 使用 useFocusEffect：每次页面获得焦点时执行
+  useFocusEffect(
+    useCallback(() => {
+      const refreshProfile = async () => {
+        logger.info('刷新用户信息');
+
+        // 保存是否是首次加载的状态（在修改前）
+        const isFirstLoad = isFirstLoadRef.current;
+
+        const success = await fetchProfile();
+
+        // 首次加载完成后，更新标记并触发重新渲染
+        if (isFirstLoad) {
+          isFirstLoadRef.current = false;
+          forceUpdate(prev => prev + 1);
+        }
+
+        // 如果不是首次加载且刷新失败，弹窗提示
+        if (!isFirstLoad && !success) {
+          Alert.alert('提示', '获取用户信息失败，请检查网络连接', [{ text: '确定' }]);
+        }
+      };
+
+      refreshProfile();
+    }, [fetchProfile])
+  );
+
+  // 首次加载且无数据，显示 loading
+  if (isFirstLoadRef.current && !user) {
+    return (
+      <AuthGuard>
+        <LoadingScreen />
+      </AuthGuard>
+    );
+  }
 
   const profile = {
     name: user?.nickName || user?.userName || DEFAULT_PROFILE.name,
@@ -60,6 +104,9 @@ export default function ProfileScreen() {
     id: user?.id ? `ID: ${user.id}` : DEFAULT_PROFILE.id,
     avatar: user?.avatar || DEFAULT_PROFILE.avatar,
   };
+
+  // 获取真实的统计数据，如果没有则使用默认值
+  const stats = user?.stats || DEFAULT_STATS;
 
   const colors = getPalette(isDark);
 
@@ -73,29 +120,47 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScreenWrapper edges={['top']}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+    <AuthGuard>
+      <ScreenWrapper edges={['top']}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
         <View style={[styles.card, styles.sectionSpacing, { backgroundColor: colors.card }]}>
-          <Image source={{ uri: profile.avatar }} style={styles.avatar} />
-          <View>
-            <ThemedText style={styles.name}>{profile.name}</ThemedText>
-            <ThemedText style={[styles.email, { color: colors.secondaryText }]}>
+          {/* 头像：如果用户有头像则显示图片，否则显示默认 emoji */}
+          {user?.avatar ? (
+            <Image source={{ uri: profile.avatar }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.iconBackground }]}>
+              <ThemedText style={styles.avatarEmoji}>😊</ThemedText>
+            </View>
+          )}
+          <View style={styles.textContainer}>
+            <ThemedText style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+              {profile.name}
+            </ThemedText>
+            <ThemedText
+              style={[styles.email, { color: colors.secondaryText }]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {profile.email}
             </ThemedText>
-            <ThemedText style={[styles.id, { color: colors.secondaryText }]}>
+            <ThemedText
+              style={[styles.id, { color: colors.secondaryText }]}
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
               {profile.id}
             </ThemedText>
           </View>
         </View>
 
         <View style={[styles.statsCard, styles.sectionSpacing, { backgroundColor: colors.card }]}>
-          {MOCK_STATS.map((item, index) => (
+          {STATS_CONFIG.map((config, index) => (
             <View
-              key={item.label}
+              key={config.key}
               style={[
                 styles.statItem,
                 index === 1 && {
@@ -106,10 +171,10 @@ export default function ProfileScreen() {
               ]}
             >
               <ThemedText style={[styles.statValue, { color: colors.headerText }]}>
-                {item.value}
+                {stats[config.key]}
               </ThemedText>
               <ThemedText style={[styles.statLabel, { color: colors.link }]}>
-                {item.label}
+                {config.label}
               </ThemedText>
             </View>
           ))}
@@ -146,6 +211,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </ScrollView>
     </ScreenWrapper>
+    </AuthGuard>
   );
 }
 
@@ -189,6 +255,22 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     marginRight: 16,
+  },
+  avatarPlaceholder: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarEmoji: {
+    fontSize: 32,
+    lineHeight: 32,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   name: {
     fontSize: 20,

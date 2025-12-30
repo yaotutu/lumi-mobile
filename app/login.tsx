@@ -21,7 +21,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { ThemedText } from '@/components/themed-text';
@@ -57,6 +57,9 @@ export default function LoginScreen() {
 
   // 认证 Store
   const { sendVerificationCode, register, login, isSubmitting, isSendingCode } = useAuthStore();
+
+  // 获取路由参数：登录成功后要跳转的页面
+  const { returnUrl } = useLocalSearchParams<{ returnUrl?: string }>();
 
   // ============================================
   // 状态管理
@@ -192,9 +195,10 @@ export default function LoginScreen() {
       success = await login(email.trim(), code.trim());
 
       if (success) {
-        // 登录成功，跳转到首页
-        logger.info('登录成功，跳转到首页');
-        router.replace('/(tabs)/discover');
+        // 登录成功，跳转到原页面或首页
+        logger.info('登录成功，跳转到目标页面');
+        const targetUrl = returnUrl || '/(tabs)/discover';
+        router.replace(targetUrl as any);
       } else {
         setSubmitError('登录失败，请检查邮箱和验证码');
       }
@@ -207,7 +211,8 @@ export default function LoginScreen() {
         success = await login(email.trim(), code.trim());
 
         if (success) {
-          router.replace('/(tabs)/discover');
+          const targetUrl = returnUrl || '/(tabs)/discover';
+          router.replace(targetUrl as any);
         }
       } else {
         setSubmitError('注册失败，请检查邮箱和验证码');

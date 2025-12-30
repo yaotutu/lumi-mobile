@@ -72,7 +72,7 @@ export default function ModelDetailScreen() {
             logger.info('Header 返回按钮被点击');
             router.back();
           }}
-          style={{ marginLeft: 8 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Ionicons
             name="chevron-back"

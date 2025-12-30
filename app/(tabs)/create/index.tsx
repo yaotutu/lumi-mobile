@@ -5,11 +5,11 @@ import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
-import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { ImageGenerating } from '@/components/pages/create/image-generating';
 import { ModelGenerating } from '@/components/pages/create/model-generating';
 import { ModelComplete } from '@/components/pages/create/model-complete';
 import { ScreenWrapper } from '@/components/screen-wrapper';
+import { AuthGuard } from '@/components/auth';
 import { useCreateStore } from '@/stores';
 import { logger } from '@/utils/logger';
 import { IconSymbol, type IconSymbolName } from '@/components/ui/icon-symbol';
@@ -104,8 +104,6 @@ export default function CreateScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { contentPaddingBottom } = useSafeAreaSpacing();
-  // 使用静默认证守卫，作为额外的防护层
-  useAuthGuard({ pageName: 'AI创作页面' });
 
   const [prompt, setPrompt] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -426,9 +424,11 @@ export default function CreateScreen() {
   };
 
   return (
-    <ScreenWrapper edges={['top']} style={{ flex: 1 }}>
-      {renderContent()}
-    </ScreenWrapper>
+    <AuthGuard>
+      <ScreenWrapper edges={['top']} style={{ flex: 1 }}>
+        {renderContent()}
+      </ScreenWrapper>
+    </AuthGuard>
   );
 }
 

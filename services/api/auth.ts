@@ -9,6 +9,7 @@ import type {
   LoginResponseData,
   RegisterRequest,
   SendVerificationCodeRequest,
+  GetUserProfileResponseData,
 } from '@/types/api/auth';
 import type { UserProfile } from '@/stores/auth/types';
 import { logger } from '@/utils/logger';
@@ -89,13 +90,44 @@ export async function logout(): Promise<ApiResult<null>> {
 export async function getUserProfile(): Promise<ApiResult<UserProfile>> {
   logger.info('获取用户信息');
 
-  const result = await apiGet<UserProfile>('/api/auth/me');
+  const result = await apiGet<GetUserProfileResponseData>('/api/auth/me');
 
   if (result.success) {
-    logger.info('获取用户信息成功');
+    // 打印完整的响应数据，用于调试
+    logger.info('API 原始响应 data:', JSON.stringify(result.data, null, 2));
+
+    // 检查认证状态
+    if (result.data.status === 'authenticated' && result.data.user) {
+      logger.info('用户已认证，提取用户数据');
+      return {
+        success: true,
+        data: result.data.user,
+      };
+    } else if (result.data.status === 'unauthenticated') {
+      // Token 无效或已过期
+      logger.warn('Token 无效或已过期，用户未认证');
+      return {
+        success: false,
+        error: {
+          type: 'authentication',
+          message: 'Token 无效或已过期',
+          statusCode: 401,
+        },
+      };
+    } else {
+      // 其他错误情况
+      logger.error('未知的认证状态:', result.data.status);
+      return {
+        success: false,
+        error: {
+          type: 'unknown',
+          message: '未知的认证状态',
+          statusCode: 500,
+        },
+      };
+    }
   } else {
     logger.error('获取用户信息失败:', result.error.message);
+    return result;
   }
-
-  return result;
 }

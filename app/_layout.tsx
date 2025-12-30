@@ -10,21 +10,21 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary, setupGlobalErrorHandlers } from '@/components/error-boundary';
 import { setUnauthorizedHandler } from '@/services/api-client';
 import { useAuthStore } from '@/stores';
+import { SessionProvider } from './ctx';
 
-export default function RootLayout() {
+/**
+ * 根布局导航
+ * Tab 页面通过 AuthGuard 组件实现认证保护
+ */
+function RootLayoutNav() {
   const colorScheme = useColorScheme();
-  const { checkAuth } = useAuthStore();
-
-  // 应用启动时恢复登录状态
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
 
   // 设置全局错误处理器（仅执行一次）
   useEffect(() => {
     setupGlobalErrorHandlers();
   }, []);
 
+  // 设置 API 401 未授权处理器
   useEffect(() => {
     const handleUnauthorized = () => {
       const { reset } = useAuthStore.getState();
@@ -37,28 +37,49 @@ export default function RootLayout() {
   }, []);
 
   return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* 应用入口 */}
+        <Stack.Screen name="index" />
+
+        {/* Tab 导航（受保护页面通过 AuthGuard 组件实现认证） */}
+        <Stack.Screen name="(tabs)" />
+
+        {/* 登录页（Modal 模式） */}
+        <Stack.Screen
+          name="login"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+
+        {/* 模型详情页 */}
+        <Stack.Screen
+          name="model/[id]"
+          options={{ headerShown: true }}
+        />
+
+        {/* 3D 模型查看器 */}
+        <Stack.Screen name="model-viewer/[id]" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
+/**
+ * 根布局组件
+ * 用 SessionProvider 包裹整个应用
+ */
+export default function RootLayout() {
+  return (
     <SafeAreaProvider>
       <KeyboardProvider>
         <ErrorBoundary>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen
-                name="login"
-                options={{
-                  presentation: 'modal',
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="model/[id]"
-                options={{ headerShown: true }}
-              />
-              <Stack.Screen name="model-viewer/[id]" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
+          <SessionProvider>
+            <RootLayoutNav />
+          </SessionProvider>
         </ErrorBoundary>
       </KeyboardProvider>
     </SafeAreaProvider>
