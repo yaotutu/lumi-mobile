@@ -1,23 +1,28 @@
 /**
- * MenuItem iOS 平台实现
- *
- * iOS 风格的菜单项组件：
- * - 使用毛玻璃效果（可选）
- * - 细腻的阴影和圆角
- * - SF Symbols 图标
- * - 流畅的按压反馈动画
+ * 统一的 MenuItem 组件
+ * 菜单项，用于在菜单分组中显示可点击的选项
  */
 
 import { StyleSheet, Pressable, Animated } from 'react-native';
 import { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import type { MenuItemProps } from './types';
 
+/**
+ * MenuItem 组件
+ *
+ * @param icon - 左侧图标名称
+ * @param title - 标题文本
+ * @param subtitle - 副标题文本（可选）
+ * @param onPress - 点击回调
+ * @param containerStyle - 容器自定义样式
+ * @param showArrow - 是否显示右侧箭头（默认 true）
+ * @param disabled - 是否禁用（默认 false）
+ */
 export function MenuItem({
   icon,
   title,
@@ -40,7 +45,7 @@ export function MenuItem({
   const handlePressIn = () => {
     if (disabled) return;
 
-    // 缩放动画
+    // 缩放动画（统一使用弹簧动画）
     Animated.spring(scaleAnim, {
       toValue: 0.97,
       useNativeDriver: true,
@@ -104,7 +109,12 @@ export function MenuItem({
         {/* 右侧箭头（可选） */}
         {showArrow && (
           <ThemedView style={styles.arrowContainer}>
-            <Ionicons name="chevron-forward" size={20} color={secondaryText} style={styles.arrow} />
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={secondaryText}
+              style={styles.arrow}
+            />
           </ThemedView>
         )}
       </Pressable>
@@ -113,6 +123,7 @@ export function MenuItem({
 }
 
 const styles = StyleSheet.create({
+  // 容器
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -120,11 +131,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 0.5,
-    // iOS 风格的平滑边缘
   },
+  // 禁用状态
   disabled: {
     opacity: 0.5,
   },
+  // 图标容器
   iconContainer: {
     width: 40,
     height: 40,
@@ -133,26 +145,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
+  // 文本容器
   textContainer: {
     flex: 1,
     justifyContent: 'center',
   },
+  // 标题
   title: {
     fontSize: 16,
     fontWeight: '400',
     lineHeight: 22,
   },
+  // 副标题
   subtitle: {
     fontSize: 14,
     lineHeight: 20,
     marginTop: 2,
   },
+  // 箭头容器
   arrowContainer: {
     marginLeft: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // 箭头样式
   arrow: {
-    // iOS 风格的箭头样式
+    // 预留用于后续自定义
   },
 });

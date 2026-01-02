@@ -1,29 +1,35 @@
 /**
- * MenuGroup Android 平台实现
- *
- * Material Design 3 风格的菜单分组组件：
- * - 圆角卡片容器
- * - Elevation 阴影系统
- * - 符合 Material Design 的间距和布局
- * - 支持可选的分组标题
+ * 统一的 MenuGroup 组件
+ * 菜单分组容器，用于将相关的菜单项组合在一起
  */
 
-import { StyleSheet, View } from 'react-native';
-
+import { StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import type { MenuGroupProps } from './types';
 
+/**
+ * MenuGroup 组件
+ *
+ * @param children - 子元素（通常是 MenuItem 组件）
+ * @param containerStyle - 容器自定义样式
+ * @param title - 分组标题（可选）
+ */
 export function MenuGroup({ children, containerStyle, title }: MenuGroupProps) {
   // 获取主题颜色
   const background = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
+  const border = useThemeColor({}, 'border');
 
   return (
-    <View style={styles.wrapper}>
+    <ThemedView style={styles.wrapper}>
       {/* 可选的分组标题 */}
-      {title && <ThemedText style={[styles.groupTitle, { color: text }]}>{title}</ThemedText>}
+      {title && (
+        <ThemedText style={[styles.groupTitle, { color: text }]}>
+          {title}
+        </ThemedText>
+      )}
 
       {/* 菜单分组容器 */}
       <ThemedView
@@ -31,34 +37,36 @@ export function MenuGroup({ children, containerStyle, title }: MenuGroupProps) {
           styles.container,
           {
             backgroundColor: background,
+            borderColor: border,
           },
           containerStyle,
         ]}
-        elevation={2}
+        shadow // 启用统一阴影
       >
         {children}
       </ThemedView>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  // 外层容器
   wrapper: {
     marginBottom: 24,
   },
+  // 分组标题
   groupTitle: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
     marginBottom: 8,
     marginLeft: 16,
-    // Material Design 3 标题样式
     textTransform: 'uppercase',
-    letterSpacing: 0.1,
+    letterSpacing: 0.5,
   },
+  // 菜单容器
   container: {
     borderRadius: 12,
-    // Material Design 圆角
-    overflow: 'hidden',
-    // 确保子元素不会超出圆角
+    overflow: 'hidden', // 确保子元素不会超出圆角
+    borderWidth: 0.5,
   },
 });

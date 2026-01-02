@@ -43,7 +43,7 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
 - **语言**: TypeScript 5.9+ (启用严格模式)
 - **动画**: React Native Reanimated ~4.1
 - **手势**: React Native Gesture Handler ~2.28
-- **图标**: Expo Symbols (iOS SF Symbols) 和 @expo/vector-icons
+- **图标**: Ionicons (来自 @expo/vector-icons，跨平台统一)
 - **日志**: react-native-logs (统一日志管理)
 - **状态管理**: Zustand 5.0+ (全局状态) + Immer 11.1+ (不可变更新)
 - **3D渲染**: Three.js ~0.166 + expo-three ~8.0
@@ -75,43 +75,49 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
   - `model-viewer/`: 3D 模型查看器页面
     - `[id].tsx`: 动态路由页面
 
-- **components/**: 全局共享组件（采用平台分离架构）
+- **components/**: 全局共享组件
   - `3d-viewer/`: 3D 模型查看器组件
     - `index.tsx`: 平台选择入口
-    - `native/`: 原生平台实现
-    - `web/`: Web 平台实现
+    - `native/`: 原生平台实现 (expo-three)
+    - `web/`: Web 平台实现 (WebView)
     - `components/`: 共享子组件
     - `types.ts`: 类型定义
   - `error-boundary/`: 全局错误边界组件
     - `index.tsx`: 错误捕获逻辑
     - `types.ts`: 类型定义
   - `haptic-tab/`: 带触觉反馈的标签栏按钮
-    - `index.tsx`: 平台选择入口
-    - `haptic-tab.ios.tsx`: iOS 实现
-    - `haptic-tab.android.tsx`: Android 实现
+    - `index.tsx`: 组件导出
+    - `haptic-tab.tsx`: 统一实现
     - `types.ts`: 类型定义
   - `model-card/`: 模型卡片组件
-    - `index.tsx`: 组件主文件
+    - `index.tsx`: 组件导出
+    - `model-card.tsx`: 统一实现（使用 BlurView）
+    - `card-content.tsx`: 卡片内容子组件
+    - `card-actions.tsx`: 卡片操作子组件
     - `types.ts`: 类型定义
   - `model-detail/`: 模型详情组件
-    - `index.tsx`: 平台选择入口
-    - `model-detail.ios.tsx`: iOS 实现
-    - `model-detail.android.tsx`: Android 实现
+    - `index.tsx`: 组件导出
+    - `model-detail.tsx`: 统一实现
     - `types.ts`: 类型定义
   - `search-bar/`: 搜索栏组件
-    - `index.tsx`: 平台选择入口
-    - `search-bar.ios.tsx`: iOS 实现
-    - `search-bar.android.tsx`: Android 实现
+    - `index.tsx`: 组件导出
+    - `search-bar.tsx`: 统一实现（使用 BlurView）
     - `types.ts`: 类型定义
   - `themed-text/`: 主题化文本组件
-    - `index.tsx`: 平台选择入口
-    - `themed-text.ios.tsx`: iOS 实现
-    - `themed-text.android.tsx`: Android 实现
+    - `index.tsx`: 组件导出
+    - `themed-text.tsx`: 统一实现
     - `types.ts`: 类型定义
   - `themed-view/`: 主题化视图组件
-    - `index.tsx`: 平台选择入口
-    - `themed-view.ios.tsx`: iOS 实现
-    - `themed-view.android.tsx`: Android 实现
+    - `index.tsx`: 组件导出
+    - `themed-view.tsx`: 统一实现
+    - `types.ts`: 类型定义
+  - `menu-group/`: 菜单分组组件
+    - `index.tsx`: 组件导出
+    - `menu-group.tsx`: 统一实现
+    - `types.ts`: 类型定义
+  - `menu-item/`: 菜单项组件
+    - `index.tsx`: 组件导出
+    - `menu-item.tsx`: 统一实现
     - `types.ts`: 类型定义
   - `pages/`: 页面级组件
     - `create/`: 创作页面组件
@@ -122,8 +128,7 @@ npm run reset-project   # 将示例代码移到 app-example 目录,创建空白 
   - `screen-wrapper/`: 安全区域包裹组件
     - `index.tsx`: ScreenWrapper 组件 (统一处理 Safe Area)
   - `ui/`: UI 基础组件
-    - `icon-symbol.tsx`: 跨平台图标组件
-    - `icon-symbol.ios.tsx`: iOS 平台特定图标实现
+    - `icon-symbol.tsx`: 跨平台图标组件（统一实现，使用 Ionicons）
 
 - **config/**: 配置文件
   - `env.ts`: 环境变量配置
@@ -253,70 +258,39 @@ export default function Index() {
 - 使用 React Navigation 的 ThemeProvider
 - 组件通过 `useColorScheme()` hook 检测当前主题
 - 主题颜色包括: text, background, tint, icon, tabIcon 等
-- 字体系统针对 iOS、Web 和默认平台分别配置
-
-### 平台特定代码
-
-- 使用 `.ios.tsx`, `.android.tsx`, `.web.tsx` 后缀创建平台特定文件
-- 示例: `icon-symbol.ios.tsx` 为 iOS 提供 SF Symbols 支持
-- 使用 `Platform.select()` 或 `process.env.EXPO_OS` 进行平台判断
+- 字体系统使用统一的系统默认字体，确保跨平台一致性
 
 ### 图标使用
 
-- iOS: 优先使用 SF Symbols (通过 expo-symbols)
-- 其他平台: 使用 @expo/vector-icons
-- `IconSymbol` 组件提供跨平台抽象
+项目统一使用 **Ionicons** (来自 @expo/vector-icons) 作为图标库：
+- 跨平台一致的图标样式
+- `IconSymbol` 组件提供统一的图标抽象
+- 通过映射表支持原有的 SF Symbols 图标名称
 
-## 双UI开发规范
+### 平台特定代码
 
-### 核心原则
-- **逻辑统一，视觉分离** - 业务逻辑100%共享，UI样式平台化
-- **交互一致，视觉差异** - 相同的功能逻辑，平台原生的视觉风格
+仅在必要时使用平台特定代码：
+- **3D Viewer**: Native 使用 expo-three，Web 使用 WebView
+- 其他组件优先使用统一实现，确保跨平台一致性
+- 使用 `Platform.select()` 或 `process.env.EXPO_OS` 进行平台判断
 
-### 开发模式
-```typescript
-// 1. 业务逻辑Hook (共享)
-function useComponentLogic(props) {
-  // 所有状态管理和业务逻辑
-  return { state, handlers };
-}
+### 组件开发规范
 
-// 2. 平台特定实现
-// component.ios.tsx - iOS风格
-// component.android.tsx - Android风格
-// index.tsx - Platform.select()自动选择
-```
-
-### 设计规范
-- **iOS**: Apple HIG风格，毛玻璃效果，SF Symbols，细腻阴影
-- **Android**: Material Design 3，Ripple效果，Material Icons，Elevation阴影
-
-### 文件组织
-```
-components/
-├── component-name/        # 组件专用文件夹
-│   ├── index.tsx          # 统一入口 (Platform.select)
-│   ├── android/           # Android 平台特定代码
-│   │   └── component.tsx  # Android版本实现
-│   ├── ios/               # iOS 平台特定代码
-│   │   └── component.tsx  # iOS版本实现
-│   └── types.ts           # 共享类型定义
-```
-
-### 组件命名规范
-
-- **组件文件夹结构**: 全局组件统一放在 `components/` 目录下,每个组件一个文件夹
-- **平台特定实现**:
-  - 使用 `.ios.tsx` 和 `.android.tsx` 后缀区分平台实现
-  - `index.tsx` 作为统一入口,使用 `Platform.select()` 自动选择平台
-  - 复杂组件可使用 `ios/` 和 `android/` 子文件夹组织
-- **类型定义**: 每个组件文件夹包含 `types.ts` 定义组件的 Props 和内部类型
+- **组件文件夹结构**: 全局组件统一放在 `components/` 目录下，每个组件一个文件夹
+- **文件组织**:
+  - `index.tsx` 作为统一入口，导出组件
+  - `component-name.tsx` 组件主文件（统一实现）
+  - `types.ts` 定义组件的 Props 和内部类型
+  - 复杂组件可拆分多个子组件文件
 - **页面组件**: 页面专属的小组件可直接放在 `components/pages/[页面名]/` 下
 
-### 适配原则
-- **小屏** (≤375px): 间距缩小10%，字体缩小5%
-- **标准** (390px): 基准设计
-- **大屏** (≥430px): 间距增大10%，保持内容密度
+### UI 设计原则
+
+- **统一体验**: 两端使用相同的 UI 组件和样式，确保视觉一致性
+- **毛玻璃效果**: 使用 BlurView 提供现代化的视觉效果（SearchBar、ModelCard 等）
+- **阴影系统**: 统一使用 iOS 的 shadow 属性 + Android 的 elevation
+- **触觉反馈**: 统一使用 Medium 强度的触觉反馈
+- **动画**: 优先使用 Animated.spring 提供流畅的交互动画
 
 ## 开发注意事项
 
