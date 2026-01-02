@@ -190,20 +190,20 @@ export const ModelDetail = React.memo(
                 disabled={isLoading}
                 activeOpacity={0.6}
               >
-                <Ionicons
-                  name={isLiked ? 'heart' : 'heart-outline'}
-                  size={22}
-                  color={
-                    isLiked
-                      ? isDark
-                        ? '#FF453A'
-                        : '#FF3B30'
-                      : isDark
-                        ? Colors.dark.icon
-                        : Colors.light.icon
-                  }
-                />
                 <View style={styles.statInfo}>
+                  <Ionicons
+                    name={isLiked ? 'heart' : 'heart-outline'}
+                    size={22}
+                    color={
+                      isLiked
+                        ? isDark
+                          ? '#FF453A'
+                          : '#FF3B30'
+                        : isDark
+                          ? Colors.dark.icon
+                          : Colors.light.icon
+                    }
+                  />
                   <ThemedText
                     style={[
                       styles.statValue,
@@ -214,8 +214,8 @@ export const ModelDetail = React.memo(
                   >
                     {formatNumber(currentLikes)}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>喜欢</ThemedText>
                 </View>
+                <ThemedText style={styles.statLabel}>喜欢</ThemedText>
               </TouchableOpacity>
 
               <View style={styles.statDivider} />
@@ -227,20 +227,20 @@ export const ModelDetail = React.memo(
                 disabled={isLoading}
                 activeOpacity={0.6}
               >
-                <Ionicons
-                  name={isFavorited ? 'star' : 'star-outline'}
-                  size={22}
-                  color={
-                    isFavorited
-                      ? isDark
-                        ? '#FFD60A'
-                        : '#FFCC00'
-                      : isDark
-                        ? Colors.dark.icon
-                        : Colors.light.icon
-                  }
-                />
                 <View style={styles.statInfo}>
+                  <Ionicons
+                    name={isFavorited ? 'star' : 'star-outline'}
+                    size={22}
+                    color={
+                      isFavorited
+                        ? isDark
+                          ? '#FFD60A'
+                          : '#FFCC00'
+                        : isDark
+                          ? Colors.dark.icon
+                          : Colors.light.icon
+                    }
+                  />
                   <ThemedText
                     style={[
                       styles.statValue,
@@ -251,25 +251,25 @@ export const ModelDetail = React.memo(
                   >
                     {formatNumber(currentFavorites)}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>收藏</ThemedText>
                 </View>
+                <ThemedText style={styles.statLabel}>收藏</ThemedText>
               </TouchableOpacity>
 
               <View style={styles.statDivider} />
 
               {/* 浏览数量 - 仅展示 */}
               <View style={styles.statItem}>
-                <Ionicons
-                  name="eye-outline"
-                  size={22}
-                  color={isDark ? Colors.dark.icon : Colors.light.icon}
-                />
                 <View style={styles.statInfo}>
+                  <Ionicons
+                    name="eye-outline"
+                    size={22}
+                    color={isDark ? Colors.dark.icon : Colors.light.icon}
+                  />
                   <ThemedText style={styles.statValue}>
                     {formatNumber(model.viewCount)}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>浏览</ThemedText>
                 </View>
+                <ThemedText style={styles.statLabel}>浏览</ThemedText>
               </View>
 
               {/* 加载指示器 */}
@@ -437,13 +437,15 @@ const styles = StyleSheet.create({
   },
   statItem: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: Spacing.xs,
     justifyContent: 'center',
   },
   statInfo: {
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   statValue: {
     ...Typography.body,
