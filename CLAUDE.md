@@ -303,8 +303,8 @@ export default function Index() {
 3. **生成文件**: `expo-env.d.ts` 和 `.expo/` 目录是自动生成的,已被 git 忽略
 4. **原生目录**: `/ios` 和 `/android` 目录会在构建时生成,不要提交到版本控制
 5. **主题化**: 新组件应考虑支持亮暗模式,使用 `useColorScheme()` 和 `Colors` 常量
-6. **触觉反馈**: iOS 交互可使用 `expo-haptics` 提供反馈
-7. **平台差异**: 新组件必须提供iOS和Android两个版本,确保功能逻辑完全一致
+6. **触觉反馈**: 使用 `expo-haptics` 提供统一的 Medium 强度触觉反馈
+7. **组件开发**: 新组件优先使用统一实现，确保跨平台一致性。仅在技术限制（如 3D 渲染）时才考虑平台分离
 8. **日志规范**: 禁止使用 `console.*`,必须使用 `logger` 模块（从 `@/utils/logger` 导入）。使用合适的日志级别：`debug` 用于调试信息、`info` 用于业务流程、`warn` 用于警告、`error` 用于错误。开发环境显示所有日志,生产环境仅输出 error 级别,ESLint 已配置强制检查（scripts 目录除外）
 9. **代码格式化**: 使用 Prettier 统一代码风格,提交前应运行 `npm run format`
 10. **环境变量**: 通过 `config/env.ts` 管理,使用 TypeScript 提供类型安全
@@ -458,7 +458,7 @@ eas build --profile production --platform android
 ### Stretchy Header（可拉伸头部）
 **实现原理**：图片绝对定位在底层（zIndex: 1），透明 ScrollView 覆盖其上（zIndex: 2），导航栏固定在最顶层（zIndex: 100），通过监听 scrollY 并用 Animated.interpolate 动态调整图片高度，实现下拉时图片拉伸填充空白的效果。
 
-**参考实现**：`components/model-detail/model-detail.ios.tsx`
+**参考实现**：`components/model-detail/model-detail.tsx`
 
 ### 3D 模型查看器
 **技术实现**：
@@ -751,7 +751,7 @@ logger.error('错误信息', error);
 
 1. **代码组织**: 遵循就近原则,全局共享的放 `components/`,页面特定的放页面目录
 2. **类型安全**: 充分利用 TypeScript,为所有函数和组件定义类型
-3. **平台适配**: 为 iOS 和 Android 提供不同的 UI 实现,确保原生体验
+3. **统一体验**: 优先使用统一实现确保跨平台一致性,仅在技术限制时考虑平台分离
 4. **错误处理**: 使用 `error-handler` 统一处理,记录日志
 5. **性能优化**: 关注首屏加载时间,优化列表和图片渲染
 6. **状态管理**: 使用 Zustand + Immer,保持状态更新的可预测性
@@ -759,6 +759,64 @@ logger.error('错误信息', error);
 8. **测试覆盖**: 为关键业务逻辑编写单元测试
 9. **文档维护**: 及时更新 CLAUDE.md 和代码注释
 10. **版本控制**: 使用语义化版本,保持 changelog 更新
+11. **UI 组件**: 使用 BlurView、统一阴影系统、Ionicons 图标库确保现代化体验
+
+## 架构调整说明（2026-01-02）
+
+### 统一架构迁移
+
+项目已从双 UI 平台分离架构迁移到统一实现架构，主要变化：
+
+**✅ 已统一的组件**：
+- `IconSymbol`: 统一使用 Ionicons（移除 SF Symbols）
+- `SearchBar`: 统一使用 BlurView 毛玻璃效果
+- `ModelCard`: 统一使用 BlurView 卡片底部
+- `ThemedView`: 统一阴影系统（shadow + elevation）
+- `ThemedText`: 统一字体系统和样式
+- `MenuGroup`: 统一容器样式
+- `MenuItem`: 统一动画（Animated.spring）
+- `HapticTab`: 统一触觉强度（Medium）
+
+**⚠️ 保留平台差异**：
+- `3D Viewer`: Native 使用 expo-three，Web 使用 WebView（技术限制）
+
+### 新的开发规范
+
+1. **组件开发**：
+   - 默认创建统一实现（单一 `.tsx` 文件）
+   - 仅在确有技术限制时才考虑平台分离
+   - 组件文件结构：
+     ```
+     components/component-name/
+     ├── index.tsx           # 导出入口
+     ├── component-name.tsx  # 统一实现
+     ├── types.ts            # 类型定义
+     └── sub-component.tsx   # 子组件（如需要）
+     ```
+
+2. **UI 设计**：
+   - 使用 BlurView 提供毛玻璃效果
+   - 使用统一阴影系统（shadowColor + shadowOffset + elevation）
+   - 使用 Ionicons 图标库（跨平台一致）
+   - 触觉反馈统一使用 `ImpactFeedbackStyle.Medium`
+   - 动画优先使用 `Animated.spring`
+
+3. **图标使用**：
+   ```typescript
+   import { IconSymbol } from '@/components/ui/icon-symbol';
+
+   // 使用原有的 SF Symbols 名称，自动映射到 Ionicons
+   <IconSymbol name="house.fill" size={24} color="#000" />
+
+   // 如果遇到未映射的图标，在 icon-symbol.tsx 中添加映射
+   ```
+
+### 迁移收益
+
+- **代码减少**: 组件代码量减少约 50%
+- **维护成本**: 降低 50%（无需维护两套 UI）
+- **开发效率**: 新功能只需编写一次
+- **视觉一致性**: 两端 UI 完全统一
 
 <!--以下内容为用户自行填写，禁止修改-->
 # 参考
