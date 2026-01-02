@@ -77,10 +77,6 @@ export function ModelComplete({
     { label: '顶点数', value: '145k' },
   ];
 
-  const handleDownload = () => {
-    logger.info('download model tapped', task.id);
-  };
-
   const handlePrint = () => {
     logger.info('print model tapped', task.id);
   };
@@ -88,28 +84,16 @@ export function ModelComplete({
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
-        <TouchableOpacity
-          onPress={onCreateNew}
-          activeOpacity={0.7}
-          style={[styles.headerButton, { borderColor: palette.border }]}
-        >
-          <IconSymbol name="chevron.left" size={18} color={textColor} />
-        </TouchableOpacity>
+        <View style={styles.headerPlaceholder} />
         <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>
-          {task.prompt || 'AI Creation'}
+          {task.prompt || 'AI 生成完成'}
         </Text>
-        <TouchableOpacity
-          style={[styles.headerButton, { borderColor: palette.border }]}
-          activeOpacity={0.7}
-          onPress={() => logger.info('model menu tapped', task.id)}
-        >
-          <IconSymbol name="ellipsis" size={18} color={secondaryTextColor} />
-        </TouchableOpacity>
+        <View style={styles.headerPlaceholder} />
       </Animated.View>
 
       <Animated.ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.body, { paddingBottom: paddingBottom + 180 }]}
+        contentContainerStyle={[styles.body, { paddingBottom: paddingBottom + Spacing.lg }]}
         showsVerticalScrollIndicator={false}
       >
         <Animated.View
@@ -134,61 +118,59 @@ export function ModelComplete({
           </View>
         </Animated.View>
 
-        <TouchableOpacity onPress={onView3D} activeOpacity={0.85}>
-          <LinearGradient
-            colors={[palette.accent, palette.accentAlt]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.previewButton}
-          >
-            <IconSymbol name="cube.fill" size={24} color="#FFFFFF" />
-            <Text style={styles.previewButtonText}>Preview 3D Model</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <View style={styles.statsRow}>
-          {stats.map(stat => (
-            <View
-              key={stat.label}
-              style={[
-                styles.statCard,
-                { backgroundColor: palette.card, borderColor: palette.border },
-              ]}
-            >
-              <Text style={[styles.statLabel, { color: secondaryTextColor }]}>{stat.label}</Text>
-              <Text style={[styles.statValue, { color: textColor }]}>{stat.value}</Text>
+        {/* 统计信息 - 紧凑横向排列 */}
+        <View style={styles.statsCompact}>
+          {stats.map((stat, index) => (
+            <View key={stat.label} style={styles.statCompactItem}>
+              <Text style={[styles.statCompactLabel, { color: secondaryTextColor }]}>
+                {stat.label}
+              </Text>
+              <Text style={[styles.statCompactValue, { color: textColor }]}>{stat.value}</Text>
+              {index < stats.length - 1 && (
+                <View style={[styles.statDivider, { backgroundColor: palette.border }]} />
+              )}
             </View>
           ))}
         </View>
-      </Animated.ScrollView>
 
-      <View
-        style={[
-          styles.bottomBar,
-          {
-            backgroundColor,
-            borderTopColor: palette.border,
-            paddingBottom: paddingBottom + Spacing.md,
-          },
-        ]}
-      >
+        {/* 主要操作按钮 - 横向排布 */}
+        <View style={styles.primaryActionsRow}>
+          <TouchableOpacity
+            onPress={onView3D}
+            activeOpacity={0.85}
+            style={[styles.previewButtonWrapper, { flex: 2 }]}
+          >
+            <LinearGradient
+              colors={[palette.accent, palette.accentAlt]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.previewButton}
+            >
+              <IconSymbol name="cube.fill" size={20} color="#FFFFFF" />
+              <Text style={styles.previewButtonText}>预览 3D</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.printButton, { borderColor: palette.accent, flex: 1 }]}
+            onPress={handlePrint}
+            activeOpacity={0.8}
+          >
+            <IconSymbol name="printer.fill" size={20} color={palette.accent} />
+            <Text style={[styles.printButtonText, { color: palette.accent }]}>打印</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 开始新任务按钮 */}
         <TouchableOpacity
-          style={[styles.ghostButton, { borderColor: palette.border }]}
-          onPress={handleDownload}
+          style={[styles.newTaskButton, { borderColor: palette.border }]}
+          onPress={onCreateNew}
           activeOpacity={0.8}
         >
-          <IconSymbol name="arrow.down.circle" size={20} color={textColor} />
-          <Text style={[styles.ghostButtonText, { color: textColor }]}>下载</Text>
+          <IconSymbol name="plus.circle" size={20} color={secondaryTextColor} />
+          <Text style={[styles.newTaskButtonText, { color: secondaryTextColor }]}>开始新任务</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filledButton, { backgroundColor: palette.accent }]}
-          onPress={handlePrint}
-          activeOpacity={0.85}
-        >
-          <IconSymbol name="printer.fill" size={20} color="#FFFFFF" />
-          <Text style={styles.filledButtonText}>一件打印</Text>
-        </TouchableOpacity>
-      </View>
+      </Animated.ScrollView>
     </View>
   );
 }
@@ -206,18 +188,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: Spacing.md,
   },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerPlaceholder: {
+    width: 44, // 与 headerButton 同宽，保持标题居中
   },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     fontWeight: FontWeight.bold,
+    textAlign: 'center',
   },
   scroll: {
     flex: 1,
@@ -270,85 +248,96 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
     letterSpacing: 1,
   },
+  // 紧凑统计信息
+  statsCompact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingVertical: Spacing.md,
+  },
+  statCompactItem: {
+    flex: 1,
+    alignItems: 'center',
+    position: 'relative',
+  },
+  statCompactLabel: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.medium,
+    opacity: 0.7,
+    marginBottom: 4,
+  },
+  statCompactValue: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+  },
+  statDivider: {
+    position: 'absolute',
+    right: 0,
+    top: '20%',
+    bottom: '20%',
+    width: 1,
+  },
+  // 主要操作按钮行
+  primaryActionsRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  // Preview 按钮包裹器
+  previewButtonWrapper: {
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  // Preview 按钮
   previewButton: {
-    borderRadius: 30,
-    paddingVertical: 18,
+    borderRadius: 24,
+    paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 8,
     ...Platform.select({
       ios: {
         shadowColor: '#2680FF',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
-        shadowRadius: 18,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
       },
       android: {
-        elevation: 6,
+        elevation: 4,
       },
     }),
   },
   previewButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
   },
-  statsRow: {
+  // 打印按钮
+  printButton: {
+    borderWidth: 1.5,
+    borderRadius: 24,
+    paddingVertical: 16,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  statCard: {
-    flex: 1,
-    borderRadius: 22,
-    borderWidth: 1,
-    paddingVertical: 14,
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+    gap: 6,
   },
-  statLabel: {
-    fontSize: FontSize.sm,
+  printButtonText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+  },
+  // 开始新任务按钮
+  newTaskButton: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  newTaskButtonText: {
+    fontSize: FontSize.md,
     fontWeight: FontWeight.medium,
-    opacity: 0.8,
-  },
-  statValue: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-  },
-  bottomBar: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  ghostButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  ghostButtonText: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-  },
-  filledButton: {
-    flex: 1,
-    borderRadius: 20,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  filledButtonText: {
-    color: '#FFFFFF',
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
   },
 });

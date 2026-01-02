@@ -29,22 +29,36 @@ export default function ModelViewer3DScreen() {
   const colorScheme = useColorScheme();
   // 确保 colorScheme 不为 null，提供默认值 'light'
   const colors = Colors[colorScheme ?? 'light'];
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, modelUrl: directModelUrl } = useLocalSearchParams<{
+    id: string;
+    modelUrl?: string;
+  }>();
 
   // 状态管理
   const [model, setModel] = useState<GalleryModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 从 API 获取模型详情
+  // 判断是否为直接预览模式（从 AI 创作页面过来）
+  const isDirectPreview = Boolean(directModelUrl);
+
+  // 从 API 获取模型详情（仅在画廊模式下）
   useEffect(() => {
     if (!id) return;
 
+    // 如果是直接预览模式，跳过 API 调用
+    if (isDirectPreview) {
+      logger.info(`直接预览模式，使用传入的 modelUrl: ${id}`, 'ModelViewer3DScreen');
+      setIsLoading(false);
+      return;
+    }
+
+    // 画廊模式：从 API 获取模型详情
     const loadModelDetail = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        logger.info(`获取模型详情用于 3D 预览: ${id}`, 'ModelViewer3DScreen');
+        logger.info(`画廊模式，获取模型详情: ${id}`, 'ModelViewer3DScreen');
 
         const data = await fetchModelDetail(id);
         setModel(data);
@@ -66,7 +80,7 @@ export default function ModelViewer3DScreen() {
     };
 
     loadModelDetail();
-  }, [id]);
+  }, [id, isDirectPreview]);
 
   const handleBack = () => {
     router.back();
@@ -83,16 +97,28 @@ export default function ModelViewer3DScreen() {
 
   // 转换模型URL为绝对路径
   const absoluteModelUrl = useMemo(() => {
+    // 直接预览模式：使用传入的 modelUrl
+    if (isDirectPreview && directModelUrl) {
+      const decoded = decodeURIComponent(directModelUrl);
+      logger.debug('直接预览模式 - 模型 URL:', {
+        encoded: directModelUrl,
+        decoded,
+      });
+      return decoded;
+    }
+
+    // 画廊模式：使用 model 中的 modelUrl
     const url = getModelUrl(model?.modelUrl);
-    logger.debug('模型 URL 转换:', {
+    logger.debug('画廊模式 - 模型 URL 转换:', {
       original: model?.modelUrl,
       absolute: url,
     });
     return url;
-  }, [model?.modelUrl]);
+  }, [isDirectPreview, directModelUrl, model?.modelUrl]);
 
-  // 转换 MTL URL 为绝对路径
+  // 转换 MTL URL 为绝对路径（仅画廊模式）
   const absoluteMtlUrl = useMemo(() => {
+    if (isDirectPreview) return undefined; // 直接预览模式不需要 MTL
     if (!model?.mtlUrl) return undefined;
     const url = getModelUrl(model.mtlUrl);
     logger.debug('MTL URL 转换:', {
@@ -100,10 +126,11 @@ export default function ModelViewer3DScreen() {
       absolute: url,
     });
     return url;
-  }, [model?.mtlUrl]);
+  }, [isDirectPreview, model?.mtlUrl]);
 
-  // 转换纹理 URL 为绝对路径
+  // 转换纹理 URL 为绝对路径（仅画廊模式）
   const absoluteTextureUrl = useMemo(() => {
+    if (isDirectPreview) return undefined; // 直接预览模式不需要纹理
     if (!model?.textureUrl) return undefined;
     const url = getModelUrl(model.textureUrl);
     logger.debug('纹理 URL 转换:', {
@@ -111,7 +138,7 @@ export default function ModelViewer3DScreen() {
       absolute: url,
     });
     return url;
-  }, [model?.textureUrl]);
+  }, [isDirectPreview, model?.textureUrl]);
 
   // 加载中状态
   if (isLoading) {
@@ -128,7 +155,7 @@ export default function ModelViewer3DScreen() {
   }
 
   // 错误状态
-  if (error || !model) {
+  if (error || (!isDirectPreview && !model)) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <StatusBar barStyle="dark-content" />
@@ -160,6 +187,9 @@ export default function ModelViewer3DScreen() {
     );
   }
 
+  // 获取模型名称（直接预览模式使用默认名称）
+  const modelName = isDirectPreview ? 'AI 生成模型' : model?.name || '3D 模型';
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -186,7 +216,7 @@ export default function ModelViewer3DScreen() {
             </TouchableOpacity>
             <View style={styles.titleContainer}>
               <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
-                {model.name}
+                {modelName}
               </Text>
             </View>
             <View style={styles.placeholder} />

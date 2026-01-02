@@ -29,6 +29,17 @@ export const API_ENDPOINTS = {
     login: '/api/auth/login',
     logout: '/api/auth/logout',
   },
+  // AI 创作任务相关端点
+  tasks: {
+    // 创建文生图任务
+    create: '/api/tasks',
+    // 查询任务详情
+    detail: (id: string) => `/api/tasks/${id}`,
+    // 查询任务状态（支持 since 参数实现 HTTP 304 优化）
+    status: (id: string) => `/api/tasks/${id}/status`,
+    // 选择图片生成 3D 模型
+    selectImage: (id: string) => `/api/tasks/${id}`,
+  },
 } as const;
 
 // 默认请求头

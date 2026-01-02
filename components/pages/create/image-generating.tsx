@@ -238,7 +238,7 @@ export function ImageGenerating({
                       ]}
                     >
                       <Image
-                        source={{ uri: image.thumbnail }}
+                        source={{ uri: image.imageUrl || image.url || image.thumbnail }}
                         style={styles.image}
                         resizeMode="cover"
                       />

@@ -1,4 +1,4 @@
-// 任务状态类型
+// 任务状态类型（前端使用）
 export type TaskStatus =
   | 'generating_images' // 正在生成图片
   | 'images_ready' // 图片已生成，等待选择
@@ -7,31 +7,51 @@ export type TaskStatus =
   | 'failed' // 失败
   | 'cancelled'; // 已取消
 
-// 生成的图片接口
+// 图片状态类型（后端返回）
+export type ImageStatus = 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
+
+// 生成的图片接口（扩展后端字段）
 export interface GeneratedImage {
+  // 图片唯一标识符
   id: string;
-  url: string;
-  thumbnail: string;
+  // 图片索引（0-3）
+  index: number;
+  // 图片状态（后端返回）
+  imageStatus: ImageStatus;
+  // 图片 URL
+  imageUrl: string | null;
+  // 实际使用的提示词（后端返回）
+  imagePrompt: string | null;
+  // 兼容旧字段
+  url?: string;
+  thumbnail?: string;
 }
 
-// 生成任务接口
+// 生成任务接口（扩展后端字段）
 export interface GenerationTask {
+  // 任务 ID
   id: string;
+  // 用户输入的提示词
   prompt: string;
+  // 任务状态（前端）
   status: TaskStatus;
+  // 创建时间
   createdAt: Date;
+  // 更新时间
   updatedAt: Date;
 
   // 图片生成阶段
   images?: GeneratedImage[];
-  imageProgress?: number; // 0-100
+  imageProgress?: number; // 0-100（前端计算）
 
   // 选择的图片
   selectedImageId?: string;
+  selectedImageIndex?: number; // 选择的图片索引（0-3）
 
   // 3D模型生成阶段
   modelUrl?: string;
-  modelProgress?: number; // 0-100
+  modelProgress?: number; // 0-100（前端计算或后端返回）
+  modelId?: string; // 3D 模型 ID（后端返回）
 
   // 错误信息
   error?: string;
@@ -53,8 +73,10 @@ export interface CreateState {
   deleteTask: (taskId: string) => void;
   getTask: (taskId: string) => GenerationTask | undefined;
 
-  // 模拟后台更新任务进度（实际项目中应该是轮询或WebSocket）
+  // 内部方法（不建议外部直接调用）
   _updateTaskProgress: (taskId: string, progress: Partial<GenerationTask>) => void;
+  _startPolling: (taskId: string) => void; // 启动轮询
+  _stopPolling: () => void; // 停止轮询
 
   // 重置状态
   reset: () => void;

@@ -385,6 +385,21 @@ export async function apiPut<T = any>(
 }
 
 /**
+ * PATCH 请求
+ */
+export async function apiPatch<T = any>(
+  url: string,
+  body: unknown,
+  options: Omit<ApiClientOptions, 'method' | 'body'> = {}
+): Promise<ApiResult<T>> {
+  return apiRequest<T>(url, {
+    ...options,
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+}
+
+/**
  * DELETE 请求
  */
 export async function apiDelete<T = any>(

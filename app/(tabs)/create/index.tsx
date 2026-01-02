@@ -164,8 +164,28 @@ export default function CreateScreen() {
 
   // 处理生成3D模型
   const handleGenerateModel = async () => {
-    if (!currentTask) return;
-    await generateModel(currentTask.id);
+    if (!currentTask) {
+      logger.warn('[Create] handleGenerateModel: currentTask 为空');
+      return;
+    }
+
+    try {
+      logger.info('[Create] 用户点击生成3D模型按钮:', {
+        taskId: currentTask.id,
+        selectedImageId: currentTask.selectedImageId,
+        selectedImageIndex: currentTask.selectedImageIndex,
+      });
+
+      // 调用 Store 方法生成3D模型
+      await generateModel(currentTask.id);
+
+      logger.info('[Create] 生成3D模型请求已发送');
+    } catch (error) {
+      logger.error('[Create] 生成3D模型失败:', error);
+
+      // TODO: 可以在这里添加用户友好的错误提示
+      // 例如使用 Alert 或 Toast 组件
+    }
   };
 
   // 处理取消任务
@@ -176,9 +196,23 @@ export default function CreateScreen() {
 
   // 处理查看3D模型
   const handleView3D = () => {
-    if (!currentTask?.modelUrl) return;
-    // 导航到3D查看器页面（全屏页面，不在tab内）
-    router.push(`/model-viewer/${currentTask.id}`);
+    if (!currentTask?.modelUrl || !currentTask?.modelId) {
+      logger.warn('[Create] handleView3D: modelUrl 或 modelId 为空', {
+        hasModelUrl: !!currentTask?.modelUrl,
+        hasModelId: !!currentTask?.modelId,
+      });
+      return;
+    }
+
+    logger.info('[Create] 导航到 3D 模型查看器:', {
+      modelId: currentTask.modelId,
+      modelUrl: currentTask.modelUrl,
+    });
+
+    // 导航到3D查看器页面，传递 modelUrl 作为查询参数
+    // 这样可以直接预览，不需要从 API 获取模型详情
+    const encodedUrl = encodeURIComponent(currentTask.modelUrl);
+    router.push(`/model-viewer/${currentTask.modelId}?modelUrl=${encodedUrl}`);
   };
 
   // 处理继续创作新的
@@ -381,7 +415,6 @@ export default function CreateScreen() {
       return (
         <ModelGenerating
           task={currentTask}
-          onCancel={handleCancel}
           paddingBottom={contentPaddingBottom}
           isDark={isDark}
         />

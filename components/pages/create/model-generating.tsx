@@ -1,7 +1,7 @@
-import { StyleSheet, View, Text, TouchableOpacity, Animated, Easing, Platform } from 'react-native';
+import { StyleSheet, View, Text, Animated, Easing, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
+import { Spacing, BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 import type { GenerationTask } from '@/stores/create/types';
 import { useEffect, useRef } from 'react';
 
@@ -23,7 +23,6 @@ const DARK_UI = {
 
 interface ModelGeneratingProps {
   task: GenerationTask;
-  onCancel: () => void;
   paddingBottom: number;
   isDark: boolean;
 }
@@ -32,7 +31,7 @@ interface ModelGeneratingProps {
  * 3D 模型生成中组件 - 现代精致风格
  * 显示生成进度和旋转立方体动画
  */
-export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: ModelGeneratingProps) {
+export function ModelGenerating({ task, paddingBottom, isDark }: ModelGeneratingProps) {
   // 动态颜色
   const palette = isDark ? DARK_UI : LIGHT_UI;
   const backgroundColor = palette.background;
@@ -95,25 +94,15 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
     outputRange: ['0deg', '360deg'],
   });
 
-  // 计算当前阶段
-  const currentStage = Math.min(Math.floor(progress / 25), 3);
-  const stages = ['分析参考', '构建网格', '添加纹理', '优化导出'];
-
   return (
     <View style={[styles.container, { backgroundColor }]}>
       {/* 头部 */}
       <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
-        <TouchableOpacity
-          onPress={onCancel}
-          activeOpacity={0.7}
-          style={[styles.headerButton, { borderColor }]}
-        >
-          <IconSymbol name="chevron.left" size={18} color={textColor} />
-        </TouchableOpacity>
+        <View style={styles.headerPlaceholder} />
         <View style={styles.headerTitles}>
-          <Text style={[styles.title, { color: textColor }]}>AI Model Builder</Text>
+          <Text style={[styles.title, { color: textColor }]}>3D 模型生成中</Text>
           <Text style={[styles.subtitle, { color: secondaryTextColor }]}>
-            {stages[currentStage]}
+            请稍候，正在为你生成 3D 模型
           </Text>
         </View>
         <View style={styles.headerSpacer} />
@@ -167,62 +156,10 @@ export function ModelGenerating({ task, onCancel, paddingBottom, isDark }: Model
             />
           </View>
         </View>
-
-        {/* 阶段指示点 */}
-        <View style={styles.stageDotsContainer}>
-          {[0, 1, 2, 3].map(index => {
-            const isCompleted = currentStage > index;
-            const isCurrent = currentStage === index;
-            return (
-              <View key={index} style={styles.stageDotWrapper}>
-                <View
-                  style={[
-                    styles.stageDot,
-                    {
-                      backgroundColor:
-                        isCompleted || isCurrent
-                          ? gradientColors[0]
-                          : isDark
-                            ? Colors.dark.border
-                            : Colors.light.border,
-                      width: isCurrent ? 32 : 8,
-                    },
-                  ]}
-                />
-              </View>
-            );
-          })}
-        </View>
-
-        {/* 阶段文字提示 */}
-        <Text style={[styles.stageText, { color: secondaryTextColor }]}>
-          第 {currentStage + 1}/4 步
-        </Text>
       </Animated.View>
 
-      {/* 底部按钮 */}
-      <Animated.View
-        style={[
-          styles.bottomContainer,
-          {
-            paddingBottom: paddingBottom || Spacing.lg,
-            opacity: fadeAnim,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          style={[
-            styles.cancelButton,
-            {
-              backgroundColor: isDark ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 59, 48, 0.05)',
-            },
-          ]}
-          onPress={onCancel}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.cancelButtonText, { color: '#FF3B30' }]}>取消生成</Text>
-        </TouchableOpacity>
-      </Animated.View>
+      {/* 底部占位，保持布局一致 */}
+      <View style={{ paddingBottom: paddingBottom || Spacing.lg }} />
     </View>
   );
 }
@@ -243,19 +180,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.md,
   },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerPlaceholder: {
+    width: 44, // 占位，保持标题居中
   },
   headerTitles: {
     flex: 1,
+    alignItems: 'center', // 居中对齐
   },
   headerSpacer: {
-    width: 44,
+    width: 44, // 占位，保持标题居中
   },
 
   // 标题样式
@@ -324,50 +257,5 @@ const styles = StyleSheet.create({
   progressBarFill: {
     height: '100%', // 高度
     borderRadius: 4, // 圆角
-  },
-
-  // 阶段点容器
-  stageDotsContainer: {
-    flexDirection: 'row', // 横向排列
-    gap: Spacing.sm, // 间距
-    alignItems: 'center', // 垂直居中
-    marginTop: Spacing.md, // 顶部间距
-  },
-
-  // 阶段点包裹器
-  stageDotWrapper: {
-    // 无额外样式
-  },
-
-  // 阶段点
-  stageDot: {
-    height: 8, // 高度
-    borderRadius: 4, // 圆角
-  },
-
-  // 阶段文字
-  stageText: {
-    fontSize: FontSize.sm, // 小字号
-    fontWeight: FontWeight.medium, // 中等字重
-    marginTop: Spacing.sm, // 顶部间距
-  },
-
-  // 底部容器
-  bottomContainer: {
-    paddingHorizontal: Spacing.lg, // 水平内边距
-    paddingTop: Spacing.lg, // 顶部内边距
-  },
-
-  // 取消按钮
-  cancelButton: {
-    paddingVertical: Spacing.lg, // 垂直内边距
-    borderRadius: BorderRadius.md, // 中等圆角
-    alignItems: 'center', // 水平居中
-  },
-
-  // 取消按钮文字
-  cancelButtonText: {
-    fontSize: FontSize.md, // 中等字号
-    fontWeight: FontWeight.semibold, // 半粗体
   },
 });
