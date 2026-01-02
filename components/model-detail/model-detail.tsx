@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StatusBar,
@@ -8,11 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useModelInteraction } from '@/hooks/use-model-interaction';
+import { useAuthStore } from '@/stores';
 import { getImageUrl } from '@/utils/url';
 import type { ModelDetailProps } from './types';
 import { logger } from '@/utils/logger';
@@ -36,6 +42,44 @@ export const ModelDetail = React.memo(
   ({ model, onDownload, onAddToQueue, on3DPreview }: ModelDetailProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
+    const router = useRouter();
+
+    // 获取用户认证状态
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+    // 使用交互 Hook 管理点赞和收藏状态
+    const {
+      isLiked,
+      isFavorited,
+      currentLikes,
+      currentFavorites,
+      isLoading,
+      handleLike,
+      handleFavorite,
+    } = useModelInteraction({
+      modelId: model.id,
+      initialLikes: model.likeCount,
+      initialFavorites: model.favoriteCount,
+      isAuthenticated,
+      onRequireLogin: () => {
+        // 跳转到登录页
+        router.push('/login');
+      },
+    });
+
+    // 处理点赞按钮点击
+    const handleLikePress = () => {
+      // 触发触觉反馈
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      handleLike();
+    };
+
+    // 处理收藏按钮点击
+    const handleFavoritePress = () => {
+      // 触发触觉反馈
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      handleFavorite();
+    };
 
     // 处理下载
     const handleDownload = () => {
@@ -128,57 +172,115 @@ export const ModelDetail = React.memo(
                 <ThemedText style={styles.creatorName}>{model.user?.name || '匿名用户'}</ThemedText>
               </View>
 
-              <TouchableOpacity
+              {/* Follow 按钮暂时隐藏，功能待开发 */}
+              {/* <TouchableOpacity
                 style={[styles.followButton, dynamicStyles.primaryButton]}
                 activeOpacity={0.85}
               >
                 <Text style={styles.followButtonText}>Follow</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {/* 统计数据卡片 */}
             <View style={[styles.statsCard, dynamicStyles.card]}>
-              <View style={styles.statItem}>
-                <IconSymbol
-                  name="heart"
-                  size={20}
-                  color={isDark ? Colors.dark.icon : Colors.light.icon}
+              {/* 喜欢数量 - 可点击 */}
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={handleLikePress}
+                disabled={isLoading}
+                activeOpacity={0.6}
+              >
+                <Ionicons
+                  name={isLiked ? 'heart' : 'heart-outline'}
+                  size={22}
+                  color={
+                    isLiked
+                      ? isDark
+                        ? '#FF453A'
+                        : '#FF3B30'
+                      : isDark
+                        ? Colors.dark.icon
+                        : Colors.light.icon
+                  }
                 />
                 <View style={styles.statInfo}>
-                  <ThemedText style={styles.statValue}>{formatNumber(model.likeCount)}</ThemedText>
-                  <ThemedText style={styles.statLabel}>Likes</ThemedText>
+                  <ThemedText
+                    style={[
+                      styles.statValue,
+                      isLiked && {
+                        color: isDark ? '#FF453A' : '#FF3B30',
+                      },
+                    ]}
+                  >
+                    {formatNumber(currentLikes)}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>喜欢</ThemedText>
                 </View>
-              </View>
+              </TouchableOpacity>
 
               <View style={styles.statDivider} />
 
+              {/* 收藏数量 - 可点击 */}
+              <TouchableOpacity
+                style={styles.statItem}
+                onPress={handleFavoritePress}
+                disabled={isLoading}
+                activeOpacity={0.6}
+              >
+                <Ionicons
+                  name={isFavorited ? 'star' : 'star-outline'}
+                  size={22}
+                  color={
+                    isFavorited
+                      ? isDark
+                        ? '#FFD60A'
+                        : '#FFCC00'
+                      : isDark
+                        ? Colors.dark.icon
+                        : Colors.light.icon
+                  }
+                />
+                <View style={styles.statInfo}>
+                  <ThemedText
+                    style={[
+                      styles.statValue,
+                      isFavorited && {
+                        color: isDark ? '#FFD60A' : '#FFCC00',
+                      },
+                    ]}
+                  >
+                    {formatNumber(currentFavorites)}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>收藏</ThemedText>
+                </View>
+              </TouchableOpacity>
+
+              <View style={styles.statDivider} />
+
+              {/* 浏览数量 - 仅展示 */}
               <View style={styles.statItem}>
-                <IconSymbol
-                  name="arrow.down.circle"
-                  size={20}
+                <Ionicons
+                  name="eye-outline"
+                  size={22}
                   color={isDark ? Colors.dark.icon : Colors.light.icon}
                 />
                 <View style={styles.statInfo}>
                   <ThemedText style={styles.statValue}>
-                    {formatNumber(model.downloadCount)}
+                    {formatNumber(model.viewCount)}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>DLs</ThemedText>
+                  <ThemedText style={styles.statLabel}>浏览</ThemedText>
                 </View>
               </View>
 
-              <View style={styles.statDivider} />
-
-              <View style={styles.statItem}>
-                <IconSymbol
-                  name="clock"
-                  size={20}
-                  color={isDark ? Colors.dark.icon : Colors.light.icon}
-                />
-                <View style={styles.statInfo}>
-                  <ThemedText style={styles.statValue}>5h 30m</ThemedText>
-                  <ThemedText style={styles.statLabel}>Est.</ThemedText>
+              {/* 加载指示器 */}
+              {isLoading && (
+                <View style={styles.loadingOverlay}>
+                  <ActivityIndicator
+                    size="small"
+                    color={isDark ? Colors.dark.tint : Colors.light.tint}
+                  />
                 </View>
-              </View>
+              )}
             </View>
 
             {/* 描述 */}
@@ -286,7 +388,8 @@ const styles = StyleSheet.create({
   },
   creatorSection: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // 注释：Follow 按钮隐藏后，只需左对齐即可
+    // justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.xxl,
   },
@@ -330,6 +433,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.xxl,
+    position: 'relative', // 为加载指示器提供定位上下文
   },
   statItem: {
     flex: 1,
@@ -357,6 +461,17 @@ const styles = StyleSheet.create({
     width: 1,
     height: 32,
     backgroundColor: 'rgba(128, 128, 128, 0.15)',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: BorderRadius.lg,
   },
   descriptionSection: {
     marginBottom: Spacing.xxl,

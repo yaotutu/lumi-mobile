@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
     models: '/api/gallery/models',
     modelDetail: (id: string) => `/api/gallery/models/${id}`,
     modelDownload: (id: string) => `/api/gallery/models/${id}/download`,
+    // 交互相关端点
+    interactions: (id: string) => `/api/gallery/models/${id}/interactions`,
+    batchInteractions: '/api/gallery/models/batch-interactions',
   },
   proxy: {
     image: '/api/proxy/image',

@@ -23,6 +23,15 @@ export type {
   SendVerificationCodeRequest,
   VerificationCodeType,
 } from './api/auth';
+export type {
+  BatchInteractionsRequest,
+  BatchInteractionsResponse,
+  InteractionStatusResponse,
+  InteractionToggleRequest,
+  InteractionToggleResponse,
+  InteractionType,
+  ModelInteractionStatus,
+} from './api/interactions';
 
 // 模型类型
 export type {

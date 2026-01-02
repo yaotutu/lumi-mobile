@@ -1,6 +1,7 @@
 /**
  * 统一的 ModelCard 主组件
  * 使用 BlurView 提供一致的毛玻璃内容区效果
+ * 支持点赞和收藏交互功能
  */
 
 import React, { useMemo } from 'react';
@@ -9,6 +10,8 @@ import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Colors, BorderRadius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useModelInteraction } from '@/hooks/use-model-interaction';
+import { useAuthStore } from '@/stores';
 import { getImageUrl } from '@/utils/url';
 import { CardContent } from './card-content';
 import { CardActions } from './card-actions';
@@ -52,13 +55,37 @@ const createCardStyles = (isDark: boolean) => ({
  * @param creator - 创作者（可选）
  * @param imageUrl - 图片URL
  * @param likes - 点赞数
+ * @param favorites - 收藏数
  * @param onPress - 点击回调（可选，默认跳转到详情页）
  */
 export const ModelCard = React.memo(
-  ({ modelId, title, creator, imageUrl, likes, onPress }: ModelCardProps) => {
+  ({ modelId, title, creator, imageUrl, likes, favorites, onPress }: ModelCardProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
     const router = useRouter();
+
+    // 获取用户认证状态
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+    // 使用交互 Hook 管理点赞和收藏状态
+    const {
+      isLiked,
+      isFavorited,
+      currentLikes,
+      currentFavorites,
+      isLoading,
+      handleLike,
+      handleFavorite,
+    } = useModelInteraction({
+      modelId,
+      initialLikes: likes,
+      initialFavorites: favorites,
+      isAuthenticated,
+      onRequireLogin: () => {
+        // 跳转到登录页
+        router.push('/auth/login');
+      },
+    });
 
     // 预计算样式对象，避免每次渲染时重新创建
     const cardStyles = useMemo(() => createCardStyles(isDark), [isDark]);
@@ -104,10 +131,18 @@ export const ModelCard = React.memo(
           style={[styles.blurContent, cardStyles.blurView.blurContent]}
         >
           {/* 卡片内容（标题、创作者） */}
-          <CardContent title={title} creator={creator} likes={likes} />
+          <CardContent title={title} creator={creator} likes={currentLikes} />
 
           {/* 卡片操作（点赞、收藏） */}
-          <CardActions likes={likes} />
+          <CardActions
+            likes={currentLikes}
+            favorites={currentFavorites}
+            isLiked={isLiked}
+            isFavorited={isFavorited}
+            isLoading={isLoading}
+            onLike={handleLike}
+            onFavorite={handleFavorite}
+          />
         </BlurView>
       </Pressable>
     );

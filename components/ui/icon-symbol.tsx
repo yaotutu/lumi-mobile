@@ -33,8 +33,13 @@ const ICON_MAPPING = {
   // 用户和社交
   'person.fill': 'person', // 用户
   'person.crop.circle': 'person-circle', // 用户头像
-  heart: 'heart-outline', // 喜欢
+  heart: 'heart', // 喜欢（实心）
+  'heart-outline': 'heart-outline', // 喜欢（空心）
+  star: 'star', // 收藏/星标（实心）
+  'star-outline': 'star-outline', // 收藏/星标（空心）
   bookmark: 'bookmark-outline', // 收藏
+  eye: 'eye', // 浏览/查看（实心）
+  'eye-outline': 'eye-outline', // 浏览/查看（空心）
   'square.and.arrow.up': 'share-outline', // 分享
 
   // 内容和媒体

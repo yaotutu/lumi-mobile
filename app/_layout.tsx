@@ -5,12 +5,16 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
+import { enableMapSet } from 'immer';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary, setupGlobalErrorHandlers } from '@/components/error-boundary';
 import { setUnauthorizedHandler } from '@/services/api-client';
 import { useAuthStore } from '@/stores';
 import { SessionProvider } from './ctx';
+
+// 启用 Immer 的 MapSet 插件（支持在 Store 中使用 Map 和 Set）
+enableMapSet();
 
 /**
  * 根布局导航

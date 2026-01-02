@@ -2,3 +2,4 @@
 export * from './gallery';
 export * from './create';
 export * from './auth';
+export * from './interactions';

@@ -19,7 +19,7 @@ import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { ModelCard } from '@/components/model-card';
 import { useAsyncController } from '@/hooks/useAsyncController';
 import { categorizeError, logError } from '@/utils/error-handler';
-import { useGalleryStore } from '@/stores';
+import { useGalleryStore, useInteractionStore } from '@/stores';
 import { logger } from '@/utils/logger';
 
 export default function DiscoverScreen() {
@@ -34,11 +34,26 @@ export default function DiscoverScreen() {
   const { models, loading, refreshing, error, fetchModels, refreshModels, clearError } =
     useGalleryStore();
 
+  // 从 Interaction Store 获取批量加载方法
+  const fetchBatchStatus = useInteractionStore((state) => state.fetchBatchStatus);
+
   // 组件挂载时加载数据
   useEffect(() => {
     const controller = createController();
     fetchModels(1, {}, controller);
   }, [fetchModels, createController]);
+
+  // 模型列表加载完成后，批量获取交互状态
+  useEffect(() => {
+    if (models && models.length > 0) {
+      // 提取所有模型 ID
+      const modelIds = models.map((model) => model.id);
+      // 批量加载交互状态
+      logger.info(`批量加载 ${modelIds.length} 个模型的交互状态`);
+      fetchBatchStatus(modelIds);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [models]); // ✅ 只依赖 models，避免 fetchBatchStatus 导致的无限循环
 
   // 下拉刷新
   const handleRefresh = () => {
@@ -165,6 +180,7 @@ export default function DiscoverScreen() {
                     title={model.name}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
+                    favorites={model.favoriteCount || 0}
                     onPress={handleModelPress}
                   />
                 ))}
@@ -179,6 +195,7 @@ export default function DiscoverScreen() {
                     title={model.name}
                     imageUrl={model.previewImageUrl}
                     likes={model.likeCount}
+                    favorites={model.favoriteCount || 0}
                     onPress={handleModelPress}
                   />
                 ))}
