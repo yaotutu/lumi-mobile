@@ -831,3 +831,4 @@ logger.error('错误信息', error);
 
 ## Rules
 - [2025-01-29] Expo Router/React Navigation：如果页面从 Tabs 导航器跳转到外部 Stack 页面（即app/(tabs) 之外的页面），必须在 Stack.Screen 的 options 中自定义headerLeft返回按钮并明确绑定 router.back()，不能依赖默认的 header 返回按钮
+- [2026-01-02] React Navigation Tab 导航器：在 Tab 导航器中处理需要用户交互的逻辑（如弹窗、Alert）时，必须使用 useIsFocused() 检查页面焦点状态，因为 Tab 页面不会卸载只会失焦

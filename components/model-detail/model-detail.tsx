@@ -39,7 +39,7 @@ const formatFileSize = (bytes: number | null | undefined): string => {
 };
 
 export const ModelDetail = React.memo(
-  ({ model, onDownload, onAddToQueue, on3DPreview }: ModelDetailProps) => {
+  ({ model, onPrint, on3DPreview }: ModelDetailProps) => {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
     const router = useRouter();
@@ -81,16 +81,10 @@ export const ModelDetail = React.memo(
       handleFavorite();
     };
 
-    // 处理下载
-    const handleDownload = () => {
-      logger.info('下载模型:', model.name);
-      onDownload?.();
-    };
-
-    // 处理加入队列
-    const handleAddToQueue = () => {
-      logger.info('加入队列:', model.name);
-      onAddToQueue?.();
+    // 处理一键打印
+    const handlePrint = () => {
+      logger.info('一键打印模型:', model.name);
+      onPrint?.();
     };
 
     // 处理 3D 预览
@@ -324,32 +318,12 @@ export const ModelDetail = React.memo(
             {/* 操作按钮 */}
             <View style={styles.actionsSection}>
               <TouchableOpacity
-                style={[styles.secondaryActionButton, dynamicStyles.secondaryButton]}
-                onPress={handleDownload}
-                activeOpacity={0.7}
-              >
-                <IconSymbol
-                  name="arrow.down.circle"
-                  size={20}
-                  color={isDark ? Colors.dark.tint : Colors.light.tint}
-                />
-                <Text
-                  style={[
-                    styles.secondaryActionText,
-                    { color: isDark ? Colors.dark.tint : Colors.light.tint },
-                  ]}
-                >
-                  Download .{model.format || 'STL'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
                 style={[styles.primaryActionButton, dynamicStyles.primaryButton]}
-                onPress={handleAddToQueue}
+                onPress={handlePrint}
                 activeOpacity={0.8}
               >
-                <IconSymbol name="plus.circle" size={20} color="#fff" />
-                <Text style={styles.primaryActionText}>Add to Queue</Text>
+                <IconSymbol name="printer.fill" size={20} color="#fff" />
+                <Text style={styles.primaryActionText}>一键打印</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -131,8 +131,7 @@ export default function ModelDetailScreen() {
       <Stack.Screen options={getHeaderOptions(model.name, { transparent: false })} />
       <ModelDetail
         model={model}
-        onDownload={() => logger.info('下载功能待实现')}
-        onAddToQueue={() => logger.info('加入队列功能待实现')}
+        onPrint={() => logger.info('一键打印功能待实现')}
         on3DPreview={() => {
           logger.info('打开 3D 预览:', model.name);
           router.push(`/model-viewer/${id}` as any);
