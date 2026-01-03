@@ -69,7 +69,9 @@ export const useInteractionStore = create<InteractionState>()(
             }
           });
         } catch (error) {
-          const errorInfo = categorizeError(error);
+          // 将 unknown error 转换为 Error 类型
+          const err = error instanceof Error ? error : new Error(String(error));
+          const errorInfo = categorizeError(err);
           logger.error('批量加载交互状态失败:', errorInfo);
 
           // 失败时设置为默认状态，避免组件无限加载
@@ -79,7 +81,7 @@ export const useInteractionStore = create<InteractionState>()(
             });
           });
 
-          logError(error, 'InteractionStore.fetchBatchStatus');
+          logError(err, 'InteractionStore.fetchBatchStatus');
         }
       },
 
@@ -144,7 +146,9 @@ export const useInteractionStore = create<InteractionState>()(
           };
         } catch (error) {
           // 4. 失败时回滚状态
-          const errorInfo = categorizeError(error);
+          // 将 unknown error 转换为 Error 类型
+          const err = error instanceof Error ? error : new Error(String(error));
+          const errorInfo = categorizeError(err);
           logger.error('切换点赞状态失败:', errorInfo);
 
           set((state) => {
@@ -152,7 +156,7 @@ export const useInteractionStore = create<InteractionState>()(
             state.loadingIds.delete(modelId);
           });
 
-          logError(error, 'InteractionStore.toggleLike');
+          logError(err, 'InteractionStore.toggleLike');
 
           // 返回回滚后的状态
           return {
@@ -215,7 +219,9 @@ export const useInteractionStore = create<InteractionState>()(
           };
         } catch (error) {
           // 4. 失败时回滚状态
-          const errorInfo = categorizeError(error);
+          // 将 unknown error 转换为 Error 类型
+          const err = error instanceof Error ? error : new Error(String(error));
+          const errorInfo = categorizeError(err);
           logger.error('切换收藏状态失败:', errorInfo);
 
           set((state) => {
@@ -223,7 +229,7 @@ export const useInteractionStore = create<InteractionState>()(
             state.loadingIds.delete(modelId);
           });
 
-          logError(error, 'InteractionStore.toggleFavorite');
+          logError(err, 'InteractionStore.toggleFavorite');
 
           // 返回回滚后的状态
           return {

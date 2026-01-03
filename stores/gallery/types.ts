@@ -1,43 +1,17 @@
 import type { ModelSummary } from '@/types';
+import type { ModelListStore, FetchOptions as BaseFetchOptions } from '../create-model-list-store';
 
-export interface GalleryState {
-  // 数据状态
-  models: ModelSummary[];
-  loading: boolean;
-  refreshing: boolean;
-  error: string | null;
+/**
+ * 画廊 Store 类型
+ * 使用通用的 ModelListStore 类型
+ */
+export type GalleryState = ModelListStore;
 
-  // 分页状态
-  currentPage: number;
-  hasMore: boolean;
-  pageSize: number;
-
-  // 搜索状态
-  searchQuery: string;
-  searchResults: ModelSummary[];
-  isSearching: boolean;
-
-  // 缓存控制
-  lastFetchTime: number;
-  cacheDuration: number; // 缓存持续时间(毫秒)
-
-  // Actions
-  fetchModels: (
-    page?: number,
-    options?: FetchOptions,
-    abortController?: AbortController
-  ) => Promise<void>;
-  refreshModels: () => Promise<void>;
-  loadMore: () => Promise<void>;
-  searchModels: (query: string) => Promise<void>;
-  clearSearch: () => void;
-  clearError: () => void;
-  reset: () => void;
-  getModelById: (id: string) => ModelSummary | undefined;
+/**
+ * 画廊获取选项
+ * 扩展基础 FetchOptions，添加画廊特定的选项
+ */
+export interface FetchOptions extends BaseFetchOptions {
+  // 可以在这里添加画廊特定的选项
 }
 
-export interface FetchOptions {
-  sort?: 'latest' | 'popular' | 'liked';
-  category?: string;
-  limit?: number;
-}

@@ -1,5 +1,4 @@
-import type { GalleryState } from './types';
-import { createModelListStore, createModelListSelectors } from '../create-model-list-store';
+import { createModelListStore, createModelListSelectors, type ModelListStore } from '../create-model-list-store';
 import { fetchGalleryModels } from '@/services';
 
 /**
@@ -31,3 +30,6 @@ export const useGalleryRefreshing = selectors.useRefreshing;
 export const useGalleryError = selectors.useError;
 export const useGalleryPagination = selectors.usePagination;
 export const useGallerySearch = selectors.useSearch;
+
+// 导出类型，保持向后兼容
+export type GalleryStore = ModelListStore;

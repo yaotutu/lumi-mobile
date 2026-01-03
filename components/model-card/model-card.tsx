@@ -83,7 +83,7 @@ export const ModelCard = React.memo(
       isAuthenticated,
       onRequireLogin: () => {
         // 跳转到登录页
-        router.push('/auth/login');
+        router.push('/login');
       },
     });
 

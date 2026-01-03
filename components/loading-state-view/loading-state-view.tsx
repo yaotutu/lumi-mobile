@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, ActivityIndicator, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { LoadingStateViewProps } from './types';
-import { categorizeError, type ErrorCategory } from '@/utils/error-handler';
+import { categorizeError, ErrorType } from '@/utils/error-handler';
 
 /**
  * 加载状态视图组件
@@ -46,11 +46,11 @@ export function LoadingStateView({
   /**
    * 根据错误类型返回对应的 Emoji 图标
    */
-  const getErrorIcon = (type: ErrorCategory['type']): string => {
+  const getErrorIcon = (type: ErrorType): string => {
     switch (type) {
-      case 'network':
+      case ErrorType.NETWORK:
         return '🌐'; // 网络错误
-      case 'server':
+      case ErrorType.SERVER:
         return '🔧'; // 服务器错误
       default:
         return '⚠️'; // 未知错误

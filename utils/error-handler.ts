@@ -7,7 +7,15 @@ export enum ErrorType {
   UNKNOWN = 'unknown',
 }
 
-export const categorizeError = (error: Error): { type: ErrorType; message: string } => {
+/**
+ * 错误分类结果类型
+ */
+export interface ErrorCategory {
+  type: ErrorType;
+  message: string;
+}
+
+export const categorizeError = (error: Error): ErrorCategory => {
   if (error.message.includes('无法连接到服务器') || error.message.includes('网络请求失败')) {
     return {
       type: ErrorType.NETWORK,

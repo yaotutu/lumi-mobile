@@ -20,6 +20,8 @@ const ICON_MAPPING = {
   'chevron.left': 'chevron-back', // 左箭头
   'chevron.left.forwardslash.chevron.right': 'code-slash', // 代码
   magnifyingglass: 'search', // 搜索
+  checkmark: 'checkmark', // 对勾
+  'xmark.circle': 'close-circle', // 关闭圆圈
 
   // 功能性图标
   'wand.and.stars': 'sparkles', // 魔法棒/AI
@@ -29,6 +31,7 @@ const ICON_MAPPING = {
   'arrow.down.circle': 'cloud-download-outline', // 下载
   ellipsis: 'ellipsis-horizontal', // 更多
   'exclamationmark.triangle.fill': 'warning', // 警告
+  'exclamationmark.triangle': 'warning-outline', // 警告（空心）
 
   // 用户和社交
   'person.fill': 'person', // 用户
@@ -54,6 +57,8 @@ const ICON_MAPPING = {
   clock: 'time-outline', // 时间
   hourglass: 'hourglass-outline', // 沙漏
   'triangle.fill': 'triangle', // 三角形
+  'doc.badge.gearshape': 'document-text-outline', // 文档设置
+  'wifi.slash': 'wifi-outline', // WiFi 断开
 
   // 主题和分类
   'pawprint.fill': 'paw', // 宠物

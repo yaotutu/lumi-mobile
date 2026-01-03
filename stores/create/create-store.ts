@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { CreateState, GenerationTask, GeneratedImage } from './types';
+import type { CreateState, GenerationTask, GeneratedImage, TaskStatus } from './types';
 import { logger } from '@/utils/logger';
 import { zustandStorage } from '@/utils/storage';
 import {
@@ -168,7 +168,8 @@ function adaptBackendTask(backendTask: BackendGenerationTask): GenerationTask {
 }
 
 // 轮询定时器引用（全局变量，确保只有一个定时器）
-let pollingIntervalId: NodeJS.Timeout | null = null;
+// 支持 Node.js 和浏览器环境的类型
+let pollingIntervalId: ReturnType<typeof setInterval> | null = null;
 
 export const useCreateStore = create<CreateState>()(
   devtools(

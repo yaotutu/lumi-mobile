@@ -68,24 +68,27 @@ export interface FetchOptions {
 
 /**
  * API 响应格式
- * 支持两种格式：
- * 1. { items: ModelSummary[] } - 带分页信息
+ * 支持多种格式：
+ * 1. { items: ModelSummary[]; total?: number } - 带分页信息
  * 2. ModelSummary[] - 直接返回数组
  */
-export type ApiResponse = { items: ModelSummary[] } | ModelSummary[];
+export type ApiResponse = { items: ModelSummary[]; total?: number } | ModelSummary[];
 
 /**
  * Fetch 函数类型
  * 接收分页参数和请求选项，返回模型数据
+ *
+ * 参数类型设计为灵活的对象，支持不同 API 的参数结构
  */
 export type FetchFunction = (
   params: {
     page?: number;
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     sort?: string;
     category?: string;
     searchQuery?: string;
+    [key: string]: any; // 允许额外的参数
   },
   options?: {
     signal?: AbortSignal;
@@ -354,7 +357,12 @@ export function createModelListStore(
  * const loading = gallerySelectors.useLoading();
  * ```
  */
-export function createModelListSelectors<T extends ModelListStore>(useStore: () => T) {
+export function createModelListSelectors<T extends ModelListStore>(
+  useStore: {
+    (): T;
+    <U>(selector: (state: T) => U): U;
+  }
+) {
   return {
     // 获取模型列表
     useModels: () => useStore(state => state.models),

@@ -2,7 +2,7 @@ export interface ModelCardProps {
   modelId: string;
   title: string;
   creator?: string; // 可选,API 可能不返回
-  imageUrl: string;
+  imageUrl: string | null; // 图片URL可能为null
   likes: number;
   favorites: number; // 新增：收藏数
   onPress?: (modelId: string) => void;
