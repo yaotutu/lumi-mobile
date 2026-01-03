@@ -144,6 +144,58 @@ export interface SelectImageResponse {
 }
 
 /**
+ * 任务列表的响应
+ */
+export interface TaskListResponse {
+  // 任务列表
+  items: BackendGenerationTask[];
+  // 总数
+  total: number;
+}
+
+/**
+ * 获取任务列表
+ *
+ * @param page - 页码（从 1 开始）
+ * @param pageSize - 每页数量
+ * @returns API 响应结果
+ *
+ * @example
+ * const result = await fetchTaskList(1, 20);
+ * if (result.success) {
+ *   console.log('任务列表:', result.data.items);
+ * }
+ */
+export async function fetchTaskList(
+  page: number = 1,
+  pageSize: number = 20
+): Promise<ApiResult<TaskListResponse>> {
+  logger.info('[API] 获取任务列表:', { page, pageSize });
+
+  // 构建查询参数
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  // 调用 GET /api/tasks?page=1&pageSize=20
+  const result = await apiGet<TaskListResponse>(
+    `${API_ENDPOINTS.tasks.list}?${queryParams.toString()}`
+  );
+
+  if (result.success) {
+    logger.info('[API] 任务列表获取成功:', {
+      total: result.data.total,
+      count: result.data.items.length,
+    });
+  } else {
+    logger.error('[API] 任务列表获取失败:', result.error.message);
+  }
+
+  return result;
+}
+
+/**
  * 创建文生图任务
  *
  * @param prompt - 用户输入的文本描述

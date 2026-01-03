@@ -18,6 +18,8 @@ const ICON_MAPPING = {
   'paperplane.fill': 'send', // 发送
   'chevron.right': 'chevron-forward', // 右箭头
   'chevron.left': 'chevron-back', // 左箭头
+  'chevron.back': 'chevron-back', // 返回箭头
+  'chevron.forward': 'chevron-forward', // 前进箭头
   'chevron.left.forwardslash.chevron.right': 'code-slash', // 代码
   magnifyingglass: 'search', // 搜索
   checkmark: 'checkmark', // 对勾

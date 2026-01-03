@@ -121,6 +121,39 @@ export default function ProfileScreen() {
     router.replace('/login');
   };
 
+  // 处理菜单项点击
+  const handleMenuPress = (label: string) => {
+    logger.info('点击菜单项:', label);
+
+    switch (label) {
+      case 'Creation History':
+        router.push('/create-history');
+        break;
+      case 'My Favorites':
+        // TODO: 跳转到收藏页面
+        logger.info('跳转到收藏页面');
+        break;
+      case 'My Print Tasks':
+        // TODO: 跳转到打印任务页面
+        logger.info('跳转到打印任务页面');
+        break;
+      case 'My Devices':
+        // TODO: 跳转到设备管理页面
+        logger.info('跳转到设备管理页面');
+        break;
+      case 'Account Security':
+        // TODO: 跳转到账户安全页面
+        logger.info('跳转到账户安全页面');
+        break;
+      case 'Help & Support':
+        // TODO: 跳转到帮助支持页面
+        logger.info('跳转到帮助支持页面');
+        break;
+      default:
+        logger.warn('未知的菜单项:', label);
+    }
+  };
+
   return (
     <AuthGuard>
       <ScreenWrapper edges={['top']}>
@@ -189,7 +222,12 @@ export default function ProfileScreen() {
             style={[styles.menuCard, styles.sectionSpacing, { backgroundColor: colors.card }]}
           >
             {group.map((item, index) => (
-              <TouchableOpacity key={item.label} style={styles.menuRow} activeOpacity={0.8}>
+              <TouchableOpacity
+                key={item.label}
+                style={styles.menuRow}
+                activeOpacity={0.8}
+                onPress={() => handleMenuPress(item.label)}
+              >
                 <View style={[styles.iconContainer, { backgroundColor: colors.iconBackground }]}>
                   <Ionicons name={item.icon as IoniconName} size={20} color={colors.iconTint} />
                 </View>

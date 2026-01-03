@@ -34,6 +34,8 @@ export const API_ENDPOINTS = {
   },
   // AI 创作任务相关端点
   tasks: {
+    // 获取任务列表
+    list: '/api/tasks',
     // 创建文生图任务
     create: '/api/tasks',
     // 查询任务详情

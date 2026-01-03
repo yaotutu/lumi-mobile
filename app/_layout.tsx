@@ -66,6 +66,18 @@ function RootLayoutNav() {
 
         {/* 3D 模型查看器 */}
         <Stack.Screen name="model-viewer/[id]" />
+
+        {/* 创作历史列表 */}
+        <Stack.Screen
+          name="create-history/index"
+          options={{ headerShown: true }}
+        />
+
+        {/* 创作历史详情 */}
+        <Stack.Screen
+          name="create-history/[id]"
+          options={{ headerShown: true }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
