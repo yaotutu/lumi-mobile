@@ -5,9 +5,7 @@ import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
-import { ImageGenerating } from '@/components/pages/create/image-generating';
-import { ModelGenerating } from '@/components/pages/create/model-generating';
-import { ModelComplete } from '@/components/pages/create/model-complete';
+import { CreateTaskRenderer } from '@/components/create-task-renderer';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useCreateStore } from '@/stores';
@@ -396,45 +394,7 @@ export default function CreateScreen() {
       );
     }
 
-    // 图片生成中或图片已生成（在同一组件中处理）
-    if (currentTask.status === 'generating_images' || currentTask.status === 'images_ready') {
-      return (
-        <ImageGenerating
-          task={currentTask}
-          onSelectImage={handleSelectImage}
-          onGenerateModel={handleGenerateModel}
-          onCancel={handleCancel}
-          paddingBottom={contentPaddingBottom}
-          isDark={isDark}
-        />
-      );
-    }
-
-    // 模型生成中
-    if (currentTask.status === 'generating_model') {
-      return (
-        <ModelGenerating
-          task={currentTask}
-          paddingBottom={contentPaddingBottom}
-          isDark={isDark}
-        />
-      );
-    }
-
-    // 模型生成完成
-    if (currentTask.status === 'model_ready') {
-      return (
-        <ModelComplete
-          task={currentTask}
-          onView3D={handleView3D}
-          onCreateNew={handleCreateNew}
-          paddingBottom={contentPaddingBottom}
-          isDark={isDark}
-        />
-      );
-    }
-
-    // 失败状态
+    // 失败状态 - 显示错误页面
     if (currentTask.status === 'failed') {
       return (
         <View style={[styles.errorContainer, { paddingBottom: contentPaddingBottom }]}>
@@ -453,7 +413,19 @@ export default function CreateScreen() {
       );
     }
 
-    return null;
+    // 有任务 - 使用 CreateTaskRenderer 组件（数据驱动的渲染）
+    return (
+      <CreateTaskRenderer
+        task={currentTask}
+        onSelectImage={handleSelectImage}
+        onGenerateModel={handleGenerateModel}
+        onCancel={handleCancel}
+        onView3D={handleView3D}
+        onCreateNew={handleCreateNew}
+        paddingBottom={contentPaddingBottom}
+        isDark={isDark}
+      />
+    );
   };
 
   return (
