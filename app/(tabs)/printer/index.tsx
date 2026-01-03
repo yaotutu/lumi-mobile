@@ -287,7 +287,9 @@ const styles = StyleSheet.create({
 
   // ScrollView 内容容器
   scrollContent: {
-    paddingTop: Spacing.lg, // 顶部内边距（删除标题后添加）
-    paddingBottom: 16, // 底部内边距（额外空间）
+    paddingTop: Spacing.lg, // 顶部内边距 - 16px，与其他页面一致
+    paddingHorizontal: Spacing.lg, // 横向内边距 - 16px，避免内容贴边
+    paddingBottom: Spacing.xxxl, // 底部内边距 - 32px，避免被 Tab Bar 遮挡
+    gap: Spacing.md, // 卡片之间的间距 - 12px
   },
 });

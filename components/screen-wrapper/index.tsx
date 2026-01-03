@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { SafeAreaView, Edge } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 interface ScreenWrapperProps {
   children: ReactNode;
@@ -51,8 +52,8 @@ export function ScreenWrapper({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  // 默认背景色
-  const defaultBackgroundColor = isDark ? '#000000' : '#F5F5F7';
+  // 默认背景色 - 使用统一的主题颜色
+  const defaultBackgroundColor = isDark ? Colors.dark.background : Colors.light.background;
 
   return (
     <SafeAreaView

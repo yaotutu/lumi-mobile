@@ -16,6 +16,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
 import { LoadingScreen } from '@/components/ui/loading-screen';
+import { Spacing } from '@/constants/theme';
 
 const DEFAULT_PROFILE = {
   name: 'Alex Chroma',
@@ -108,6 +109,7 @@ export default function ProfileScreen() {
   // 获取真实的统计数据，如果没有则使用默认值
   const stats = user?.stats || DEFAULT_STATS;
 
+  // 使用统一的主题颜色
   const colors = getPalette(isDark);
 
   const handleLogout = async () => {
@@ -127,7 +129,8 @@ export default function ProfileScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-        <View style={[styles.card, styles.sectionSpacing, { backgroundColor: colors.card }]}>
+        {/* 第一个卡片不需要 marginTop，由 ScrollView 的 paddingTop 统一控制 */}
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
           {/* 头像：如果用户有头像则显示图片，否则显示默认 emoji */}
           {user?.avatar ? (
             <Image source={{ uri: profile.avatar }} style={styles.avatar} />
@@ -217,7 +220,7 @@ export default function ProfileScreen() {
 
 function getPalette(isDark: boolean) {
   return {
-    screen: isDark ? '#0B0B0F' : '#F3F6FA',
+    // 移除自定义的 screen 背景色，使用 ScreenWrapper 的统一背景
     card: isDark ? '#1C1E26' : '#FFFFFF',
     headerText: isDark ? '#F5F6F8' : '#111A2C',
     secondaryText: isDark ? '#B0B6C3' : '#576482',
@@ -233,11 +236,12 @@ function getPalette(isDark: boolean) {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingTop: Spacing.lg, // 顶部内边距 - 16px，与其他页面一致
+    paddingHorizontal: Spacing.lg, // 横向内边距 - 16px
+    paddingBottom: Spacing.xxxl, // 底部内边距 - 32px，避免被 Tab Bar 遮挡
   },
   sectionSpacing: {
-    marginTop: 12,
+    marginTop: Spacing.md, // 区块之间的间距 - 12px，使用 Spacing 常量
   },
   card: {
     flexDirection: 'row',

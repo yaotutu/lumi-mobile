@@ -62,7 +62,7 @@ const QUICK_STYLES: QuickStyle[] = [
 ];
 
 const LIGHT_PALETTE = {
-  background: '#F5F7FB',
+  // 移除自定义的 background，使用 ScreenWrapper 的统一背景
   card: '#FFFFFF',
   border: '#DDE5F2',
   text: '#0F172A',
@@ -77,7 +77,7 @@ const LIGHT_PALETTE = {
 };
 
 const DARK_PALETTE = {
-  background: '#0C111F',
+  // 移除自定义的 background，使用 ScreenWrapper 的统一背景
   card: '#151B2C',
   border: '#2B3550',
   text: '#F6F7FF',
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pageHeader: {
-    paddingTop: Spacing.xl,
+    paddingTop: 0, // 移除顶部 padding，由 ScreenWrapper 处理
     paddingBottom: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: Spacing.lg,
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.md, // 减小顶部间距，从 20 改为 12
     gap: Spacing.xl,
   },
   promptCard: {

@@ -214,8 +214,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: BorderRadius.lg, // 圆角
     padding: Spacing.lg, // 内边距
-    marginHorizontal: Spacing.lg, // 左右外边距
-    marginTop: Spacing.lg, // 顶部外边距
+    // 移除 marginHorizontal 和 marginTop，由父容器的 paddingHorizontal 和 gap 统一控制
     borderWidth: StyleSheet.hairlineWidth, // 细边框
   },
 

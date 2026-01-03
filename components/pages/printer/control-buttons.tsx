@@ -250,9 +250,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', // 水平布局
     gap: Spacing.md, // 按钮间距
-    marginHorizontal: Spacing.lg, // 左右外边距
-    marginTop: Spacing.lg, // 顶部外边距
-    marginBottom: Spacing.xxl, // 底部外边距（为底部 Tab 留出空间）
+    // 移除所有 margin，由父容器的 paddingHorizontal、gap 和 paddingBottom 统一控制
   },
 
   // 主操作按钮（暂停/继续）
