@@ -11,7 +11,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary, setupGlobalErrorHandlers } from '@/components/error-boundary';
 import { setUnauthorizedHandler } from '@/services/api-client';
 import { useAuthStore } from '@/stores';
-import { SessionProvider } from './ctx';
+import { SessionProvider } from '@/contexts/session';
 
 // 启用 Immer 的 MapSet 插件（支持在 Store 中使用 Map 和 Set）
 enableMapSet();

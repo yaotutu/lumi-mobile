@@ -27,7 +27,7 @@ import { Alert } from 'react-native';
 import { router, usePathname, useFocusEffect } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 
-import { useSession } from '@/app/ctx';
+import { useSession } from '@/contexts/session';
 import { LoadingScreen } from '@/components/ui/loading-screen';
 import { logger } from '@/utils/logger';
 
