@@ -27,16 +27,16 @@ const DEFAULT_PROFILE = {
 
 // 默认统计数据（当 API 未返回时使用）
 const DEFAULT_STATS = {
-  totalModels: 0,
-  totalFavorites: 0,
-  totalViews: 0,
+  totalModels: 0, // 我创建的模型数量
+  totalFavorites: 0, // 我收藏的模型数量
+  totalLikes: 0, // 我喜欢的模型数量
 };
 
-// 统计数据配置（标签）
+// 统计数据配置（标签和路由）
 const STATS_CONFIG = [
-  { key: 'totalModels' as const, label: '3D模型' },
-  { key: 'totalFavorites' as const, label: '收藏' },
-  { key: 'totalViews' as const, label: '浏览量' },
+  { key: 'totalModels' as const, label: '3D模型', route: '/user-models/my-models' }, // 对应我创建的模型
+  { key: 'totalFavorites' as const, label: '收藏', route: '/user-models/my-favorites' }, // 对应我的收藏模型
+  { key: 'totalLikes' as const, label: '喜欢', route: '/user-models/my-likes' }, // 对应我喜欢的模型
 ];
 
 const MENU_SECTIONS = [
@@ -130,8 +130,8 @@ export default function ProfileScreen() {
         router.push('/create-history');
         break;
       case 'My Favorites':
-        // TODO: 跳转到收藏页面
-        logger.info('跳转到收藏页面');
+        // 跳转到收藏页面
+        router.push('/user-models/my-favorites');
         break;
       case 'My Print Tasks':
         // TODO: 跳转到打印任务页面
@@ -152,6 +152,15 @@ export default function ProfileScreen() {
       default:
         logger.warn('未知的菜单项:', label);
     }
+  };
+
+  /**
+   * 处理统计项点击
+   * 跳转到对应的列表页面
+   */
+  const handleStatPress = (route: string, label: string) => {
+    logger.info('点击统计项:', label, '跳转到:', route);
+    router.push(route);
   };
 
   return (
@@ -195,7 +204,7 @@ export default function ProfileScreen() {
 
         <View style={[styles.statsCard, styles.sectionSpacing, { backgroundColor: colors.card }]}>
           {STATS_CONFIG.map((config, index) => (
-            <View
+            <TouchableOpacity
               key={config.key}
               style={[
                 styles.statItem,
@@ -205,6 +214,8 @@ export default function ProfileScreen() {
                   borderColor: colors.statDivider,
                 },
               ]}
+              activeOpacity={0.6}
+              onPress={() => handleStatPress(config.route, config.label)}
             >
               <ThemedText style={[styles.statValue, { color: colors.headerText }]}>
                 {stats[config.key]}
@@ -212,7 +223,7 @@ export default function ProfileScreen() {
               <ThemedText style={[styles.statLabel, { color: colors.link }]}>
                 {config.label}
               </ThemedText>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 

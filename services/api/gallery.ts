@@ -66,3 +66,93 @@ export async function recordModelDownload(id: string): Promise<void> {
     // 不抛出错误,下载计数失败不应影响用户体验
   }
 }
+
+/**
+ * 获取我创建的模型列表
+ */
+export async function fetchMyModels(
+  params: GalleryQueryParams = {},
+  options?: { signal?: AbortSignal }
+): Promise<GalleryListResponse['data']> {
+  const { sort = 'latest', limit = 20, offset = 0 } = params;
+
+  const query = new URLSearchParams({
+    sort,
+    limit: String(limit),
+    offset: String(offset),
+  });
+
+  const result = await apiGet<GalleryListResponse['data']>(
+    `${API_ENDPOINTS.user.myModels}?${query.toString()}`,
+    {
+      signal: options?.signal,
+    }
+  );
+
+  if (!result.success) {
+    logger.error('获取我的模型列表失败:', result.error);
+    throw result.error;
+  }
+
+  return result.data;
+}
+
+/**
+ * 获取我收藏的模型列表
+ */
+export async function fetchMyFavorites(
+  params: GalleryQueryParams = {},
+  options?: { signal?: AbortSignal }
+): Promise<GalleryListResponse['data']> {
+  const { sort = 'latest', limit = 20, offset = 0 } = params;
+
+  const query = new URLSearchParams({
+    sort,
+    limit: String(limit),
+    offset: String(offset),
+  });
+
+  const result = await apiGet<GalleryListResponse['data']>(
+    `${API_ENDPOINTS.user.myFavorites}?${query.toString()}`,
+    {
+      signal: options?.signal,
+    }
+  );
+
+  if (!result.success) {
+    logger.error('获取我的收藏列表失败:', result.error);
+    throw result.error;
+  }
+
+  return result.data;
+}
+
+/**
+ * 获取我喜欢的模型列表
+ */
+export async function fetchMyLikes(
+  params: GalleryQueryParams = {},
+  options?: { signal?: AbortSignal }
+): Promise<GalleryListResponse['data']> {
+  const { sort = 'latest', limit = 20, offset = 0 } = params;
+
+  const query = new URLSearchParams({
+    sort,
+    limit: String(limit),
+    offset: String(offset),
+  });
+
+  const result = await apiGet<GalleryListResponse['data']>(
+    `${API_ENDPOINTS.user.myLikes}?${query.toString()}`,
+    {
+      signal: options?.signal,
+    }
+  );
+
+  if (!result.success) {
+    logger.error('获取我喜欢的列表失败:', result.error);
+    throw result.error;
+  }
+
+  return result.data;
+}

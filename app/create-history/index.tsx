@@ -49,7 +49,7 @@ export default function CreateHistoryScreen() {
    */
   const getHeaderOptions = useCallback(() => {
     const baseOptions = createImmersiveHeaderOptions({
-      title: '', // 不显示标题，因为我们要自定义布局
+      title: '创作历史', // 显示标题
       colorScheme,
       transparent: false,
     });
@@ -79,14 +79,6 @@ export default function CreateHistoryScreen() {
             返回
           </ThemedText>
         </TouchableOpacity>
-      ),
-      // 自定义右侧副标题
-      headerRight: () => (
-        <View style={styles.headerRightContainer}>
-          <ThemedText style={styles.headerSubtitle} numberOfLines={1}>
-            查看你的所有 AI 创作任务
-          </ThemedText>
-        </View>
       ),
     };
   }, [colorScheme, isDark, handleBack]);
@@ -310,8 +302,9 @@ const styles = StyleSheet.create({
   },
   // 列表样式
   listContent: {
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg, // 左右内边距 - 16px
+    paddingTop: Spacing.lg, // 顶部内边距 - 16px，避免内容贴着导航栏
+    paddingBottom: Spacing.xl, // 底部内边距 - 24px
   },
   row: {
     justifyContent: 'space-between',

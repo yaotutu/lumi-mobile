@@ -195,6 +195,8 @@ const styles = StyleSheet.create({
   // 内容容器样式
   contentContainer: {
     paddingHorizontal: 16, // 左右内边距
+    paddingTop: 16, // 顶部内边距 - 避免内容贴着导航栏
+    paddingBottom: 32, // 底部内边距 - 避免被底部 Tab Bar 遮挡
   },
 
   // 网格容器样式

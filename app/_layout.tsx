@@ -78,6 +78,12 @@ function RootLayoutNav() {
           name="create-history/[id]"
           options={{ headerShown: true }}
         />
+
+        {/* 用户模型列表（通用页面，根据 type 参数区分）*/}
+        <Stack.Screen
+          name="user-models/[type]"
+          options={{ headerShown: true }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -31,6 +31,12 @@ export const API_ENDPOINTS = {
     profile: '/api/user/profile',
     login: '/api/auth/login',
     logout: '/api/auth/logout',
+    // 用户模型列表
+    myModels: '/api/users/my-models',
+    // 用户收藏列表
+    myFavorites: '/api/users/favorites',
+    // 用户喜欢列表
+    myLikes: '/api/users/likes',
   },
   // AI 创作任务相关端点
   tasks: {
