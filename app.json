@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "top.yaotutu.lumi"
+      "bundleIdentifier": "top.yaotutu.lumi",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +25,10 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "top.yaotutu.lumi",
-      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"]
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "output": "static",
@@ -58,7 +64,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "23476433-e92d-40f7-85cf-4fcf8e2dc614"
+        "projectId": "285ed735-ef23-470d-8bf7-65a11bf31ffe"
       }
     },
     "owner": "yaotutu"
