@@ -31,6 +31,7 @@ export function createImmersiveHeaderOptions({
   return {
     headerShown: true,
     headerTitle: title || '',
+    headerTitleAlign: 'center', // 标题居中显示
     headerTitleStyle: {
       color: tintColor,
       fontWeight: '600' as TextStyle['fontWeight'],
