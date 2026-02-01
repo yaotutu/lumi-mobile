@@ -107,8 +107,10 @@ export default function CreateScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeStyleId, setActiveStyleId] = useState<string | null>(null);
 
-  // 从 Store 获取当前任务和操作方法
-  const currentTask = useCreateStore(state => state.currentTask);
+  // 从 Store 获取当前任务（从 tasks 数组中计算派生状态）
+  const currentTask = useCreateStore(state =>
+    state.tasks.find(t => t.id === state.currentTaskId) ?? null
+  );
   const createTask = useCreateStore(state => state.createTask);
   const selectImage = useCreateStore(state => state.selectImage);
   const generateModel = useCreateStore(state => state.generateModel);

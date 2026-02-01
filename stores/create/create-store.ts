@@ -176,7 +176,7 @@ export const useCreateStore = create<CreateState>()(
     persist(
       immer((set, get) => ({
         // 初始状态
-        currentTask: null,
+        currentTaskId: null,
         tasks: [],
 
         // 创建新任务
@@ -200,7 +200,7 @@ export const useCreateStore = create<CreateState>()(
             // 更新状态
             set(state => {
               state.tasks.unshift(newTask);
-              state.currentTask = newTask;
+              state.currentTaskId = newTask.id;
 
               // 限制任务列表数量，保留最近 20 条
               if (state.tasks.length > 20) {
@@ -219,19 +219,16 @@ export const useCreateStore = create<CreateState>()(
         },
 
         // 选择图片（仅更新本地状态，不调用 API）
+        // 注意：只记录 selectedImageId，不设置 selectedImageIndex
+        // selectedImageIndex 应该在 generateModel 时设置，避免提前跳转到模型页面
         selectImage: async (taskId: string, imageId: string) => {
           logger.info('[Store] 选择图片:', { taskId, imageId });
 
           set(state => {
             const task = state.tasks.find(t => t.id === taskId);
             if (task && task.status === 'images_ready') {
-              // 更新选中的图片 ID
+              // 只更新选中的图片 ID，不设置 selectedImageIndex
               task.selectedImageId = imageId;
-              // 查找对应的图片索引
-              const selectedImage = task.images?.find(img => img.id === imageId);
-              if (selectedImage) {
-                task.selectedImageIndex = selectedImage.index;
-              }
               task.updatedAt = new Date();
             }
           });
@@ -249,31 +246,32 @@ export const useCreateStore = create<CreateState>()(
               throw new Error('任务不存在');
             }
 
-            if (task.selectedImageIndex === undefined) {
+            if (!task.selectedImageId) {
               logger.error('[Store] 未选择图片:', taskId);
               throw new Error('未选择图片');
             }
 
+            // 查找选中图片的索引
+            const selectedImage = task.images?.find(img => img.id === task.selectedImageId);
+            if (!selectedImage) {
+              logger.error('[Store] 选中的图片不存在:', { taskId, selectedImageId: task.selectedImageId });
+              throw new Error('选中的图片不存在');
+            }
+
             logger.info('[Store] 任务验证通过:', {
               taskId,
-              selectedImageIndex: task.selectedImageIndex,
               selectedImageId: task.selectedImageId,
+              selectedImageIndex: selectedImage.index,
             });
 
-            // 先更新本地状态为生成中
+            // 先更新本地状态为生成中，并设置 selectedImageIndex（触发页面跳转）
             set(state => {
               const task = state.tasks.find(t => t.id === taskId);
               if (task) {
                 task.status = 'generating_model';
                 task.modelProgress = 0;
+                task.selectedImageIndex = selectedImage.index; // 设置索引，触发跳转到模型页面
                 task.updatedAt = new Date();
-              }
-
-              // 同步更新 currentTask
-              if (state.currentTask?.id === taskId) {
-                state.currentTask.status = 'generating_model';
-                state.currentTask.modelProgress = 0;
-                state.currentTask.updatedAt = new Date();
               }
             });
 
@@ -282,10 +280,10 @@ export const useCreateStore = create<CreateState>()(
             // 调用 API 选择图片并生成 3D 模型
             logger.info('[Store] 调用 API selectImageForModel:', {
               taskId,
-              imageIndex: task.selectedImageIndex,
+              imageIndex: selectedImage.index,
             });
 
-            const result = await selectImageForModel(taskId, task.selectedImageIndex);
+            const result = await selectImageForModel(taskId, selectedImage.index);
 
             if (!result.success) {
               logger.error('[Store] API 调用失败:', {
@@ -301,13 +299,6 @@ export const useCreateStore = create<CreateState>()(
                   task.status = 'failed';
                   task.error = result.error.message;
                   task.updatedAt = new Date();
-                }
-
-                // 同步更新 currentTask
-                if (state.currentTask?.id === taskId) {
-                  state.currentTask.status = 'failed';
-                  state.currentTask.error = result.error.message;
-                  state.currentTask.updatedAt = new Date();
                 }
               });
 
@@ -335,11 +326,6 @@ export const useCreateStore = create<CreateState>()(
               if (task) {
                 Object.assign(task, updatedTask);
               }
-
-              // 同步更新 currentTask
-              if (state.currentTask?.id === taskId) {
-                Object.assign(state.currentTask, updatedTask);
-              }
             });
 
             logger.info('[Store] 任务状态已更新');
@@ -358,13 +344,6 @@ export const useCreateStore = create<CreateState>()(
                 task.status = 'failed';
                 task.error = error instanceof Error ? error.message : '未知错误';
                 task.updatedAt = new Date();
-              }
-
-              // 同步更新 currentTask
-              if (state.currentTask?.id === taskId) {
-                state.currentTask.status = 'failed';
-                state.currentTask.error = error instanceof Error ? error.message : '未知错误';
-                state.currentTask.updatedAt = new Date();
               }
             });
 
@@ -388,8 +367,8 @@ export const useCreateStore = create<CreateState>()(
             }
 
             // 如果是当前任务，清除引用
-            if (state.currentTask?.id === taskId) {
-              state.currentTask = null;
+            if (state.currentTaskId === taskId) {
+              state.currentTaskId = null;
             }
           });
         },
@@ -402,8 +381,8 @@ export const useCreateStore = create<CreateState>()(
             state.tasks = state.tasks.filter(t => t.id !== taskId);
 
             // 如果是当前任务，清除引用
-            if (state.currentTask?.id === taskId) {
-              state.currentTask = null;
+            if (state.currentTaskId === taskId) {
+              state.currentTaskId = null;
             }
           });
         },
@@ -420,12 +399,6 @@ export const useCreateStore = create<CreateState>()(
             if (task) {
               Object.assign(task, progress);
               task.updatedAt = new Date();
-
-              // 同步更新当前任务
-              if (state.currentTask?.id === taskId) {
-                Object.assign(state.currentTask, progress);
-                state.currentTask.updatedAt = new Date();
-              }
             }
           });
         },
@@ -464,8 +437,9 @@ export const useCreateStore = create<CreateState>()(
                 modelProgress: task.modelProgress,
               });
 
-              // 如果任务已完成（图片完成、模型完成、失败），停止轮询
-              const finishedStatuses: TaskStatus[] = ['images_ready', 'model_ready', 'failed'];
+              // 如果任务已完成（模型完成、失败），停止轮询
+              // 注意：images_ready 不停止轮询，因为用户可能还要生成 3D 模型
+              const finishedStatuses: TaskStatus[] = ['model_ready', 'failed'];
               if (finishedStatuses.includes(task.status)) {
                 logger.info('[Store] 任务已完成，停止轮询:', {
                   status: task.status,
@@ -518,6 +492,7 @@ export const useCreateStore = create<CreateState>()(
               get()._updateTaskProgress(taskId, updatedTask);
 
               // 智能停止轮询：检查任务是否已完成
+              // 注意：images_ready 不停止轮询，因为用户可能还要生成 3D 模型
               if (finishedStatuses.includes(updatedTask.status)) {
                 logger.info('[Store] 任务已完成，停止轮询:', {
                   status: updatedTask.status,
@@ -556,7 +531,7 @@ export const useCreateStore = create<CreateState>()(
           get()._stopPolling();
 
           set(state => {
-            state.currentTask = null;
+            state.currentTaskId = null;
             // 保留历史任务
           });
         },
@@ -576,7 +551,6 @@ export const useCreateStore = create<CreateState>()(
 );
 
 // 选择器 hooks，用于性能优化
-export const useCurrentTask = () => useCreateStore(state => state.currentTask);
 export const useTasks = () => useCreateStore(state => state.tasks);
 export const useTaskById = (taskId: string) =>
   useCreateStore(state => state.tasks.find(t => t.id === taskId));

@@ -59,8 +59,8 @@ export interface GenerationTask {
 
 // Create Store 状态接口
 export interface CreateState {
-  // 当前活动任务
-  currentTask: GenerationTask | null;
+  // 当前活动任务的 ID（从 tasks 数组中派生 currentTask）
+  currentTaskId: string | null;
 
   // 历史任务列表
   tasks: GenerationTask[];
