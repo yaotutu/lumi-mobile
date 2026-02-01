@@ -167,10 +167,6 @@ function adaptBackendTask(backendTask: BackendGenerationTask): GenerationTask {
   return frontendTask;
 }
 
-// 轮询定时器引用（全局变量，确保只有一个定时器）
-// 支持 Node.js 和浏览器环境的类型
-let pollingIntervalId: ReturnType<typeof setInterval> | null = null;
-
 export const useCreateStore = create<CreateState>()(
   devtools(
     persist(
@@ -178,6 +174,7 @@ export const useCreateStore = create<CreateState>()(
         // 初始状态
         currentTaskId: null,
         tasks: [],
+        pollingIntervals: new Map(), // 初始化轮询定时器 Map
 
         // 创建新任务
         createTask: async (prompt: string) => {
@@ -356,8 +353,8 @@ export const useCreateStore = create<CreateState>()(
         cancelTask: (taskId: string) => {
           logger.info('[Store] 取消任务:', taskId);
 
-          // 停止轮询
-          get()._stopPolling();
+          // 停止该任务的轮询
+          get()._stopPolling(taskId);
 
           set(state => {
             const task = state.tasks.find(t => t.id === taskId);
@@ -376,6 +373,9 @@ export const useCreateStore = create<CreateState>()(
         // 删除任务
         deleteTask: (taskId: string) => {
           logger.info('[Store] 删除任务:', taskId);
+
+          // 停止该任务的轮询
+          get()._stopPolling(taskId);
 
           set(state => {
             state.tasks = state.tasks.filter(t => t.id !== taskId);
@@ -407,8 +407,8 @@ export const useCreateStore = create<CreateState>()(
         _startPolling: (taskId: string) => {
           logger.info('[Store] 启动轮询:', taskId);
 
-          // 清除之前的定时器（确保只有一个轮询）
-          get()._stopPolling();
+          // 清除该任务之前的定时器（避免重复轮询）
+          get()._stopPolling(taskId);
 
           // 保存上次更新时间（用于 HTTP 304 优化）
           let lastUpdatedAt: string | undefined;
@@ -426,7 +426,7 @@ export const useCreateStore = create<CreateState>()(
                   taskExists: !!task,
                   status: task?.status,
                 });
-                get()._stopPolling();
+                get()._stopPolling(taskId);
                 return;
               }
 
@@ -437,15 +437,15 @@ export const useCreateStore = create<CreateState>()(
                 modelProgress: task.modelProgress,
               });
 
-              // 如果任务已完成（模型完成、失败），停止轮询
-              // 注意：images_ready 不停止轮询，因为用户可能还要生成 3D 模型
-              const finishedStatuses: TaskStatus[] = ['model_ready', 'failed'];
+              // 如果任务已完成（图片完成、模型完成、失败），停止轮询
+              // 注意：images_ready 时停止轮询，用户点击"生成 3D 模型"时会重新启动轮询
+              const finishedStatuses: TaskStatus[] = ['images_ready', 'model_ready', 'failed'];
               if (finishedStatuses.includes(task.status)) {
                 logger.info('[Store] 任务已完成，停止轮询:', {
                   status: task.status,
                   reason: '任务状态为终止状态',
                 });
-                get()._stopPolling();
+                get()._stopPolling(taskId);
                 return;
               }
 
@@ -492,13 +492,13 @@ export const useCreateStore = create<CreateState>()(
               get()._updateTaskProgress(taskId, updatedTask);
 
               // 智能停止轮询：检查任务是否已完成
-              // 注意：images_ready 不停止轮询，因为用户可能还要生成 3D 模型
+              // 注意：images_ready 时停止轮询，用户点击"生成 3D 模型"时会重新启动轮询
               if (finishedStatuses.includes(updatedTask.status)) {
                 logger.info('[Store] 任务已完成，停止轮询:', {
                   status: updatedTask.status,
                   reason: '任务状态更新为终止状态',
                 });
-                get()._stopPolling();
+                get()._stopPolling(taskId);
               }
             } catch (error) {
               logger.error('[Store] 轮询异常:', error);
@@ -509,17 +509,48 @@ export const useCreateStore = create<CreateState>()(
           logger.info('[Store] 立即执行首次轮询');
           pollTask();
 
-          // 每 2 秒轮询一次
+          // 每 2 秒轮询一次，并保存到 Map 中
           logger.info('[Store] 设置定时器，每 2 秒轮询一次');
-          pollingIntervalId = setInterval(pollTask, 2000);
+          const intervalId = setInterval(pollTask, 2000);
+
+          // 保存到 Map 中（使用 set 函数确保状态更新）
+          set(state => {
+            state.pollingIntervals.set(taskId, intervalId);
+          });
         },
 
-        // 停止轮询（内部方法）
-        _stopPolling: () => {
-          if (pollingIntervalId) {
-            logger.info('[Store] 停止轮询');
-            clearInterval(pollingIntervalId);
-            pollingIntervalId = null;
+        // 停止指定任务的轮询（内部方法）
+        _stopPolling: (taskId: string) => {
+          const interval = get().pollingIntervals.get(taskId);
+          logger.debug('[Store] 尝试停止轮询:', {
+            taskId,
+            hasInterval: !!interval,
+            mapSize: get().pollingIntervals.size,
+            mapKeys: Array.from(get().pollingIntervals.keys()),
+          });
+          if (interval) {
+            logger.info('[Store] 停止轮询:', { taskId });
+            clearInterval(interval);
+            // 从 Map 中删除（使用 set 函数确保状态更新）
+            set(state => {
+              state.pollingIntervals.delete(taskId);
+            });
+            logger.debug('[Store] 轮询已停止，剩余:', { mapSize: get().pollingIntervals.size });
+          } else {
+            logger.warn('[Store] 未找到轮询定时器:', { taskId });
+          }
+        },
+
+        // 停止所有轮询（内部方法）
+        _stopAllPolling: () => {
+          const intervals = get().pollingIntervals;
+          if (intervals.size > 0) {
+            logger.info('[Store] 停止所有轮询:', { count: intervals.size });
+            intervals.forEach(interval => clearInterval(interval));
+            // 清空 Map（使用 set 函数确保状态更新）
+            set(state => {
+              state.pollingIntervals.clear();
+            });
           }
         },
 
@@ -527,8 +558,8 @@ export const useCreateStore = create<CreateState>()(
         reset: () => {
           logger.info('[Store] 重置创作状态');
 
-          // 停止轮询
-          get()._stopPolling();
+          // 停止所有轮询
+          get()._stopAllPolling();
 
           set(state => {
             state.currentTaskId = null;

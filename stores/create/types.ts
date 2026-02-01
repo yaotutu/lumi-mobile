@@ -65,6 +65,10 @@ export interface CreateState {
   // 历史任务列表
   tasks: GenerationTask[];
 
+  // 轮询定时器 Map（每个任务独立管理）
+  // 使用 ReturnType<typeof setInterval> 兼容 Node.js 和浏览器环境
+  pollingIntervals: Map<string, ReturnType<typeof setInterval>>;
+
   // 操作方法
   createTask: (prompt: string) => Promise<string>; // 返回taskId
   selectImage: (taskId: string, imageId: string) => Promise<void>;
@@ -76,7 +80,8 @@ export interface CreateState {
   // 内部方法（不建议外部直接调用）
   _updateTaskProgress: (taskId: string, progress: Partial<GenerationTask>) => void;
   _startPolling: (taskId: string) => void; // 启动轮询
-  _stopPolling: () => void; // 停止轮询
+  _stopPolling: (taskId: string) => void; // 停止指定任务的轮询
+  _stopAllPolling: () => void; // 停止所有轮询
 
   // 重置状态
   reset: () => void;
