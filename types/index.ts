@@ -32,6 +32,21 @@ export type {
   InteractionType,
   ModelInteractionStatus,
 } from './api/interactions';
+export type {
+  BindPrinterRequest,
+  BindPrinterResponse,
+  CreatePrintTaskRequest,
+  CreatePrintTaskResponse,
+  CurrentJob,
+  PrinterApiStatus,
+  PrinterBasicInfo,
+  PrinterDetailInfo,
+  PrinterListResponse,
+  ProductInfo,
+  ProductListResponse,
+  RealtimeStatus,
+  UnbindPrinterRequest,
+} from './api/printer';
 
 // 模型类型
 export type {
@@ -41,3 +56,10 @@ export type {
   ModelVisibility,
   UserInfo,
 } from './models/gallery';
+export type {
+  Printer,
+  PrinterListItem,
+  PrinterStatus,
+  PrintTask,
+  Product,
+} from './models/printer';

@@ -36,8 +36,8 @@ export interface PrinterStatusCardProps {
   printerModel: string;
   /** 当前状态 */
   status: PrinterStatus;
-  /** 设置按钮点击回调 */
-  onSettingsPress?: () => void;
+  /** 下拉箭头点击回调（用于切换打印机） */
+  onSwitchPress?: () => void;
 }
 
 /**
@@ -88,7 +88,7 @@ export function PrinterStatusCard({
   printerName,
   printerModel,
   status,
-  onSettingsPress,
+  onSwitchPress,
 }: PrinterStatusCardProps) {
   // 获取主题配置
   const colorScheme = useColorScheme();
@@ -120,7 +120,7 @@ export function PrinterStatusCard({
         },
       ]}
     >
-      {/* 顶部：打印机信息和设置按钮 */}
+      {/* 顶部：打印机信息和下拉箭头 */}
       <View style={styles.header}>
         {/* 左侧：打印机图标和信息 */}
         <View style={styles.headerLeft}>
@@ -161,12 +161,12 @@ export function PrinterStatusCard({
           </View>
         </View>
 
-        {/* 右侧：设置按钮 */}
-        {onSettingsPress && (
+        {/* 右侧：下拉箭头按钮（用于切换打印机） */}
+        {onSwitchPress && (
           <TouchableOpacity
-            onPress={onSettingsPress}
+            onPress={onSwitchPress}
             style={[
-              styles.settingsButton,
+              styles.switchButton,
               {
                 backgroundColor: isDark
                   ? 'rgba(255, 255, 255, 0.1)'
@@ -176,7 +176,7 @@ export function PrinterStatusCard({
             activeOpacity={0.7}
           >
             <Ionicons
-              name="settings-outline"
+              name="chevron-down"
               size={20}
               color={isDark ? Colors.dark.icon : Colors.light.icon}
             />
@@ -272,8 +272,8 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.regular, // 字重 400
   },
 
-  // 设置按钮
-  settingsButton: {
+  // 下拉箭头按钮（用于切换打印机）
+  switchButton: {
     width: 36, // 宽度
     height: 36, // 高度
     borderRadius: BorderRadius.sm, // 圆角

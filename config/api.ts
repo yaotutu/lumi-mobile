@@ -51,6 +51,21 @@ export const API_ENDPOINTS = {
     // 选择图片生成 3D 模型
     selectImage: (id: string) => `/api/tasks/${id}`,
   },
+  // 打印机相关端点
+  printer: {
+    // 查询产品列表
+    products: '/api/devices/products',
+    // 获取打印机列表
+    list: '/api/printer/list',
+    // 获取打印机详情（需要添加 ?device_id=xxx 查询参数）
+    detail: (deviceId: string) => `/api/printer/${deviceId}`,
+    // 绑定打印机
+    bind: '/api/printer/bind',
+    // 解绑打印机
+    unbind: '/api/printer/unbind',
+    // 创建打印任务
+    createTask: '/api/printer/task/start',
+  },
 } as const;
 
 // 默认请求头

@@ -12,3 +12,11 @@ export {
   fetchMyLikes,
 } from './api/gallery';
 export { fetchBatchInteractions, toggleInteraction } from './api/interactions';
+export {
+  bindPrinter,
+  createPrintTask,
+  fetchPrinterDetail,
+  fetchPrinterList,
+  fetchProducts,
+  unbindPrinter,
+} from './api/printer';

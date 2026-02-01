@@ -4,6 +4,7 @@ export * from './create';
 export * from './auth';
 export * from './interactions';
 export * from './user-models'; // 用户模型相关 Store
+export * from './printer'; // 打印机相关 Store
 
 // 导出通用 Store 工厂函数，用于创建新的列表 Store
 export { createModelListStore, createModelListSelectors } from './create-model-list-store';

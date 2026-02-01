@@ -6,75 +6,29 @@
  * 设计原则（基于 UI/UX Pro Max）：
  * - IoT Dashboard - 实时监控仪表板
  * - Glassmorphism - 毛玻璃卡片风格
- * - Real-Time Updates - 实时数据更新
+ * - Real-Time Updates - 实时数据更新（5秒轮询）
  * - Clear Hierarchy - 清晰的信息层次
+ *
+ * 数据来源：
+ * - 使用 Zustand Store 管理打印机状态
+ * - 通过轮询机制实时更新打印机数据
+ * - 支持下拉刷新手动更新
  */
 
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, ScrollView, RefreshControl, Alert, View, Text, ActivityIndicator } from 'react-native';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing } from '@/constants/theme';
 import { logger } from '@/utils/logger';
+import { usePrinterStore } from '@/stores';
 
 // 导入打印页面组件
 import { PrinterStatusCard, type PrinterStatus } from '@/components/pages/printer/printer-status-card';
 import { TaskProgressCard } from '@/components/pages/printer/task-progress-card';
 import { PrinterParametersCard } from '@/components/pages/printer/printer-parameters-card';
 import { ControlButtons } from '@/components/pages/printer/control-buttons';
-
-/**
- * 打印机数据接口
- */
-interface PrinterData {
-  // 打印机信息
-  name: string;
-  model: string;
-  status: PrinterStatus;
-
-  // 任务信息
-  taskName: string;
-  progress: number;
-  elapsedTime: number;
-  remainingTime: number;
-  currentLayer: number;
-  totalLayers: number;
-
-  // 打印参数
-  nozzleTemp: number;
-  nozzleTargetTemp: number;
-  bedTemp: number;
-  bedTargetTemp: number;
-  printSpeed: number;
-  fanSpeed: number;
-}
-
-/**
- * Mock 数据 - 模拟打印中状态
- */
-const MOCK_PRINTER_DATA: PrinterData = {
-  // 打印机信息
-  name: 'Lumi Pro X1',
-  model: 'LPX-2024',
-  status: 'printing',
-
-  // 任务信息
-  taskName: 'dragon_sculpture_v3.gcode',
-  progress: 42.5,
-  elapsedTime: 3600, // 1小时
-  remainingTime: 4860, // 1小时21分钟
-  currentLayer: 127,
-  totalLayers: 298,
-
-  // 打印参数
-  nozzleTemp: 205,
-  nozzleTargetTemp: 210,
-  bedTemp: 58,
-  bedTargetTemp: 60,
-  printSpeed: 60,
-  fanSpeed: 100,
-};
 
 /**
  * 3D 打印页面主组件
@@ -85,140 +39,202 @@ export default function PrinterScreen() {
   const isDark = colorScheme === 'dark';
   const backgroundColor = isDark ? Colors.dark.background : Colors.light.background;
 
-  // 打印机数据状态
-  const [printerData, setPrinterData] = useState<PrinterData>(MOCK_PRINTER_DATA);
-
-  // 下拉刷新状态
-  const [refreshing, setRefreshing] = useState(false);
+  // 从 Store 获取状态和操作
+  const currentPrinter = usePrinterStore((state) => state.currentPrinter);
+  const printers = usePrinterStore((state) => state.printers);
+  const selectedPrinterId = usePrinterStore((state) => state.selectedPrinterId);
+  const loading = usePrinterStore((state) => state.loading);
+  const refreshing = usePrinterStore((state) => state.refreshing);
+  const error = usePrinterStore((state) => state.error);
+  const fetchPrinters = usePrinterStore((state) => state.fetchPrinters);
+  const fetchPrinterDetail = usePrinterStore((state) => state.fetchPrinterDetail);
+  const refreshCurrentPrinter = usePrinterStore((state) => state.refreshCurrentPrinter);
+  const setPollingEnabled = usePrinterStore((state) => state.setPollingEnabled);
+  const clearError = usePrinterStore((state) => state.clearError);
 
   /**
-   * 模拟实时更新
-   * 每秒更新进度、时间、温度等参数
+   * 初始化：获取打印机列表
    */
   useEffect(() => {
-    // 只在打印中状态才更新
-    if (printerData.status !== 'printing') {
+    logger.info('[PrinterScreen] 组件挂载，获取打印机列表');
+    fetchPrinters();
+  }, [fetchPrinters]);
+
+  /**
+   * 初始化：获取第一台打印机的详情
+   * 只在没有选中打印机时执行（首次加载）
+   */
+  useEffect(() => {
+    // 如果已经有选中的打印机，不执行初始化
+    if (selectedPrinterId) {
       return;
     }
 
-    const interval = setInterval(() => {
-      setPrinterData((prev) => {
-        // 计算新的进度（每秒增加约 0.01%）
-        const newProgress = Math.min(prev.progress + 0.01, 100);
+    // 如果有打印机列表且没有选中打印机，获取第一台打印机的详情
+    if (printers.length > 0) {
+      const firstPrinter = printers[0];
 
-        // 计算新的已打印时间（增加 1 秒）
-        const newElapsedTime = prev.elapsedTime + 1;
+      // 检查 deviceId 是否存在
+      if (!firstPrinter.deviceId) {
+        logger.error('[PrinterScreen] 第一台打印机没有 deviceId');
+        return;
+      }
 
-        // 计算新的剩余时间（减少 1 秒，最小为 0）
-        const newRemainingTime = Math.max(prev.remainingTime - 1, 0);
+      logger.info('[PrinterScreen] 首次加载，获取第一台打印机详情:', firstPrinter.deviceId);
+      fetchPrinterDetail(firstPrinter.deviceId);
+    }
+  }, [printers, selectedPrinterId, fetchPrinterDetail]);
 
-        // 计算新的当前层数（根据进度比例）
-        const newCurrentLayer = Math.floor((newProgress / 100) * prev.totalLayers);
+  /**
+   * 轮询机制：每 5 秒刷新打印机状态
+   */
+  useEffect(() => {
+    // 如果没有选中的打印机 ID，不启动轮询
+    if (!selectedPrinterId) {
+      return;
+    }
 
-        // 模拟温度波动（±2℃）
-        const nozzleTempDelta = (Math.random() - 0.5) * 4;
-        const bedTempDelta = (Math.random() - 0.5) * 4;
-        const newNozzleTemp = Math.max(0, prev.nozzleTemp + nozzleTempDelta);
-        const newBedTemp = Math.max(0, prev.bedTemp + bedTempDelta);
+    logger.info('[PrinterScreen] 启动轮询机制，间隔 5 秒');
 
-        return {
-          ...prev,
-          progress: newProgress,
-          elapsedTime: newElapsedTime,
-          remainingTime: newRemainingTime,
-          currentLayer: newCurrentLayer,
-          nozzleTemp: newNozzleTemp,
-          bedTemp: newBedTemp,
-        };
-      });
-    }, 1000); // 每秒更新一次
+    // 启用轮询
+    setPollingEnabled(true);
 
-    // 清理定时器
-    return () => clearInterval(interval);
-  }, [printerData.status]);
+    // 创建 AbortController 用于取消请求
+    const controller = new AbortController();
+
+    // 轮询函数
+    const poll = async () => {
+      try {
+        await refreshCurrentPrinter();
+      } catch (error) {
+        // 轮询失败不显示错误提示，只记录日志
+        logger.error('[PrinterScreen] 轮询失败:', error);
+      }
+    };
+
+    // 立即执行一次
+    poll();
+
+    // 设置定时器，每 5 秒执行一次
+    const interval = setInterval(poll, 5000);
+
+    // 清理函数
+    return () => {
+      logger.info('[PrinterScreen] 停止轮询机制');
+      clearInterval(interval);
+      controller.abort();
+      setPollingEnabled(false);
+    };
+  }, [selectedPrinterId, refreshCurrentPrinter, setPollingEnabled]);
+
+  /**
+   * 错误处理：显示错误提示
+   */
+  useEffect(() => {
+    if (error) {
+      Alert.alert('错误', error, [{ text: '确定', onPress: () => clearError() }]);
+    }
+  }, [error, clearError]);
 
   /**
    * 处理下拉刷新
    */
   const handleRefresh = async () => {
-    logger.info('🔄 [PrinterScreen] 刷新打印机数据');
-    setRefreshing(true);
-
-    // 模拟网络请求
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // 重置为初始数据
-    setPrinterData(MOCK_PRINTER_DATA);
-
-    setRefreshing(false);
+    logger.info('[PrinterScreen] 手动刷新打印机数据');
+    await refreshCurrentPrinter();
   };
 
   /**
-   * 处理设置按钮点击
+   * 处理切换打印机按钮点击
    */
-  const handleSettingsPress = () => {
-    logger.info('⚙️ [PrinterScreen] 打开打印机设置');
-    Alert.alert('打印机设置', '设置功能开发中...', [{ text: '确定' }]);
+  const handleSwitchPrinter = () => {
+    logger.info('[PrinterScreen] 切换打印机');
+
+    // 如果只有一台打印机，提示用户
+    if (printers.length <= 1) {
+      Alert.alert('提示', '当前只有一台打印机', [{ text: '确定' }]);
+      return;
+    }
+
+    // 构建打印机选择列表
+    const printerOptions = printers.map((printer) => ({
+      text: `${printer.deviceName} (${printer.status === 'idle' ? '空闲' : printer.status === 'printing' ? '打印中' : printer.status === 'paused' ? '已暂停' : printer.status === 'offline' ? '离线' : '错误'})`,
+      onPress: () => {
+        logger.info('[PrinterScreen] 切换到打印机:', printer.deviceId);
+        fetchPrinterDetail(printer.deviceId);
+      },
+    }));
+
+    // 添加取消按钮
+    printerOptions.push({
+      text: '取消',
+      onPress: () => {},
+      style: 'cancel',
+    });
+
+    // 显示选择对话框
+    Alert.alert('选择打印机', '请选择要查看的打印机', printerOptions);
   };
 
   /**
    * 处理暂停操作
    */
   const handlePause = async () => {
-    logger.info('⏸️ [PrinterScreen] 暂停打印');
-
-    // 模拟网络请求
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 更新状态为暂停
-    setPrinterData((prev) => ({
-      ...prev,
-      status: 'paused',
-    }));
-
-    Alert.alert('已暂停', '打印已暂停', [{ text: '确定' }]);
+    logger.info('[PrinterScreen] 暂停打印');
+    Alert.alert('暂停打印', '暂停功能开发中...', [{ text: '确定' }]);
   };
 
   /**
    * 处理继续操作
    */
   const handleResume = async () => {
-    logger.info('▶️ [PrinterScreen] 继续打印');
-
-    // 模拟网络请求
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 更新状态为打印中
-    setPrinterData((prev) => ({
-      ...prev,
-      status: 'printing',
-    }));
-
-    Alert.alert('已继续', '打印已继续', [{ text: '确定' }]);
+    logger.info('[PrinterScreen] 继续打印');
+    Alert.alert('继续打印', '继续功能开发中...', [{ text: '确定' }]);
   };
 
   /**
    * 处理停止操作
    */
   const handleStop = async () => {
-    logger.info('⏹️ [PrinterScreen] 停止打印');
-
-    // 模拟网络请求
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 更新状态为空闲
-    setPrinterData((prev) => ({
-      ...prev,
-      status: 'idle',
-      progress: 0,
-      elapsedTime: 0,
-      remainingTime: 0,
-      currentLayer: 0,
-    }));
-
-    Alert.alert('已停止', '打印已停止', [{ text: '确定' }]);
+    logger.info('[PrinterScreen] 停止打印');
+    Alert.alert('停止打印', '停止功能开发中...', [{ text: '确定' }]);
   };
 
+  // 加载状态：显示加载指示器
+  if (loading && !currentPrinter) {
+    return (
+      <AuthGuard>
+        <ScreenWrapper edges={['top']}>
+          <View style={[styles.loadingContainer, { backgroundColor }]}>
+            <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
+            <Text style={[styles.loadingText, { color: isDark ? Colors.dark.text : Colors.light.text }]}>
+              加载中...
+            </Text>
+          </View>
+        </ScreenWrapper>
+      </AuthGuard>
+    );
+  }
+
+  // 空状态：没有打印机
+  if (!currentPrinter && !loading) {
+    return (
+      <AuthGuard>
+        <ScreenWrapper edges={['top']}>
+          <View style={[styles.emptyContainer, { backgroundColor }]}>
+            <Text style={[styles.emptyText, { color: isDark ? Colors.dark.text : Colors.light.text }]}>
+              暂无打印机
+            </Text>
+            <Text style={[styles.emptyHint, { color: isDark ? Colors.dark.icon : Colors.light.icon }]}>
+              请先绑定打印机
+            </Text>
+          </View>
+        </ScreenWrapper>
+      </AuthGuard>
+    );
+  }
+
+  // 正常状态：显示打印机数据
   return (
     <AuthGuard>
       <ScreenWrapper edges={['top']}>
@@ -237,35 +253,35 @@ export default function PrinterScreen() {
         >
           {/* 打印机状态卡片 */}
           <PrinterStatusCard
-            printerName={printerData.name}
-            printerModel={printerData.model}
-            status={printerData.status}
-            onSettingsPress={handleSettingsPress}
+            printerName={currentPrinter.deviceName}
+            printerModel={currentPrinter.model}
+            status={currentPrinter.status as PrinterStatus}
+            onSwitchPress={handleSwitchPrinter}
           />
 
           {/* 任务进度卡片 */}
           <TaskProgressCard
-            taskName={printerData.taskName}
-            progress={printerData.progress}
-            elapsedTime={printerData.elapsedTime}
-            remainingTime={printerData.remainingTime}
-            currentLayer={printerData.currentLayer}
-            totalLayers={printerData.totalLayers}
+            taskName={currentPrinter.currentTask?.taskName || ''}
+            progress={currentPrinter.currentTask?.progress || 0}
+            elapsedTime={currentPrinter.currentTask?.elapsedTime || 0}
+            remainingTime={currentPrinter.currentTask?.remainingTime || 0}
+            currentLayer={currentPrinter.currentTask?.currentLayer || 0}
+            totalLayers={currentPrinter.currentTask?.totalLayers || 0}
           />
 
           {/* 打印参数卡片 */}
           <PrinterParametersCard
-            nozzleTemp={printerData.nozzleTemp}
-            nozzleTargetTemp={printerData.nozzleTargetTemp}
-            bedTemp={printerData.bedTemp}
-            bedTargetTemp={printerData.bedTargetTemp}
-            printSpeed={printerData.printSpeed}
-            fanSpeed={printerData.fanSpeed}
+            nozzleTemp={currentPrinter.nozzleTemp}
+            nozzleTargetTemp={currentPrinter.nozzleTargetTemp}
+            bedTemp={currentPrinter.bedTemp}
+            bedTargetTemp={currentPrinter.bedTargetTemp}
+            printSpeed={currentPrinter.printSpeed}
+            fanSpeed={currentPrinter.fanSpeed}
           />
 
           {/* 操作按钮组 */}
           <ControlButtons
-            status={printerData.status}
+            status={currentPrinter.status as PrinterStatus}
             onPause={handlePause}
             onResume={handleResume}
             onStop={handleStop}
@@ -291,5 +307,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg, // 横向内边距 - 16px，避免内容贴边
     paddingBottom: Spacing.xxxl, // 底部内边距 - 32px，避免被 Tab Bar 遮挡
     gap: Spacing.md, // 卡片之间的间距 - 12px
+  },
+
+  // 加载容器
+  loadingContainer: {
+    flex: 1, // 占满整个屏幕
+    justifyContent: 'center', // 垂直居中
+    alignItems: 'center', // 水平居中
+    gap: Spacing.md, // 指示器和文本之间的间距
+  },
+
+  // 加载文本
+  loadingText: {
+    fontSize: 16, // 字体大小
+    fontWeight: '500', // 字体粗细
+  },
+
+  // 空状态容器
+  emptyContainer: {
+    flex: 1, // 占满整个屏幕
+    justifyContent: 'center', // 垂直居中
+    alignItems: 'center', // 水平居中
+    gap: Spacing.sm, // 文本之间的间距
+  },
+
+  // 空状态文本
+  emptyText: {
+    fontSize: 18, // 字体大小
+    fontWeight: '600', // 字体粗细
+  },
+
+  // 空状态提示
+  emptyHint: {
+    fontSize: 14, // 字体大小
+    fontWeight: '400', // 字体粗细
   },
 });
