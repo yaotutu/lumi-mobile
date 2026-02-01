@@ -199,14 +199,25 @@ export const useAuthStore = create<AuthStore>()(
                 state.user = result.data;
               })
             );
-            return true; // 返回成功状态
+            return { success: true }; // 返回成功状态
           } else {
             logger.warn('❌ 获取用户信息失败:', result.error.message);
-            return false; // 返回失败状态
+            // 返回失败状态，包含错误信息
+            return {
+              success: false,
+              error: result.error,
+            };
           }
         } catch (error) {
-          logger.error('获取用户信息失败:', error);
-          return false; // 返回失败状态
+          logger.error('获取用户信息异常:', error);
+          // 返回失败状态，包含错误信息
+          return {
+            success: false,
+            error: {
+              message: error instanceof Error ? error.message : '未知错误',
+              status: 0,
+            },
+          };
         }
       },
 
@@ -232,19 +243,32 @@ export const useAuthStore = create<AuthStore>()(
             );
 
             // 获取用户信息
-            const success = await get().fetchProfile();
+            const result = await get().fetchProfile();
 
-            // 如果获取用户信息失败（Token 无效），清除认证状态
-            if (!success) {
-              logger.warn('Token 无效，清除认证状态');
-              await tokenManager.clearToken();
-              set(
-                produce((state: AuthStore) => {
-                  state.isAuthenticated = false;
-                  state.token = null;
-                  state.user = null;
-                })
-              );
+            // ✅ 修复：只在真正的认证错误（401）时清除认证状态
+            if (!result.success) {
+              // 检查是否是认证错误（401 或 UNAUTHORIZED）
+              const isAuthError =
+                result.error.status === 401 ||
+                result.error.code === 'UNAUTHORIZED' ||
+                result.error.code === 'UNAUTHENTICATED';
+
+              if (isAuthError) {
+                // 认证错误：清除 token 和认证状态
+                logger.warn('Token 无效（401），清除认证状态');
+                await tokenManager.clearToken();
+                set(
+                  produce((state: AuthStore) => {
+                    state.isAuthenticated = false;
+                    state.token = null;
+                    state.user = null;
+                  })
+                );
+              } else {
+                // 其他错误（网络错误、500、502 等）：保持登录状态
+                logger.warn('获取用户信息失败，但保持登录状态:', result.error.message);
+                // 保持 isAuthenticated = true 和 token，只是 user 为 null
+              }
             }
           } else {
             set(
@@ -256,16 +280,28 @@ export const useAuthStore = create<AuthStore>()(
             );
           }
         } catch (error) {
-          logger.error('检查登录状态失败', error);
-          set(
-            produce((state: AuthStore) => {
-              state.isAuthenticated = false;
-              state.token = null;
-              state.user = null;
-            })
-          );
+          logger.error('检查登录状态异常:', error);
+          // ✅ 修复：异常情况下也保持登录状态（如果有 token）
+          const token = await tokenManager.getToken();
+          if (token) {
+            logger.warn('检查登录状态异常，但保持登录状态');
+            set(
+              produce((state: AuthStore) => {
+                state.isAuthenticated = true;
+                state.token = token;
+                state.user = null;
+              })
+            );
+          } else {
+            set(
+              produce((state: AuthStore) => {
+                state.isAuthenticated = false;
+                state.token = null;
+                state.user = null;
+              })
+            );
+          }
         } finally {
-          // 清除加载状态
           set(
             produce((state: AuthStore) => {
               state.isLoading = false;

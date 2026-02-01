@@ -67,6 +67,18 @@ export interface AuthState {
 }
 
 /**
+ * fetchProfile 返回结果
+ */
+export interface FetchProfileResult {
+  success: boolean;
+  error?: {
+    message: string;
+    status?: number;
+    code?: string;
+  };
+}
+
+/**
  * 认证操作
  */
 export interface AuthActions {
@@ -79,7 +91,7 @@ export interface AuthActions {
   /** 登出 */
   logout: () => Promise<void>;
   /** 获取用户信息 */
-  fetchProfile: () => Promise<boolean>;
+  fetchProfile: () => Promise<FetchProfileResult>;
   /** 检查登录状态 */
   checkAuth: () => Promise<void>;
   /** 重置状态 */
