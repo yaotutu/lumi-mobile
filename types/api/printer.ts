@@ -132,10 +132,9 @@ export interface UnbindPrinterRequest {
 
 /**
  * 创建打印任务请求参数
+ * deviceId 已移到路径参数，不再包含在请求体中
  */
 export interface CreatePrintTaskRequest {
-  // 设备 ID
-  deviceId: string;
   // 模型 ID
   modelId: string;
   // 任务名称
@@ -164,14 +163,11 @@ export interface ProductListResponse {
 
 /**
  * 绑定打印机响应
+ * 新版本 API 只返回 message，不再返回 printer 对象
  */
 export interface BindPrinterResponse {
-  // 设备 ID
-  deviceId: string;
-  // 设备名称
-  deviceName: string;
-  // 绑定时间（ISO 8601 格式）
-  bindTime: string;
+  // 成功消息
+  message: string;
 }
 
 /**
@@ -184,4 +180,13 @@ export interface CreatePrintTaskResponse {
   taskName: string;
   // 创建时间（ISO 8601 格式）
   createTime: string;
+}
+
+/**
+ * 打印机详情响应
+ * 新版本 API 返回格式（包含嵌套的 printer 字段）
+ */
+export interface PrinterDetailResponse {
+  // 打印机详情（嵌套在 printer 字段中）
+  printer: PrinterDetailInfo;
 }

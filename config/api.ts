@@ -55,16 +55,16 @@ export const API_ENDPOINTS = {
   printer: {
     // 查询产品列表
     products: '/api/devices/products',
-    // 获取打印机列表
-    list: '/api/printer/list',
-    // 获取打印机详情（需要添加 ?device_id=xxx 查询参数）
-    detail: (deviceId: string) => `/api/printer/${deviceId}`,
-    // 绑定打印机
-    bind: '/api/printer/bind',
-    // 解绑打印机
-    unbind: '/api/printer/unbind',
-    // 创建打印任务
-    createTask: '/api/printer/task/start',
+    // 获取打印机列表（新版本 RESTful 风格）
+    list: '/api/printers',
+    // 获取打印机详情（新版本 RESTful 风格，使用路径参数）
+    detail: (deviceId: string) => `/api/printers/${deviceId}`,
+    // 绑定打印机（新版本 RESTful 风格）
+    bind: '/api/printers',
+    // 解绑打印机（新版本 RESTful 风格，使用 DELETE 方法和路径参数）
+    unbind: (deviceId: string) => `/api/printers/${deviceId}`,
+    // 创建打印任务（新版本 RESTful 风格，使用路径参数）
+    createTask: (deviceId: string) => `/api/printers/${deviceId}/jobs`,
   },
 } as const;
 

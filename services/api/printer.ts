@@ -3,7 +3,7 @@
  * 封装所有打印机相关的 API 调用
  */
 
-import { apiGet, apiPost } from '../api-client';
+import { apiGet, apiPost, apiDelete } from '../api-client';
 import { API_ENDPOINTS } from '@/config/api';
 import { logger } from '@/utils/logger';
 import {
@@ -23,6 +23,7 @@ import type {
   CreatePrintTaskRequest,
   CreatePrintTaskResponse,
   ProductInfo,
+  PrinterDetailResponse,
 } from '@/types/api/printer';
 import type { Printer, PrinterListItem, Product } from '@/types/models/printer';
 
@@ -173,10 +174,8 @@ export async function fetchPrinterDetail(
 ): Promise<Printer> {
   logger.info('[PrinterAPI] 获取打印机详情:', deviceId);
 
-  // 构建 URL，添加 device_id 查询参数
-  const url = `${API_ENDPOINTS.printer.detail(deviceId)}?device_id=${deviceId}`;
-
-  const result = await apiGet<PrinterDetailInfo>(url, {
+  // 使用新版本 API 端点（RESTful 风格，路径参数）
+  const result = await apiGet<PrinterDetailResponse>(API_ENDPOINTS.printer.detail(deviceId), {
     signal: options?.signal,
   });
 
@@ -185,8 +184,9 @@ export async function fetchPrinterDetail(
     throw result.error;
   }
 
-  logger.info('[PrinterAPI] 获取打印机详情成功:', result.data.deviceName);
-  return transformPrinterDetail(result.data);
+  // 新版本 API 返回格式：{ printer: PrinterDetailInfo }
+  logger.info('[PrinterAPI] 获取打印机详情成功:', result.data.printer.deviceName);
+  return transformPrinterDetail(result.data.printer);
 }
 
 /**
@@ -221,7 +221,8 @@ export async function bindPrinter(
     throw result.error;
   }
 
-  logger.info('[PrinterAPI] 绑定打印机成功:', result.data.deviceId);
+  // 新版本 API 只返回 message，不再返回 printer 对象
+  logger.info('[PrinterAPI] 绑定打印机成功:', result.data.message);
   return result.data;
 }
 
@@ -233,11 +234,8 @@ export async function bindPrinter(
 export async function unbindPrinter(deviceId: string, options?: ApiCallOptions): Promise<void> {
   logger.info('[PrinterAPI] 解绑打印机:', deviceId);
 
-  const requestBody: UnbindPrinterRequest = {
-    deviceId,
-  };
-
-  const result = await apiPost<void>(API_ENDPOINTS.printer.unbind, requestBody, {
+  // 使用新版本 API：DELETE 方法，deviceId 作为路径参数
+  const result = await apiDelete<{ message: string }>(API_ENDPOINTS.printer.unbind(deviceId), {
     signal: options?.signal,
   });
 
@@ -265,14 +263,14 @@ export async function createPrintTask(
 ): Promise<CreatePrintTaskResponse> {
   logger.info('[PrinterAPI] 创建打印任务:', { deviceId, modelId, taskName });
 
+  // 使用新版本 API：deviceId 作为路径参数，不再包含在请求体中
   const requestBody: CreatePrintTaskRequest = {
-    deviceId,
     modelId,
     taskName,
   };
 
   const result = await apiPost<CreatePrintTaskResponse>(
-    API_ENDPOINTS.printer.createTask,
+    API_ENDPOINTS.printer.createTask(deviceId),
     requestBody,
     {
       signal: options?.signal,
@@ -284,6 +282,7 @@ export async function createPrintTask(
     throw result.error;
   }
 
+  // 新版本 API 返回 201 状态码，但 apiPost 会自动处理
   logger.info('[PrinterAPI] 创建打印任务成功:', result.data.taskId);
   return result.data;
 }
