@@ -15,8 +15,10 @@
  * - 支持下拉刷新手动更新
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, RefreshControl, Alert, View, Text, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -29,6 +31,7 @@ import { PrinterStatusCard, type PrinterStatus } from '@/components/pages/printe
 import { TaskProgressCard } from '@/components/pages/printer/task-progress-card';
 import { PrinterParametersCard } from '@/components/pages/printer/printer-parameters-card';
 import { ControlButtons } from '@/components/pages/printer/control-buttons';
+import { PrinterSelector } from '@/components/printer-selector';
 
 /**
  * 3D 打印页面主组件
@@ -38,6 +41,9 @@ export default function PrinterScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const backgroundColor = isDark ? Colors.dark.background : Colors.light.background;
+
+  // 路由
+  const router = useRouter();
 
   // 从 Store 获取状态和操作
   const currentPrinter = usePrinterStore((state) => state.currentPrinter);
@@ -51,6 +57,10 @@ export default function PrinterScreen() {
   const refreshCurrentPrinter = usePrinterStore((state) => state.refreshCurrentPrinter);
   const setPollingEnabled = usePrinterStore((state) => state.setPollingEnabled);
   const clearError = usePrinterStore((state) => state.clearError);
+  const unbindPrinter = usePrinterStore((state) => state.unbindPrinter);
+
+  // 打印机选择器显示状态
+  const [selectorVisible, setSelectorVisible] = useState(false);
 
   /**
    * 初始化：获取打印机列表
@@ -150,30 +160,61 @@ export default function PrinterScreen() {
   const handleSwitchPrinter = () => {
     logger.info('[PrinterScreen] 切换打印机');
 
-    // 如果只有一台打印机，提示用户
-    if (printers.length <= 1) {
-      Alert.alert('提示', '当前只有一台打印机', [{ text: '确定' }]);
-      return;
+    // 直接显示打印机选择器（即使只有一台打印机，也允许用户添加新打印机）
+    setSelectorVisible(true);
+  };
+
+  /**
+   * 处理选择打印机
+   */
+  const handleSelectPrinter = (deviceId: string) => {
+    logger.info('[PrinterScreen] 切换到打印机:', deviceId);
+    // 获取选中打印机的详细信息
+    fetchPrinterDetail(deviceId);
+    // 关闭选择器
+    setSelectorVisible(false);
+  };
+
+  /**
+   * 处理添加打印机
+   */
+  const handleAddPrinter = () => {
+    logger.info('[PrinterScreen] 添加打印机');
+    // 关闭选择器
+    setSelectorVisible(false);
+    // 跳转到扫码页面
+    router.push('/scan-printer');
+  };
+
+  /**
+   * 处理删除打印机
+   */
+  const handleDeletePrinter = async (deviceId: string) => {
+    logger.info('[PrinterScreen] 删除打印机:', deviceId);
+
+    try {
+      // 调用解绑 API
+      await unbindPrinter(deviceId);
+
+      logger.info('[PrinterScreen] 删除打印机成功');
+
+      // 触觉反馈
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // 关闭选择器
+      setSelectorVisible(false);
+    } catch (error) {
+      // 删除失败
+      logger.error('[PrinterScreen] 删除打印机失败:', error);
+
+      // 触觉反馈
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
+      // 显示错误提示
+      Alert.alert('解绑失败', error instanceof Error ? error.message : '未知错误', [
+        { text: '确定' },
+      ]);
     }
-
-    // 构建打印机选择列表
-    const printerOptions = printers.map((printer) => ({
-      text: `${printer.deviceName} (${printer.status === 'idle' ? '空闲' : printer.status === 'printing' ? '打印中' : printer.status === 'paused' ? '已暂停' : printer.status === 'offline' ? '离线' : '错误'})`,
-      onPress: () => {
-        logger.info('[PrinterScreen] 切换到打印机:', printer.deviceId);
-        fetchPrinterDetail(printer.deviceId);
-      },
-    }));
-
-    // 添加取消按钮
-    printerOptions.push({
-      text: '取消',
-      onPress: () => {},
-      style: 'cancel',
-    });
-
-    // 显示选择对话框
-    Alert.alert('选择打印机', '请选择要查看的打印机', printerOptions);
   };
 
   /**
@@ -287,6 +328,17 @@ export default function PrinterScreen() {
             onStop={handleStop}
           />
         </ScrollView>
+
+        {/* 打印机选择器 */}
+        <PrinterSelector
+          visible={selectorVisible}
+          printers={printers}
+          selectedPrinterId={selectedPrinterId}
+          onSelect={handleSelectPrinter}
+          onClose={() => setSelectorVisible(false)}
+          onAddPrinter={handleAddPrinter}
+          onDelete={handleDeletePrinter}
+        />
       </ScreenWrapper>
     </AuthGuard>
   );

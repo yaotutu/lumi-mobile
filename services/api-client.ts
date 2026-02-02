@@ -198,6 +198,8 @@ async function apiClient(url: string, options: ApiClientOptions = {}): Promise<R
     disableRetry = false,
     disableErrorHandling = false,
     headers = {},
+    method,
+    body,
     ...fetchOptions
   } = options;
 
@@ -206,9 +208,14 @@ async function apiClient(url: string, options: ApiClientOptions = {}): Promise<R
 
   // 准备请求头
   const finalHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...(headers as Record<string, string>),
   };
+
+  // 只有在有 body 的情况下才添加 Content-Type
+  // DELETE 和 GET 请求通常没有 body，不需要 Content-Type
+  if (method !== 'GET' && method !== 'DELETE' && body !== undefined) {
+    finalHeaders['Content-Type'] = 'application/json';
+  }
 
   // 自动添加 Token（后端返回的 token 已包含 "Bearer " 前缀，直接使用）
   const token = await tokenManager.getToken();
@@ -219,6 +226,8 @@ async function apiClient(url: string, options: ApiClientOptions = {}): Promise<R
   // 发送请求
   const response = await fetch(fullUrl, {
     ...fetchOptions,
+    method,
+    body,
     headers: finalHeaders,
   });
 

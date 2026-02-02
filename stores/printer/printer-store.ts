@@ -58,15 +58,54 @@ export const usePrinterStore = create<PrinterStore>()(
           // 调用 API
           const printers = await fetchPrinterList();
 
+          // 获取当前选中的打印机 ID
+          const { selectedPrinterId } = get();
+
           // 更新状态
           set(
             produce((state) => {
               state.printers = printers;
               state.loading = false;
+
+              // 检查当前选中的打印机是否还在列表中
+              if (selectedPrinterId) {
+                const stillExists = printers.some((p) => p.deviceId === selectedPrinterId);
+
+                if (!stillExists) {
+                  // 如果当前选中的打印机已经不存在了
+                  logger.warn(
+                    '[PrinterStore] 当前选中的打印机已不存在:',
+                    selectedPrinterId
+                  );
+
+                  // 清空当前打印机和选中 ID
+                  state.currentPrinter = null;
+                  state.selectedPrinterId = null;
+
+                  // 如果列表不为空，自动选择第一台打印机
+                  if (printers.length > 0) {
+                    logger.info('[PrinterStore] 自动选择第一台打印机:', printers[0].deviceId);
+                    // 注意：这里只设置 selectedPrinterId，不设置 currentPrinter
+                    // currentPrinter 会在页面调用 fetchPrinterDetail 时设置
+                    state.selectedPrinterId = printers[0].deviceId;
+                  }
+                }
+              } else if (printers.length > 0 && !state.currentPrinter) {
+                // 如果没有选中的打印机，且列表不为空，自动选择第一台
+                logger.info('[PrinterStore] 自动选择第一台打印机:', printers[0].deviceId);
+                state.selectedPrinterId = printers[0].deviceId;
+              }
             })
           );
 
           logger.info('[PrinterStore] 获取打印机列表成功，共', printers.length, '台');
+
+          // 如果选中的打印机 ID 发生了变化，自动获取详情
+          const { selectedPrinterId: newSelectedId } = get();
+          if (newSelectedId && newSelectedId !== selectedPrinterId) {
+            logger.info('[PrinterStore] 自动获取新选中打印机的详情');
+            await get().fetchPrinterDetail(newSelectedId);
+          }
         } catch (error) {
           // 错误处理
           const errorInfo = categorizeError(error);
