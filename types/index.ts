@@ -56,10 +56,4 @@ export type {
   ModelVisibility,
   UserInfo,
 } from './models/gallery';
-export type {
-  Printer,
-  PrinterListItem,
-  PrinterStatus,
-  PrintTask,
-  Product,
-} from './models/printer';
+export type { Printer, PrinterListItem, PrinterStatus, PrintTask, Product } from './models/printer';

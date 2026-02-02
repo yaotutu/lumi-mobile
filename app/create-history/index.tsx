@@ -2,10 +2,10 @@ import { useState, useCallback } from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity, Image, Text } from 'react-native';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
-import { ThemedText } from '@/components/themed-text';
-import { LoadingStateView } from '@/components/loading-state-view';
+import { ThemedText } from '@/components/themed/themed-text';
+import { LoadingStateView } from '@/components/layout/loading-state-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAsyncController } from '@/hooks/useAsyncController';
 import { fetchTaskList, type BackendGenerationTask } from '@/services/api/tasks';
@@ -65,17 +65,8 @@ export default function CreateHistoryScreen() {
           onPress={handleBack}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={isDark ? '#0A84FF' : '#007AFF'}
-          />
-          <ThemedText
-            style={[
-              styles.headerBackText,
-              { color: isDark ? '#0A84FF' : '#007AFF' },
-            ]}
-          >
+          <Ionicons name="chevron-back" size={28} color={isDark ? '#0A84FF' : '#007AFF'} />
+          <ThemedText style={[styles.headerBackText, { color: isDark ? '#0A84FF' : '#007AFF' }]}>
             返回
           </ThemedText>
         </TouchableOpacity>

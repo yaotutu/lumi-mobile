@@ -11,10 +11,10 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { StatusBar, TouchableOpacity, StyleSheet } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { ModelListView } from '@/components/model-list-view';
 import { AuthGuard } from '@/components/auth';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/themed/themed-text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAsyncController } from '@/hooks/useAsyncController';
@@ -110,17 +110,8 @@ export default function UserModelsScreen() {
           onPress={handleBack}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={isDark ? '#0A84FF' : '#007AFF'}
-          />
-          <ThemedText
-            style={[
-              styles.headerBackText,
-              { color: isDark ? '#0A84FF' : '#007AFF' },
-            ]}
-          >
+          <Ionicons name="chevron-back" size={28} color={isDark ? '#0A84FF' : '#007AFF'} />
+          <ThemedText style={[styles.headerBackText, { color: isDark ? '#0A84FF' : '#007AFF' }]}>
             返回
           </ThemedText>
         </TouchableOpacity>

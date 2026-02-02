@@ -63,9 +63,8 @@ function transformPrinterDetail(apiData: PrinterDetailInfo): Printer {
   if (apiData.currentJob) {
     const startTime = parseISODate(apiData.currentJob.startedAt);
     const remainingTime = apiData.currentJob.timeRemaining;
-    const estimatedEndTime = remainingTime > 0
-      ? new Date(startTime.getTime() + remainingTime * 1000)
-      : undefined;
+    const estimatedEndTime =
+      remainingTime > 0 ? new Date(startTime.getTime() + remainingTime * 1000) : undefined;
 
     printer.currentTask = {
       taskId: '', // 后端没有返回 taskId，使用空字符串
@@ -208,13 +207,9 @@ export async function bindPrinter(
     code,
   };
 
-  const result = await apiPost<BindPrinterResponse>(
-    API_ENDPOINTS.printer.bind,
-    requestBody,
-    {
-      signal: options?.signal,
-    }
-  );
+  const result = await apiPost<BindPrinterResponse>(API_ENDPOINTS.printer.bind, requestBody, {
+    signal: options?.signal,
+  });
 
   if (!result.success) {
     logger.error('[PrinterAPI] 绑定打印机失败:', result.error);

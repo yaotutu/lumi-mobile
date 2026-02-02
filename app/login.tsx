@@ -24,7 +24,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/themed/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Colors } from '@/constants/theme';
 import { useAuthStore } from '@/stores';

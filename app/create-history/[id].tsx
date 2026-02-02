@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { StyleSheet, View, TouchableOpacity, Platform } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
-import { ThemedText } from '@/components/themed-text';
-import { LoadingStateView } from '@/components/loading-state-view';
+import { ThemedText } from '@/components/themed/themed-text';
+import { LoadingStateView } from '@/components/layout/loading-state-view';
 import { CreateTaskRenderer } from '@/components/create-task-renderer';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
@@ -137,17 +137,8 @@ export default function CreateHistoryDetailScreen() {
           onPress={handleBack}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons
-            name="chevron-back"
-            size={28}
-            color={isDark ? '#0A84FF' : '#007AFF'}
-          />
-          <ThemedText
-            style={[
-              styles.headerBackText,
-              { color: isDark ? '#0A84FF' : '#007AFF' },
-            ]}
-          >
+          <Ionicons name="chevron-back" size={28} color={isDark ? '#0A84FF' : '#007AFF'} />
+          <ThemedText style={[styles.headerBackText, { color: isDark ? '#0A84FF' : '#007AFF' }]}>
             返回
           </ThemedText>
         </TouchableOpacity>
@@ -199,7 +190,11 @@ export default function CreateHistoryDetailScreen() {
       <Stack.Screen options={getHeaderOptions()} />
 
       {/* 页面内容 */}
-      <ScreenWrapper edges={[]} style={{ flex: 1 }} backgroundColor={isDark ? '#000000' : '#FFFFFF'}>
+      <ScreenWrapper
+        edges={[]}
+        style={{ flex: 1 }}
+        backgroundColor={isDark ? '#000000' : '#FFFFFF'}
+      >
         {/* 内容 */}
         {loading ? (
           <LoadingStateView type="loading" message="加载中..." />
@@ -225,9 +220,7 @@ export default function CreateHistoryDetailScreen() {
 /**
  * 后端任务状态映射到前端任务状态
  */
-function mapBackendStatus(
-  backendStatus: string
-): GenerationTask['status'] {
+function mapBackendStatus(backendStatus: string): GenerationTask['status'] {
   switch (backendStatus) {
     case 'IMAGE_PENDING':
     case 'IMAGE_GENERATING':

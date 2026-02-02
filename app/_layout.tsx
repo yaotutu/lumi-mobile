@@ -59,31 +59,19 @@ function RootLayoutNav() {
         />
 
         {/* 模型详情页 */}
-        <Stack.Screen
-          name="model/[id]"
-          options={{ headerShown: true }}
-        />
+        <Stack.Screen name="model/[id]" options={{ headerShown: true }} />
 
         {/* 3D 模型查看器 */}
         <Stack.Screen name="model-viewer/[id]" />
 
         {/* 创作历史列表 */}
-        <Stack.Screen
-          name="create-history/index"
-          options={{ headerShown: true }}
-        />
+        <Stack.Screen name="create-history/index" options={{ headerShown: true }} />
 
         {/* 创作历史详情 */}
-        <Stack.Screen
-          name="create-history/[id]"
-          options={{ headerShown: true }}
-        />
+        <Stack.Screen name="create-history/[id]" options={{ headerShown: true }} />
 
         {/* 用户模型列表（通用页面，根据 type 参数区分）*/}
-        <Stack.Screen
-          name="user-models/[type]"
-          options={{ headerShown: true }}
-        />
+        <Stack.Screen name="user-models/[type]" options={{ headerShown: true }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -37,9 +37,7 @@ export function SearchBar({
           {
             // 细微的边框增强玻璃效果
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: isDark
-              ? 'rgba(255, 255, 255, 0.18)'
-              : 'rgba(0, 0, 0, 0.08)',
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.08)',
           },
         ]}
       >
@@ -60,9 +58,7 @@ export function SearchBar({
             },
           ]}
           placeholder={placeholder}
-          placeholderTextColor={
-            isDark ? Colors.dark.tertiaryText : Colors.light.tertiaryText
-          }
+          placeholderTextColor={isDark ? Colors.dark.tertiaryText : Colors.light.tertiaryText}
           value={value}
           onChangeText={onChangeText}
           // 通用属性

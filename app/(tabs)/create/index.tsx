@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { CreateTaskRenderer } from '@/components/create-task-renderer';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useCreateStore } from '@/stores';
 import { logger } from '@/utils/logger';
@@ -108,8 +108,8 @@ export default function CreateScreen() {
   const [activeStyleId, setActiveStyleId] = useState<string | null>(null);
 
   // 从 Store 获取当前任务（从 tasks 数组中计算派生状态）
-  const currentTask = useCreateStore(state =>
-    state.tasks.find(t => t.id === state.currentTaskId) ?? null
+  const currentTask = useCreateStore(
+    state => state.tasks.find(t => t.id === state.currentTaskId) ?? null
   );
   const createTask = useCreateStore(state => state.createTask);
   const selectImage = useCreateStore(state => state.selectImage);

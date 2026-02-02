@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { router } from 'expo-router';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { ModelListView } from '@/components/model-list-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';

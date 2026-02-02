@@ -16,11 +16,20 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, Alert, View, Text, ActivityIndicator, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Alert,
+  View,
+  Text,
+  ActivityIndicator,
+  Pressable,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing } from '@/constants/theme';
@@ -28,10 +37,10 @@ import { logger } from '@/utils/logger';
 import { usePrinterStore } from '@/stores';
 
 // 导入打印页面组件
-import { PrinterStatusCard, type PrinterStatus } from '@/components/pages/printer/printer-status-card';
-import { TaskProgressCard } from '@/components/pages/printer/task-progress-card';
-import { PrinterParametersCard } from '@/components/pages/printer/printer-parameters-card';
-import { ControlButtons } from '@/components/pages/printer/control-buttons';
+import { PrinterStatusCard, type PrinterStatus } from './components/printer-status-card';
+import { TaskProgressCard } from './components/task-progress-card';
+import { PrinterParametersCard } from './components/printer-parameters-card';
+import { ControlButtons } from './components/control-buttons';
 import { PrinterSelector } from '@/components/printer-selector';
 
 /**
@@ -47,18 +56,18 @@ export default function PrinterScreen() {
   const router = useRouter();
 
   // 从 Store 获取状态和操作
-  const currentPrinter = usePrinterStore((state) => state.currentPrinter);
-  const printers = usePrinterStore((state) => state.printers);
-  const selectedPrinterId = usePrinterStore((state) => state.selectedPrinterId);
-  const loading = usePrinterStore((state) => state.loading);
-  const refreshing = usePrinterStore((state) => state.refreshing);
-  const error = usePrinterStore((state) => state.error);
-  const fetchPrinters = usePrinterStore((state) => state.fetchPrinters);
-  const fetchPrinterDetail = usePrinterStore((state) => state.fetchPrinterDetail);
-  const refreshCurrentPrinter = usePrinterStore((state) => state.refreshCurrentPrinter);
-  const setPollingEnabled = usePrinterStore((state) => state.setPollingEnabled);
-  const clearError = usePrinterStore((state) => state.clearError);
-  const unbindPrinter = usePrinterStore((state) => state.unbindPrinter);
+  const currentPrinter = usePrinterStore(state => state.currentPrinter);
+  const printers = usePrinterStore(state => state.printers);
+  const selectedPrinterId = usePrinterStore(state => state.selectedPrinterId);
+  const loading = usePrinterStore(state => state.loading);
+  const refreshing = usePrinterStore(state => state.refreshing);
+  const error = usePrinterStore(state => state.error);
+  const fetchPrinters = usePrinterStore(state => state.fetchPrinters);
+  const fetchPrinterDetail = usePrinterStore(state => state.fetchPrinterDetail);
+  const refreshCurrentPrinter = usePrinterStore(state => state.refreshCurrentPrinter);
+  const setPollingEnabled = usePrinterStore(state => state.setPollingEnabled);
+  const clearError = usePrinterStore(state => state.clearError);
+  const unbindPrinter = usePrinterStore(state => state.unbindPrinter);
 
   // 打印机选择器显示状态
   const [selectorVisible, setSelectorVisible] = useState(false);
@@ -249,7 +258,9 @@ export default function PrinterScreen() {
         <ScreenWrapper edges={['top']}>
           <View style={[styles.loadingContainer, { backgroundColor }]}>
             <ActivityIndicator size="large" color={isDark ? Colors.dark.tint : Colors.light.tint} />
-            <Text style={[styles.loadingText, { color: isDark ? Colors.dark.text : Colors.light.text }]}>
+            <Text
+              style={[styles.loadingText, { color: isDark ? Colors.dark.text : Colors.light.text }]}
+            >
               加载中...
             </Text>
           </View>
@@ -273,10 +284,14 @@ export default function PrinterScreen() {
             />
 
             {/* 提示文字 */}
-            <Text style={[styles.emptyText, { color: isDark ? Colors.dark.text : Colors.light.text }]}>
+            <Text
+              style={[styles.emptyText, { color: isDark ? Colors.dark.text : Colors.light.text }]}
+            >
               暂无打印机
             </Text>
-            <Text style={[styles.emptyHint, { color: isDark ? Colors.dark.icon : Colors.light.icon }]}>
+            <Text
+              style={[styles.emptyHint, { color: isDark ? Colors.dark.icon : Colors.light.icon }]}
+            >
               扫描打印机二维码进行绑定
             </Text>
 

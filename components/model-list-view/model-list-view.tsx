@@ -4,8 +4,8 @@ import { useIsFocused } from '@react-navigation/native';
 import type { ModelListViewProps } from './types';
 import { SearchBar } from '@/components/search-bar';
 import { ModelCard } from '@/components/model-card';
-import { MasonryGrid } from '@/components/masonry-grid';
-import { LoadingStateView } from '@/components/loading-state-view';
+import { MasonryGrid } from '@/components/layout/masonry-grid';
+import { LoadingStateView } from '@/components/layout/loading-state-view';
 import { useInteractionStore } from '@/stores';
 import { logger } from '@/utils/logger';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -116,7 +116,7 @@ export function ModelListView({
   /**
    * 渲染单个模型卡片
    */
-  const renderModelCard = (model: typeof models[0]) => {
+  const renderModelCard = (model: (typeof models)[0]) => {
     return (
       <ModelCard
         key={model.id}

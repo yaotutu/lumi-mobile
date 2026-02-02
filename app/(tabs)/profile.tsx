@@ -9,9 +9,9 @@ import { useRef, useState, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/themed/themed-text';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuthStore } from '@/stores';
 import { logger } from '@/utils/logger';
@@ -171,98 +171,98 @@ export default function ProfileScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-        {/* 第一个卡片不需要 marginTop，由 ScrollView 的 paddingTop 统一控制 */}
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
-          {/* 头像：如果用户有头像则显示图片，否则显示默认 emoji */}
-          {user?.avatar ? (
-            <Image source={{ uri: profile.avatar }} style={styles.avatar} />
-          ) : (
-            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.iconBackground }]}>
-              <ThemedText style={styles.avatarEmoji}>😊</ThemedText>
-            </View>
-          )}
-          <View style={styles.textContainer}>
-            <ThemedText style={styles.name} numberOfLines={1} ellipsizeMode="tail">
-              {profile.name}
-            </ThemedText>
-            <ThemedText
-              style={[styles.email, { color: colors.secondaryText }]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {profile.email}
-            </ThemedText>
-            <ThemedText
-              style={[styles.id, { color: colors.secondaryText }]}
-              numberOfLines={1}
-              ellipsizeMode="middle"
-            >
-              {profile.id}
-            </ThemedText>
-          </View>
-        </View>
-
-        <View style={[styles.statsCard, styles.sectionSpacing, { backgroundColor: colors.card }]}>
-          {STATS_CONFIG.map((config, index) => (
-            <TouchableOpacity
-              key={config.key}
-              style={[
-                styles.statItem,
-                index === 1 && {
-                  borderLeftWidth: StyleSheet.hairlineWidth,
-                  borderRightWidth: StyleSheet.hairlineWidth,
-                  borderColor: colors.statDivider,
-                },
-              ]}
-              activeOpacity={0.6}
-              onPress={() => handleStatPress(config.route, config.label)}
-            >
-              <ThemedText style={[styles.statValue, { color: colors.headerText }]}>
-                {stats[config.key]}
+          {/* 第一个卡片不需要 marginTop，由 ScrollView 的 paddingTop 统一控制 */}
+          <View style={[styles.card, { backgroundColor: colors.card }]}>
+            {/* 头像：如果用户有头像则显示图片，否则显示默认 emoji */}
+            {user?.avatar ? (
+              <Image source={{ uri: profile.avatar }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatarPlaceholder, { backgroundColor: colors.iconBackground }]}>
+                <ThemedText style={styles.avatarEmoji}>😊</ThemedText>
+              </View>
+            )}
+            <View style={styles.textContainer}>
+              <ThemedText style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+                {profile.name}
               </ThemedText>
-              <ThemedText style={[styles.statLabel, { color: colors.link }]}>
-                {config.label}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {MENU_SECTIONS.map((group, groupIndex) => (
-          <View
-            key={`group-${groupIndex}`}
-            style={[styles.menuCard, styles.sectionSpacing, { backgroundColor: colors.card }]}
-          >
-            {group.map((item, index) => (
-              <TouchableOpacity
-                key={item.label}
-                style={styles.menuRow}
-                activeOpacity={0.8}
-                onPress={() => handleMenuPress(item.label)}
+              <ThemedText
+                style={[styles.email, { color: colors.secondaryText }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
-                <View style={[styles.iconContainer, { backgroundColor: colors.iconBackground }]}>
-                  <Ionicons name={item.icon as IoniconName} size={20} color={colors.iconTint} />
-                </View>
-                <ThemedText style={[styles.menuLabel, { color: colors.headerText }]}>
-                  {item.label}
+                {profile.email}
+              </ThemedText>
+              <ThemedText
+                style={[styles.id, { color: colors.secondaryText }]}
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
+                {profile.id}
+              </ThemedText>
+            </View>
+          </View>
+
+          <View style={[styles.statsCard, styles.sectionSpacing, { backgroundColor: colors.card }]}>
+            {STATS_CONFIG.map((config, index) => (
+              <TouchableOpacity
+                key={config.key}
+                style={[
+                  styles.statItem,
+                  index === 1 && {
+                    borderLeftWidth: StyleSheet.hairlineWidth,
+                    borderRightWidth: StyleSheet.hairlineWidth,
+                    borderColor: colors.statDivider,
+                  },
+                ]}
+                activeOpacity={0.6}
+                onPress={() => handleStatPress(config.route, config.label)}
+              >
+                <ThemedText style={[styles.statValue, { color: colors.headerText }]}>
+                  {stats[config.key]}
                 </ThemedText>
-                <Ionicons name="chevron-forward" size={20} color={colors.chevron} />
-                {index !== group.length - 1 && (
-                  <View style={[styles.rowDivider, { backgroundColor: colors.divider }]} />
-                )}
+                <ThemedText style={[styles.statLabel, { color: colors.link }]}>
+                  {config.label}
+                </ThemedText>
               </TouchableOpacity>
             ))}
           </View>
-        ))}
 
-        <TouchableOpacity
-          style={[styles.logoutButton, styles.sectionSpacing, { backgroundColor: colors.logout }]}
-          onPress={handleLogout}
-          activeOpacity={0.9}
-        >
-          <ThemedText style={styles.logoutLabel}>Log Out</ThemedText>
-        </TouchableOpacity>
-      </ScrollView>
-    </ScreenWrapper>
+          {MENU_SECTIONS.map((group, groupIndex) => (
+            <View
+              key={`group-${groupIndex}`}
+              style={[styles.menuCard, styles.sectionSpacing, { backgroundColor: colors.card }]}
+            >
+              {group.map((item, index) => (
+                <TouchableOpacity
+                  key={item.label}
+                  style={styles.menuRow}
+                  activeOpacity={0.8}
+                  onPress={() => handleMenuPress(item.label)}
+                >
+                  <View style={[styles.iconContainer, { backgroundColor: colors.iconBackground }]}>
+                    <Ionicons name={item.icon as IoniconName} size={20} color={colors.iconTint} />
+                  </View>
+                  <ThemedText style={[styles.menuLabel, { color: colors.headerText }]}>
+                    {item.label}
+                  </ThemedText>
+                  <Ionicons name="chevron-forward" size={20} color={colors.chevron} />
+                  {index !== group.length - 1 && (
+                    <View style={[styles.rowDivider, { backgroundColor: colors.divider }]} />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))}
+
+          <TouchableOpacity
+            style={[styles.logoutButton, styles.sectionSpacing, { backgroundColor: colors.logout }]}
+            onPress={handleLogout}
+            activeOpacity={0.9}
+          >
+            <ThemedText style={styles.logoutLabel}>Log Out</ThemedText>
+          </TouchableOpacity>
+        </ScrollView>
+      </ScreenWrapper>
     </AuthGuard>
   );
 }

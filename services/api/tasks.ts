@@ -20,15 +20,15 @@ export type ImageStatus = 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
  * 任务状态枚举（后端定义）
  */
 export type BackendTaskStatus =
-  | 'IMAGE_PENDING'       // 图片队列中
-  | 'IMAGE_GENERATING'    // 图片生成中
-  | 'IMAGE_COMPLETED'     // 图片完成
-  | 'IMAGE_FAILED'        // 图片失败
-  | 'MODEL_PENDING'       // 模型队列中
-  | 'MODEL_GENERATING'    // 模型生成中
-  | 'MODEL_COMPLETED'     // 模型完成
-  | 'MODEL_FAILED'        // 模型失败
-  | 'COMPLETED';          // 整个任务完成（后端可能返回的状态）
+  | 'IMAGE_PENDING' // 图片队列中
+  | 'IMAGE_GENERATING' // 图片生成中
+  | 'IMAGE_COMPLETED' // 图片完成
+  | 'IMAGE_FAILED' // 图片失败
+  | 'MODEL_PENDING' // 模型队列中
+  | 'MODEL_GENERATING' // 模型生成中
+  | 'MODEL_COMPLETED' // 模型完成
+  | 'MODEL_FAILED' // 模型失败
+  | 'COMPLETED'; // 整个任务完成（后端可能返回的状态）
 
 /**
  * 生成的图片（后端响应格式）
@@ -213,10 +213,7 @@ export async function createTextToImageTask(
   logger.info('[API] 创建文生图任务:', { prompt });
 
   // 调用 POST /api/tasks
-  const result = await apiPost<BackendGenerationTask>(
-    API_ENDPOINTS.tasks.create,
-    { prompt }
-  );
+  const result = await apiPost<BackendGenerationTask>(API_ENDPOINTS.tasks.create, { prompt });
 
   if (result.success) {
     logger.info('[API] 任务创建成功:', { taskId: result.data.id });
@@ -296,10 +293,9 @@ export async function selectImageForModel(
   logger.info('[API] 选择图片生成 3D 模型:', { taskId, imageIndex });
 
   // 调用 PATCH /api/tasks/{id}
-  const result = await apiPatch<SelectImageResponse>(
-    API_ENDPOINTS.tasks.selectImage(taskId),
-    { selectedImageIndex: imageIndex }
-  );
+  const result = await apiPatch<SelectImageResponse>(API_ENDPOINTS.tasks.selectImage(taskId), {
+    selectedImageIndex: imageIndex,
+  });
 
   if (result.success) {
     logger.info('[API] 3D 模型生成已启动:', { modelId: result.data.model.id });

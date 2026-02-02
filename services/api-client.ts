@@ -46,7 +46,11 @@ function transformUrls<T>(data: T): T {
     const result: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(data)) {
-      if ((URL_FIELDS as readonly string[]).includes(key) && typeof value === 'string' && value.startsWith('/')) {
+      if (
+        (URL_FIELDS as readonly string[]).includes(key) &&
+        typeof value === 'string' &&
+        value.startsWith('/')
+      ) {
         result[key] = `${API_CONFIG.baseURL}${value}`;
       } else if (typeof value === 'object') {
         result[key] = transformUrls(value);

@@ -39,9 +39,7 @@ const createCardStyles = (isDark: boolean) => ({
     // BlurView 内容区边框
     blurContent: {
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? 'rgba(255, 255, 255, 0.08)'
-        : 'rgba(0, 0, 0, 0.04)',
+      borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
       borderTopWidth: StyleSheet.hairlineWidth,
     },
   },
@@ -65,7 +63,7 @@ export const ModelCard = React.memo(
     const router = useRouter();
 
     // 获取用户认证状态
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
     // 使用交互 Hook 管理点赞和收藏状态
     const {
@@ -109,20 +107,14 @@ export const ModelCard = React.memo(
         style={({ pressed }) => [
           styles.card,
           {
-            backgroundColor: isDark
-              ? Colors.dark.cardBackground
-              : Colors.light.cardBackground,
+            backgroundColor: isDark ? Colors.dark.cardBackground : Colors.light.cardBackground,
             opacity: pressed ? 0.9 : 1, // 按压时降低不透明度
           },
           cardStyles.card,
         ]}
       >
         {/* 模型预览图 */}
-        <Image
-          source={{ uri: absoluteImageUrl }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: absoluteImageUrl }} style={styles.image} resizeMode="cover" />
 
         {/* BlurView 毛玻璃内容区 */}
         <BlurView

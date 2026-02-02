@@ -35,7 +35,11 @@ export interface ModelListState {
  */
 export interface ModelListActions {
   // 获取模型列表
-  fetchModels: (page?: number, options?: FetchOptions, abortController?: AbortController) => Promise<void>;
+  fetchModels: (
+    page?: number,
+    options?: FetchOptions,
+    abortController?: AbortController
+  ) => Promise<void>;
   // 刷新模型列表
   refreshModels: () => Promise<void>;
   // 加载更多
@@ -157,7 +161,11 @@ export function createModelListStore(
     cacheDuration: DEFAULT_CACHE_DURATION,
 
     // ==================== 获取模型列表 ====================
-    fetchModels: async (page = 1, fetchOptions: FetchOptions = {}, abortController?: AbortController) => {
+    fetchModels: async (
+      page = 1,
+      fetchOptions: FetchOptions = {},
+      abortController?: AbortController
+    ) => {
       const { models: existingModels, pageSize } = get();
 
       // 信息流设计: 总是获取最新数据
@@ -203,7 +211,7 @@ export function createModelListStore(
         );
 
         // 处理不同的响应格式
-        const newModels = Array.isArray(response) ? response : response.items ?? [];
+        const newModels = Array.isArray(response) ? response : (response.items ?? []);
 
         set(state => {
           if (page === 1) {
@@ -357,12 +365,10 @@ export function createModelListStore(
  * const loading = gallerySelectors.useLoading();
  * ```
  */
-export function createModelListSelectors<T extends ModelListStore>(
-  useStore: {
-    (): T;
-    <U>(selector: (state: T) => U): U;
-  }
-) {
+export function createModelListSelectors<T extends ModelListStore>(useStore: {
+  (): T;
+  <U>(selector: (state: T) => U): U;
+}) {
   return {
     // 获取模型列表
     useModels: () => useStore(state => state.models),

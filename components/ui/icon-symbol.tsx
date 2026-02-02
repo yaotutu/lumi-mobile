@@ -118,11 +118,6 @@ export function IconSymbol({
   }
 
   return (
-    <Ionicons
-      name={iconName || 'help-circle-outline'}
-      size={size}
-      color={color}
-      style={style}
-    />
+    <Ionicons name={iconName || 'help-circle-outline'} size={size} color={color} style={style} />
   );
 }

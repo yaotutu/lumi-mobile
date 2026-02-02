@@ -1,6 +1,6 @@
-import { ImageGenerating } from '@/components/pages/create/image-generating';
-import { ModelGenerating } from '@/components/pages/create/model-generating';
-import { ModelComplete } from '@/components/pages/create/model-complete';
+import { ImageGenerating } from '@/app/(tabs)/create/components/image-generating';
+import { ModelGenerating } from '@/app/(tabs)/create/components/model-generating';
+import { ModelComplete } from '@/app/(tabs)/create/components/model-complete';
 import type { CreateTaskRendererProps } from './types';
 import { logger } from '@/utils/logger';
 
@@ -72,11 +72,5 @@ export function CreateTaskRenderer({
 
   // 模型生成中页面
   logger.debug('[CreateTaskRenderer] 渲染模型生成中页面');
-  return (
-    <ModelGenerating
-      task={task}
-      paddingBottom={paddingBottom}
-      isDark={isDark}
-    />
-  );
+  return <ModelGenerating task={task} paddingBottom={paddingBottom} isDark={isDark} />;
 }

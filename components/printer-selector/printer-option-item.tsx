@@ -36,7 +36,12 @@ const STATUS_CONFIG: Record<
 /**
  * 打印机选项项组件
  */
-export function PrinterOptionItem({ printer, isSelected, onPress, onDelete }: PrinterOptionItemProps) {
+export function PrinterOptionItem({
+  printer,
+  isSelected,
+  onPress,
+  onDelete,
+}: PrinterOptionItemProps) {
   // 获取当前主题
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -139,10 +144,7 @@ export function PrinterOptionItem({ printer, isSelected, onPress, onDelete }: Pr
         <View style={styles.infoContainer}>
           {/* 打印机名称 */}
           <Text
-            style={[
-              styles.name,
-              { color: isDark ? Colors.dark.text : Colors.light.text },
-            ]}
+            style={[styles.name, { color: isDark ? Colors.dark.text : Colors.light.text }]}
             numberOfLines={1}
           >
             {printer.deviceName}
@@ -152,10 +154,7 @@ export function PrinterOptionItem({ printer, isSelected, onPress, onDelete }: Pr
           <View style={styles.metaRow}>
             {/* 型号 */}
             <Text
-              style={[
-                styles.model,
-                { color: isDark ? Colors.dark.icon : Colors.light.icon },
-              ]}
+              style={[styles.model, { color: isDark ? Colors.dark.icon : Colors.light.icon }]}
               numberOfLines={1}
             >
               {printer.model}
@@ -200,9 +199,7 @@ export function PrinterOptionItem({ printer, isSelected, onPress, onDelete }: Pr
                   style={[
                     styles.progressBarBackground,
                     {
-                      backgroundColor: isDark
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(0, 0, 0, 0.05)',
+                      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
                     },
                   ]}
                 >
@@ -244,11 +241,7 @@ export function PrinterOptionItem({ printer, isSelected, onPress, onDelete }: Pr
             style={styles.deleteButton}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons
-              name="trash-outline"
-              size={20}
-              color={isDark ? '#FF6B6B' : '#FF3B30'}
-            />
+            <Ionicons name="trash-outline" size={20} color={isDark ? '#FF6B6B' : '#FF3B30'} />
           </Pressable>
         )}
       </Pressable>

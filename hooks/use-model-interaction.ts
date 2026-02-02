@@ -74,10 +74,10 @@ export function useModelInteraction({
   onRequireLogin,
 }: UseModelInteractionParams): UseModelInteractionResult {
   // ✅ 修复：使用稳定的选择器，避免创建新对象导致无限循环
-  const statusMap = useInteractionStore((state) => state.statusMap);
-  const toggleLike = useInteractionStore((state) => state.toggleLike);
-  const toggleFavorite = useInteractionStore((state) => state.toggleFavorite);
-  const loadingIds = useInteractionStore((state) => state.loadingIds);
+  const statusMap = useInteractionStore(state => state.statusMap);
+  const toggleLike = useInteractionStore(state => state.toggleLike);
+  const toggleFavorite = useInteractionStore(state => state.toggleFavorite);
+  const loadingIds = useInteractionStore(state => state.loadingIds);
 
   // 本地状态：当前的点赞数和收藏数
   const [currentLikes, setCurrentLikes] = useState(initialLikes);
@@ -98,7 +98,9 @@ export function useModelInteraction({
 
   // 调试日志：打印当前模型的交互状态
   useEffect(() => {
-    logger.debug(`[ModelInteraction] modelId=${modelId}, isLiked=${isLiked}, isFavorited=${isFavorited}`);
+    logger.debug(
+      `[ModelInteraction] modelId=${modelId}, isLiked=${isLiked}, isFavorited=${isFavorited}`
+    );
   }, [modelId, isLiked, isFavorited]);
 
   // 同步初始计数（当 props 变化时）
@@ -117,26 +119,22 @@ export function useModelInteraction({
     // 1. 检查登录状态
     if (!isAuthenticated) {
       // 未登录，显示提示
-      Alert.alert(
-        '提示',
-        '请先登录后再进行操作',
-        [
-          {
-            text: '取消',
-            style: 'cancel',
+      Alert.alert('提示', '请先登录后再进行操作', [
+        {
+          text: '取消',
+          style: 'cancel',
+        },
+        {
+          text: '去登录',
+          onPress: () => {
+            if (onRequireLogin) {
+              onRequireLogin();
+            } else {
+              logger.warn('未提供 onRequireLogin 回调');
+            }
           },
-          {
-            text: '去登录',
-            onPress: () => {
-              if (onRequireLogin) {
-                onRequireLogin();
-              } else {
-                logger.warn('未提供 onRequireLogin 回调');
-              }
-            },
-          },
-        ]
-      );
+        },
+      ]);
       return;
     }
 
@@ -168,15 +166,7 @@ export function useModelInteraction({
       // 显示错误提示
       Alert.alert('操作失败', '点赞失败，请稍后重试');
     }
-  }, [
-    modelId,
-    isAuthenticated,
-    isLoading,
-    isLiked,
-    currentLikes,
-    toggleLike,
-    onRequireLogin,
-  ]);
+  }, [modelId, isAuthenticated, isLoading, isLiked, currentLikes, toggleLike, onRequireLogin]);
 
   /**
    * 处理收藏操作
@@ -185,26 +175,22 @@ export function useModelInteraction({
     // 1. 检查登录状态
     if (!isAuthenticated) {
       // 未登录，显示提示
-      Alert.alert(
-        '提示',
-        '请先登录后再进行操作',
-        [
-          {
-            text: '取消',
-            style: 'cancel',
+      Alert.alert('提示', '请先登录后再进行操作', [
+        {
+          text: '取消',
+          style: 'cancel',
+        },
+        {
+          text: '去登录',
+          onPress: () => {
+            if (onRequireLogin) {
+              onRequireLogin();
+            } else {
+              logger.warn('未提供 onRequireLogin 回调');
+            }
           },
-          {
-            text: '去登录',
-            onPress: () => {
-              if (onRequireLogin) {
-                onRequireLogin();
-              } else {
-                logger.warn('未提供 onRequireLogin 回调');
-              }
-            },
-          },
-        ]
-      );
+        },
+      ]);
       return;
     }
 

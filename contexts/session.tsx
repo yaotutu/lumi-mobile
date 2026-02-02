@@ -58,9 +58,9 @@ const SessionContext = createContext<SessionContextType>({
  */
 export function SessionProvider({ children }: PropsWithChildren) {
   // 从 Zustand Store 获取认证状态
-  const token = useAuthStore((state) => state.token);
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const token = useAuthStore(state => state.token);
+  const isLoading = useAuthStore(state => state.isLoading);
+  const checkAuth = useAuthStore(state => state.checkAuth);
 
   // 应用启动时初始化认证状态（仅执行一次）
   useEffect(() => {

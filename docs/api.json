@@ -24,9 +24,7 @@
     "/health": {
       "get": {
         "summary": "基础健康检查",
-        "tags": [
-          "健康检查"
-        ],
+        "tags": ["健康检查"],
         "description": "检查服务是否正常运行",
         "responses": {
           "200": {
@@ -40,34 +38,24 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
                       "properties": {
                         "status": {
                           "type": "string",
-                          "enum": [
-                            "ok"
-                          ]
+                          "enum": ["ok"]
                         },
                         "timestamp": {
                           "format": "date-time",
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "status",
-                        "timestamp"
-                      ]
+                      "required": ["status", "timestamp"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -78,9 +66,7 @@
     "/health/detailed": {
       "get": {
         "summary": "详细健康检查",
-        "tags": [
-          "健康检查"
-        ],
+        "tags": ["健康检查"],
         "description": "检查服务及其依赖（数据库、Redis）的健康状态",
         "responses": {
           "200": {
@@ -94,18 +80,14 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
                       "properties": {
                         "status": {
                           "type": "string",
-                          "enum": [
-                            "ok"
-                          ]
+                          "enum": ["ok"]
                         },
                         "checks": {
                           "type": "object",
@@ -117,27 +99,17 @@
                               "type": "boolean"
                             }
                           },
-                          "required": [
-                            "database",
-                            "redis"
-                          ]
+                          "required": ["database", "redis"]
                         },
                         "timestamp": {
                           "format": "date-time",
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "status",
-                        "checks",
-                        "timestamp"
-                      ]
+                      "required": ["status", "checks", "timestamp"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -153,9 +125,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -169,15 +139,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -188,9 +153,7 @@
     "/": {
       "get": {
         "summary": "根路径健康检查",
-        "tags": [
-          "健康检查"
-        ],
+        "tags": ["健康检查"],
         "description": "返回服务基本信息",
         "responses": {
           "200": {
@@ -210,16 +173,10 @@
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "running"
-                      ]
+                      "enum": ["running"]
                     }
                   },
-                  "required": [
-                    "service",
-                    "version",
-                    "status"
-                  ]
+                  "required": ["service", "version", "status"]
                 }
               }
             }
@@ -230,9 +187,7 @@
     "/api/auth/send-code": {
       "post": {
         "summary": "发送邮箱验证码",
-        "tags": [
-          "认证"
-        ],
+        "tags": ["认证"],
         "description": "向指定邮箱发送验证码，有效期 10 分钟",
         "requestBody": {
           "content": {
@@ -250,29 +205,20 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "enum": [
-                          "login"
-                        ]
+                        "enum": ["login"]
                       },
                       {
                         "type": "string",
-                        "enum": [
-                          "register"
-                        ]
+                        "enum": ["register"]
                       },
                       {
                         "type": "string",
-                        "enum": [
-                          "modify_password"
-                        ]
+                        "enum": ["modify_password"]
                       }
                     ]
                   }
                 },
-                "required": [
-                  "email",
-                  "type"
-                ]
+                "required": ["email", "type"]
               }
             }
           },
@@ -290,18 +236,13 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "null"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -317,9 +258,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -333,15 +272,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -357,9 +291,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -373,15 +305,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -392,9 +319,7 @@
     "/api/auth/register": {
       "post": {
         "summary": "用户注册",
-        "tags": [
-          "认证"
-        ],
+        "tags": ["认证"],
         "description": "使用邮箱和验证码注册新用户",
         "requestBody": {
           "content": {
@@ -414,10 +339,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "code"
-                ]
+                "required": ["email", "code"]
               }
             }
           },
@@ -435,18 +357,13 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "null"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -462,9 +379,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -478,15 +393,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -502,9 +412,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -518,15 +426,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -537,9 +440,7 @@
     "/api/auth/login": {
       "post": {
         "summary": "用户登录",
-        "tags": [
-          "认证"
-        ],
+        "tags": ["认证"],
         "description": "使用邮箱和验证码登录，成功后返回 Bearer Token",
         "requestBody": {
           "content": {
@@ -559,10 +460,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "code"
-                ]
+                "required": ["email", "code"]
               }
             }
           },
@@ -580,9 +478,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -592,15 +488,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "token"
-                      ]
+                      "required": ["token"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -616,9 +507,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -632,15 +521,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -656,9 +540,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -672,15 +554,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -696,9 +573,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -712,15 +587,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -731,9 +601,7 @@
     "/api/auth/me": {
       "get": {
         "summary": "获取当前登录用户",
-        "tags": [
-          "认证"
-        ],
+        "tags": ["认证"],
         "description": "通过 Bearer Token 获取当前登录用户信息（包含统计数据）",
         "responses": {
           "200": {
@@ -747,9 +615,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -759,21 +625,15 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "authenticated"
-                              ]
+                              "enum": ["authenticated"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "unauthenticated"
-                              ]
+                              "enum": ["unauthenticated"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "error"
-                              ]
+                              "enum": ["error"]
                             }
                           ]
                         },
@@ -897,11 +757,7 @@
                                   "title": "UserStatsEntity"
                                 }
                               },
-                              "required": [
-                                "id",
-                                "userName",
-                                "nickName"
-                              ]
+                              "required": ["id", "userName", "nickName"]
                             },
                             {
                               "type": "null"
@@ -909,16 +765,10 @@
                           ]
                         }
                       },
-                      "required": [
-                        "status",
-                        "user"
-                      ]
+                      "required": ["status", "user"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -929,9 +779,7 @@
     "/api/auth/logout": {
       "post": {
         "summary": "登出",
-        "tags": [
-          "认证"
-        ],
+        "tags": ["认证"],
         "description": "注销当前登录会话",
         "responses": {
           "200": {
@@ -945,18 +793,13 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "null"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -972,9 +815,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -988,15 +829,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1007,9 +843,7 @@
     "/api/users/favorites": {
       "get": {
         "summary": "获取用户收藏的模型列表",
-        "tags": [
-          "用户"
-        ],
+        "tags": ["用户"],
         "description": "获取当前登录用户收藏的所有 3D 模型（需要 Bearer Token）",
         "parameters": [
           {
@@ -1043,9 +877,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "array",
@@ -1066,15 +898,11 @@
                             "anyOf": [
                               {
                                 "type": "string",
-                                "enum": [
-                                  "AI_GENERATED"
-                                ]
+                                "enum": ["AI_GENERATED"]
                               },
                               {
                                 "type": "string",
-                                "enum": [
-                                  "USER_UPLOADED"
-                                ]
+                                "enum": ["USER_UPLOADED"]
                               }
                             ],
                             "title": "ModelSource"
@@ -1182,15 +1010,11 @@
                             "anyOf": [
                               {
                                 "type": "string",
-                                "enum": [
-                                  "PRIVATE"
-                                ]
+                                "enum": ["PRIVATE"]
                               },
                               {
                                 "type": "string",
-                                "enum": [
-                                  "PUBLIC"
-                                ]
+                                "enum": ["PUBLIC"]
                               }
                             ],
                             "title": "ModelVisibility"
@@ -1250,39 +1074,27 @@
                                 "anyOf": [
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "NOT_STARTED"
-                                    ]
+                                    "enum": ["NOT_STARTED"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "SLICING"
-                                    ]
+                                    "enum": ["SLICING"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "SLICE_COMPLETE"
-                                    ]
+                                    "enum": ["SLICE_COMPLETE"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PRINTING"
-                                    ]
+                                    "enum": ["PRINTING"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PRINT_COMPLETE"
-                                    ]
+                                    "enum": ["PRINT_COMPLETE"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "FAILED"
-                                    ]
+                                    "enum": ["FAILED"]
                                   }
                                 ],
                                 "title": "PrintStatus"
@@ -1370,10 +1182,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1389,9 +1198,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1405,15 +1212,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1429,9 +1231,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1445,15 +1245,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1464,9 +1259,7 @@
     "/api/users/{id}": {
       "get": {
         "summary": "获取指定用户信息",
-        "tags": [
-          "用户"
-        ],
+        "tags": ["用户"],
         "description": "获取指定 ID 的用户详细信息（需要 Bearer Token）",
         "parameters": [
           {
@@ -1492,9 +1285,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "用户实体",
@@ -1534,21 +1325,11 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "id",
-                        "email",
-                        "userName",
-                        "nickName",
-                        "avatar",
-                        "gender"
-                      ],
+                      "required": ["id", "email", "userName", "nickName", "avatar", "gender"],
                       "title": "UserEntity"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1564,9 +1345,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1580,15 +1359,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1604,9 +1378,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1620,15 +1392,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1644,9 +1411,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1660,15 +1425,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1684,9 +1444,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1700,15 +1458,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1719,9 +1472,7 @@
     "/api/users/update": {
       "post": {
         "summary": "更新用户信息",
-        "tags": [
-          "用户"
-        ],
+        "tags": ["用户"],
         "description": "更新用户的昵称、头像、性别等信息（需要 Bearer Token）",
         "requestBody": {
           "content": {
@@ -1747,9 +1498,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id"
-                ]
+                "required": ["id"]
               }
             }
           },
@@ -1767,9 +1516,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -1779,15 +1526,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1801,9 +1543,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1815,16 +1555,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message",
-                        "code"
-                      ]
+                      "required": ["message", "code"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1835,9 +1569,7 @@
     "/api/users/modify-password": {
       "post": {
         "summary": "修改密码",
-        "tags": [
-          "用户"
-        ],
+        "tags": ["用户"],
         "description": "修改用户登录密码（需要 Bearer Token）",
         "requestBody": {
           "content": {
@@ -1867,12 +1599,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id",
-                  "new_password",
-                  "repassword",
-                  "random_code"
-                ]
+                "required": ["id", "new_password", "repassword", "random_code"]
               }
             }
           },
@@ -1890,9 +1617,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -1902,15 +1627,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1924,9 +1644,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -1938,16 +1656,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message",
-                        "code"
-                      ]
+                      "required": ["message", "code"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -1958,9 +1670,7 @@
     "/api/proxy/image": {
       "get": {
         "summary": "图片代理",
-        "tags": [
-          "代理"
-        ],
+        "tags": ["代理"],
         "description": "通过服务端代理访问图片资源（解决跨域问题）",
         "parameters": [
           {
@@ -2022,9 +1732,7 @@
     "/api/proxy/model": {
       "get": {
         "summary": "模型文件代理",
-        "tags": [
-          "代理"
-        ],
+        "tags": ["代理"],
         "description": "通过服务端代理访问 3D 模型文件（解决跨域问题）",
         "parameters": [
           {
@@ -2086,9 +1794,7 @@
     "/api/tasks": {
       "get": {
         "summary": "获取任务列表",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "分页获取当前用户的生成任务列表",
         "parameters": [
           {
@@ -2126,9 +1832,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -2168,69 +1872,47 @@
                                     "anyOf": [
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "IMAGE_PENDING"
-                                        ]
+                                        "enum": ["IMAGE_PENDING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "IMAGE_GENERATING"
-                                        ]
+                                        "enum": ["IMAGE_GENERATING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "IMAGE_COMPLETED"
-                                        ]
+                                        "enum": ["IMAGE_COMPLETED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "IMAGE_FAILED"
-                                        ]
+                                        "enum": ["IMAGE_FAILED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "MODEL_PENDING"
-                                        ]
+                                        "enum": ["MODEL_PENDING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "MODEL_GENERATING"
-                                        ]
+                                        "enum": ["MODEL_GENERATING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "MODEL_COMPLETED"
-                                        ]
+                                        "enum": ["MODEL_COMPLETED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "MODEL_FAILED"
-                                        ]
+                                        "enum": ["MODEL_FAILED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "COMPLETED"
-                                        ]
+                                        "enum": ["COMPLETED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "FAILED"
-                                        ]
+                                        "enum": ["FAILED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "CANCELLED"
-                                        ]
+                                        "enum": ["CANCELLED"]
                                       }
                                     ],
                                     "title": "RequestStatus"
@@ -2240,27 +1922,19 @@
                                     "anyOf": [
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "IMAGE_GENERATION"
-                                        ]
+                                        "enum": ["IMAGE_GENERATION"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "AWAITING_SELECTION"
-                                        ]
+                                        "enum": ["AWAITING_SELECTION"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "MODEL_GENERATION"
-                                        ]
+                                        "enum": ["MODEL_GENERATION"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "COMPLETED"
-                                        ]
+                                        "enum": ["COMPLETED"]
                                       }
                                     ],
                                     "title": "RequestPhase"
@@ -2365,27 +2039,19 @@
                                           "anyOf": [
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "PENDING"
-                                              ]
+                                              "enum": ["PENDING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "GENERATING"
-                                              ]
+                                              "enum": ["GENERATING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "COMPLETED"
-                                              ]
+                                              "enum": ["COMPLETED"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "FAILED"
-                                              ]
+                                              "enum": ["FAILED"]
                                             }
                                           ],
                                           "title": "ImageStatus"
@@ -2447,9 +2113,7 @@
                                     }
                                   }
                                 },
-                                "required": [
-                                  "images"
-                                ]
+                                "required": ["images"]
                               }
                             ],
                             "title": "TaskWithImages"
@@ -2461,16 +2125,10 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "items",
-                        "total"
-                      ]
+                      "required": ["items", "total"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -2486,9 +2144,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -2502,15 +2158,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -2526,9 +2177,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -2542,10 +2191,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -2554,9 +2200,7 @@
       },
       "post": {
         "summary": "创建生成任务",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "创建新的图片生成任务",
         "requestBody": {
           "content": {
@@ -2572,9 +2216,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "prompt"
-                ]
+                "required": ["prompt"]
               }
             }
           },
@@ -2593,9 +2235,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "生成任务实体",
@@ -2625,69 +2265,47 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "IMAGE_PENDING"
-                              ]
+                              "enum": ["IMAGE_PENDING"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "IMAGE_GENERATING"
-                              ]
+                              "enum": ["IMAGE_GENERATING"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "IMAGE_COMPLETED"
-                              ]
+                              "enum": ["IMAGE_COMPLETED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "IMAGE_FAILED"
-                              ]
+                              "enum": ["IMAGE_FAILED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "MODEL_PENDING"
-                              ]
+                              "enum": ["MODEL_PENDING"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "MODEL_GENERATING"
-                              ]
+                              "enum": ["MODEL_GENERATING"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "MODEL_COMPLETED"
-                              ]
+                              "enum": ["MODEL_COMPLETED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "MODEL_FAILED"
-                              ]
+                              "enum": ["MODEL_FAILED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "COMPLETED"
-                              ]
+                              "enum": ["COMPLETED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "FAILED"
-                              ]
+                              "enum": ["FAILED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "CANCELLED"
-                              ]
+                              "enum": ["CANCELLED"]
                             }
                           ]
                         },
@@ -2696,27 +2314,19 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "IMAGE_GENERATION"
-                              ]
+                              "enum": ["IMAGE_GENERATION"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "AWAITING_SELECTION"
-                              ]
+                              "enum": ["AWAITING_SELECTION"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "MODEL_GENERATION"
-                              ]
+                              "enum": ["MODEL_GENERATION"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "COMPLETED"
-                              ]
+                              "enum": ["COMPLETED"]
                             }
                           ]
                         },
@@ -2769,10 +2379,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -2783,9 +2390,7 @@
     "/api/tasks/{id}": {
       "get": {
         "summary": "获取任务详情",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "获取指定任务的详细信息，包含关联的图片和模型",
         "parameters": [
           {
@@ -2811,9 +2416,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "allOf": [
@@ -2849,69 +2452,47 @@
                                   "anyOf": [
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_PENDING"
-                                      ]
+                                      "enum": ["IMAGE_PENDING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_GENERATING"
-                                      ]
+                                      "enum": ["IMAGE_GENERATING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_COMPLETED"
-                                      ]
+                                      "enum": ["IMAGE_COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_FAILED"
-                                      ]
+                                      "enum": ["IMAGE_FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_PENDING"
-                                      ]
+                                      "enum": ["MODEL_PENDING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_GENERATING"
-                                      ]
+                                      "enum": ["MODEL_GENERATING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_COMPLETED"
-                                      ]
+                                      "enum": ["MODEL_COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_FAILED"
-                                      ]
+                                      "enum": ["MODEL_FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "COMPLETED"
-                                      ]
+                                      "enum": ["COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "FAILED"
-                                      ]
+                                      "enum": ["FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "CANCELLED"
-                                      ]
+                                      "enum": ["CANCELLED"]
                                     }
                                   ]
                                 },
@@ -2920,27 +2501,19 @@
                                   "anyOf": [
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_GENERATION"
-                                      ]
+                                      "enum": ["IMAGE_GENERATION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "AWAITING_SELECTION"
-                                      ]
+                                      "enum": ["AWAITING_SELECTION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_GENERATION"
-                                      ]
+                                      "enum": ["MODEL_GENERATION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "COMPLETED"
-                                      ]
+                                      "enum": ["COMPLETED"]
                                     }
                                   ]
                                 },
@@ -3043,27 +2616,19 @@
                                         "anyOf": [
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "PENDING"
-                                            ]
+                                            "enum": ["PENDING"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "GENERATING"
-                                            ]
+                                            "enum": ["GENERATING"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "COMPLETED"
-                                            ]
+                                            "enum": ["COMPLETED"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "FAILED"
-                                            ]
+                                            "enum": ["FAILED"]
                                           }
                                         ]
                                       },
@@ -3123,9 +2688,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "images"
-                              ]
+                              "required": ["images"]
                             }
                           ]
                         },
@@ -3152,15 +2715,11 @@
                                       "anyOf": [
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "AI_GENERATED"
-                                          ]
+                                          "enum": ["AI_GENERATED"]
                                         },
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "USER_UPLOADED"
-                                          ]
+                                          "enum": ["USER_UPLOADED"]
                                         }
                                       ]
                                     },
@@ -3267,15 +2826,11 @@
                                       "anyOf": [
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "PRIVATE"
-                                          ]
+                                          "enum": ["PRIVATE"]
                                         },
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "PUBLIC"
-                                          ]
+                                          "enum": ["PUBLIC"]
                                         }
                                       ]
                                     },
@@ -3334,39 +2889,27 @@
                                           "anyOf": [
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "NOT_STARTED"
-                                              ]
+                                              "enum": ["NOT_STARTED"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "SLICING"
-                                              ]
+                                              "enum": ["SLICING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "SLICE_COMPLETE"
-                                              ]
+                                              "enum": ["SLICE_COMPLETE"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "PRINTING"
-                                              ]
+                                              "enum": ["PRINTING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "PRINT_COMPLETE"
-                                              ]
+                                              "enum": ["PRINT_COMPLETE"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "FAILED"
-                                              ]
+                                              "enum": ["FAILED"]
                                             }
                                           ]
                                         },
@@ -3456,17 +2999,12 @@
                               ]
                             }
                           },
-                          "required": [
-                            "model"
-                          ]
+                          "required": ["model"]
                         }
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -3475,9 +3013,7 @@
       },
       "patch": {
         "summary": "选择图片生成 3D 模型",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "从生成的 4 张图片中选择一张，开始生成 3D 模型",
         "requestBody": {
           "content": {
@@ -3493,9 +3029,7 @@
                     "type": "integer"
                   }
                 },
-                "required": [
-                  "selectedImageIndex"
-                ]
+                "required": ["selectedImageIndex"]
               }
             }
           },
@@ -3526,9 +3060,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -3561,69 +3093,47 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "IMAGE_PENDING"
-                                  ]
+                                  "enum": ["IMAGE_PENDING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "IMAGE_GENERATING"
-                                  ]
+                                  "enum": ["IMAGE_GENERATING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "IMAGE_COMPLETED"
-                                  ]
+                                  "enum": ["IMAGE_COMPLETED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "IMAGE_FAILED"
-                                  ]
+                                  "enum": ["IMAGE_FAILED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "MODEL_PENDING"
-                                  ]
+                                  "enum": ["MODEL_PENDING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "MODEL_GENERATING"
-                                  ]
+                                  "enum": ["MODEL_GENERATING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "MODEL_COMPLETED"
-                                  ]
+                                  "enum": ["MODEL_COMPLETED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "MODEL_FAILED"
-                                  ]
+                                  "enum": ["MODEL_FAILED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "COMPLETED"
-                                  ]
+                                  "enum": ["COMPLETED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "FAILED"
-                                  ]
+                                  "enum": ["FAILED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "CANCELLED"
-                                  ]
+                                  "enum": ["CANCELLED"]
                                 }
                               ]
                             },
@@ -3632,27 +3142,19 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "IMAGE_GENERATION"
-                                  ]
+                                  "enum": ["IMAGE_GENERATION"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "AWAITING_SELECTION"
-                                  ]
+                                  "enum": ["AWAITING_SELECTION"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "MODEL_GENERATION"
-                                  ]
+                                  "enum": ["MODEL_GENERATION"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "COMPLETED"
-                                  ]
+                                  "enum": ["COMPLETED"]
                                 }
                               ]
                             },
@@ -3721,15 +3223,11 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "AI_GENERATED"
-                                  ]
+                                  "enum": ["AI_GENERATED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "USER_UPLOADED"
-                                  ]
+                                  "enum": ["USER_UPLOADED"]
                                 }
                               ]
                             },
@@ -3836,15 +3334,11 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRIVATE"
-                                  ]
+                                  "enum": ["PRIVATE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PUBLIC"
-                                  ]
+                                  "enum": ["PUBLIC"]
                                 }
                               ]
                             },
@@ -3903,39 +3397,27 @@
                                   "anyOf": [
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "NOT_STARTED"
-                                      ]
+                                      "enum": ["NOT_STARTED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "SLICING"
-                                      ]
+                                      "enum": ["SLICING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "SLICE_COMPLETE"
-                                      ]
+                                      "enum": ["SLICE_COMPLETE"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "PRINTING"
-                                      ]
+                                      "enum": ["PRINTING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "PRINT_COMPLETE"
-                                      ]
+                                      "enum": ["PRINT_COMPLETE"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "FAILED"
-                                      ]
+                                      "enum": ["FAILED"]
                                     }
                                   ]
                                 },
@@ -4020,16 +3502,10 @@
                           ]
                         }
                       },
-                      "required": [
-                        "task",
-                        "model"
-                      ]
+                      "required": ["task", "model"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4038,9 +3514,7 @@
       },
       "delete": {
         "summary": "删除任务",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "删除指定的生成任务及其关联数据",
         "parameters": [
           {
@@ -4066,18 +3540,13 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "null"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4088,9 +3557,7 @@
     "/api/tasks/{id}/print": {
       "post": {
         "summary": "提交 3D 打印",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "将模型提交到打印系统进行切片和打印",
         "parameters": [
           {
@@ -4116,9 +3583,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -4132,16 +3597,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "sliceTaskId",
-                        "message"
-                      ]
+                      "required": ["sliceTaskId", "message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4152,9 +3611,7 @@
     "/api/tasks/{id}/print-status": {
       "get": {
         "summary": "获取打印状态",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "查询模型的打印和切片状态",
         "parameters": [
           {
@@ -4180,9 +3637,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -4216,17 +3671,10 @@
                           ]
                         }
                       },
-                      "required": [
-                        "printStatus",
-                        "sliceTaskId",
-                        "sliceProgress"
-                      ]
+                      "required": ["printStatus", "sliceTaskId", "sliceProgress"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4237,9 +3685,7 @@
     "/api/tasks/{id}/status": {
       "get": {
         "summary": "获取任务状态（轮询）",
-        "tags": [
-          "任务"
-        ],
+        "tags": ["任务"],
         "description": "轮询获取任务的最新状态，替代 SSE。支持条件查询（since 参数），仅返回有变更的数据",
         "parameters": [
           {
@@ -4275,9 +3721,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "allOf": [
@@ -4313,69 +3757,47 @@
                                   "anyOf": [
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_PENDING"
-                                      ]
+                                      "enum": ["IMAGE_PENDING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_GENERATING"
-                                      ]
+                                      "enum": ["IMAGE_GENERATING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_COMPLETED"
-                                      ]
+                                      "enum": ["IMAGE_COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_FAILED"
-                                      ]
+                                      "enum": ["IMAGE_FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_PENDING"
-                                      ]
+                                      "enum": ["MODEL_PENDING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_GENERATING"
-                                      ]
+                                      "enum": ["MODEL_GENERATING"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_COMPLETED"
-                                      ]
+                                      "enum": ["MODEL_COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_FAILED"
-                                      ]
+                                      "enum": ["MODEL_FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "COMPLETED"
-                                      ]
+                                      "enum": ["COMPLETED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "FAILED"
-                                      ]
+                                      "enum": ["FAILED"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "CANCELLED"
-                                      ]
+                                      "enum": ["CANCELLED"]
                                     }
                                   ]
                                 },
@@ -4384,27 +3806,19 @@
                                   "anyOf": [
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "IMAGE_GENERATION"
-                                      ]
+                                      "enum": ["IMAGE_GENERATION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "AWAITING_SELECTION"
-                                      ]
+                                      "enum": ["AWAITING_SELECTION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "MODEL_GENERATION"
-                                      ]
+                                      "enum": ["MODEL_GENERATION"]
                                     },
                                     {
                                       "type": "string",
-                                      "enum": [
-                                        "COMPLETED"
-                                      ]
+                                      "enum": ["COMPLETED"]
                                     }
                                   ]
                                 },
@@ -4507,27 +3921,19 @@
                                         "anyOf": [
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "PENDING"
-                                            ]
+                                            "enum": ["PENDING"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "GENERATING"
-                                            ]
+                                            "enum": ["GENERATING"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "COMPLETED"
-                                            ]
+                                            "enum": ["COMPLETED"]
                                           },
                                           {
                                             "type": "string",
-                                            "enum": [
-                                              "FAILED"
-                                            ]
+                                            "enum": ["FAILED"]
                                           }
                                         ]
                                       },
@@ -4587,9 +3993,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "images"
-                              ]
+                              "required": ["images"]
                             }
                           ]
                         },
@@ -4616,15 +4020,11 @@
                                       "anyOf": [
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "AI_GENERATED"
-                                          ]
+                                          "enum": ["AI_GENERATED"]
                                         },
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "USER_UPLOADED"
-                                          ]
+                                          "enum": ["USER_UPLOADED"]
                                         }
                                       ]
                                     },
@@ -4731,15 +4131,11 @@
                                       "anyOf": [
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "PRIVATE"
-                                          ]
+                                          "enum": ["PRIVATE"]
                                         },
                                         {
                                           "type": "string",
-                                          "enum": [
-                                            "PUBLIC"
-                                          ]
+                                          "enum": ["PUBLIC"]
                                         }
                                       ]
                                     },
@@ -4798,39 +4194,27 @@
                                           "anyOf": [
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "NOT_STARTED"
-                                              ]
+                                              "enum": ["NOT_STARTED"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "SLICING"
-                                              ]
+                                              "enum": ["SLICING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "SLICE_COMPLETE"
-                                              ]
+                                              "enum": ["SLICE_COMPLETE"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "PRINTING"
-                                              ]
+                                              "enum": ["PRINTING"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "PRINT_COMPLETE"
-                                              ]
+                                              "enum": ["PRINT_COMPLETE"]
                                             },
                                             {
                                               "type": "string",
-                                              "enum": [
-                                                "FAILED"
-                                              ]
+                                              "enum": ["FAILED"]
                                             }
                                           ]
                                         },
@@ -4920,17 +4304,12 @@
                               ]
                             }
                           },
-                          "required": [
-                            "model"
-                          ]
+                          "required": ["model"]
                         }
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4958,9 +4337,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -4974,15 +4351,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -4998,9 +4370,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -5014,10 +4384,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -5028,9 +4395,7 @@
     "/api/gallery/models": {
       "get": {
         "summary": "获取公开模型列表",
-        "tags": [
-          "模型"
-        ],
+        "tags": ["模型"],
         "description": "分页获取所有公开的 3D 模型",
         "parameters": [
           {
@@ -5062,21 +4427,15 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "enum": [
-                    "latest"
-                  ]
+                  "enum": ["latest"]
                 },
                 {
                   "type": "string",
-                  "enum": [
-                    "popular"
-                  ]
+                  "enum": ["popular"]
                 },
                 {
                   "type": "string",
-                  "enum": [
-                    "liked"
-                  ]
+                  "enum": ["liked"]
                 }
               ]
             },
@@ -5097,9 +4456,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -5135,15 +4492,11 @@
                                 "anyOf": [
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PRIVATE"
-                                    ]
+                                    "enum": ["PRIVATE"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PUBLIC"
-                                    ]
+                                    "enum": ["PUBLIC"]
                                   }
                                 ]
                               },
@@ -5183,16 +4536,10 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "items",
-                        "total"
-                      ]
+                      "required": ["items", "total"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5208,9 +4555,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -5224,15 +4569,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5243,9 +4583,7 @@
     "/api/gallery/models/{id}": {
       "get": {
         "summary": "获取模型详情",
-        "tags": [
-          "模型"
-        ],
+        "tags": ["模型"],
         "description": "获取指定 3D 模型的详细信息",
         "parameters": [
           {
@@ -5271,9 +4609,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "3D 模型实体",
@@ -5292,15 +4628,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "AI_GENERATED"
-                              ]
+                              "enum": ["AI_GENERATED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "USER_UPLOADED"
-                              ]
+                              "enum": ["USER_UPLOADED"]
                             }
                           ]
                         },
@@ -5407,15 +4739,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "PRIVATE"
-                              ]
+                              "enum": ["PRIVATE"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "PUBLIC"
-                              ]
+                              "enum": ["PUBLIC"]
                             }
                           ]
                         },
@@ -5474,39 +4802,27 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "NOT_STARTED"
-                                  ]
+                                  "enum": ["NOT_STARTED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICING"
-                                  ]
+                                  "enum": ["SLICING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICE_COMPLETE"
-                                  ]
+                                  "enum": ["SLICE_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINTING"
-                                  ]
+                                  "enum": ["PRINTING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINT_COMPLETE"
-                                  ]
+                                  "enum": ["PRINT_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "FAILED"
-                                  ]
+                                  "enum": ["FAILED"]
                                 }
                               ]
                             },
@@ -5591,10 +4907,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5605,9 +4918,7 @@
     "/api/gallery/models/{id}/download": {
       "post": {
         "summary": "下载模型",
-        "tags": [
-          "模型"
-        ],
+        "tags": ["模型"],
         "description": "增加下载计数",
         "parameters": [
           {
@@ -5633,9 +4944,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -5645,15 +4954,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5664,9 +4968,7 @@
     "/api/gallery/models/{id}/interactions": {
       "get": {
         "summary": "获取用户交互状态",
-        "tags": [
-          "交互"
-        ],
+        "tags": ["交互"],
         "description": "获取当前用户对指定模型的点赞和收藏状态",
         "parameters": [
           {
@@ -5692,9 +4994,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -5719,16 +5019,10 @@
                           "type": "boolean"
                         }
                       },
-                      "required": [
-                        "isAuthenticated",
-                        "interactions"
-                      ]
+                      "required": ["isAuthenticated", "interactions"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5737,9 +5031,7 @@
       },
       "post": {
         "summary": "创建交互",
-        "tags": [
-          "交互"
-        ],
+        "tags": ["交互"],
         "description": "对模型进行点赞或收藏操作",
         "requestBody": {
           "content": {
@@ -5753,23 +5045,17 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "enum": [
-                          "LIKE"
-                        ]
+                        "enum": ["LIKE"]
                       },
                       {
                         "type": "string",
-                        "enum": [
-                          "FAVORITE"
-                        ]
+                        "enum": ["FAVORITE"]
                       }
                     ],
                     "title": "InteractionType"
                   }
                 },
-                "required": [
-                  "type"
-                ]
+                "required": ["type"]
               }
             }
           },
@@ -5800,9 +5086,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "模型交互实体",
@@ -5825,15 +5109,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "LIKE"
-                              ]
+                              "enum": ["LIKE"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "FAVORITE"
-                              ]
+                              "enum": ["FAVORITE"]
                             }
                           ]
                         },
@@ -5843,20 +5123,11 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "id",
-                        "externalUserId",
-                        "modelId",
-                        "type",
-                        "createdAt"
-                      ],
+                      "required": ["id", "externalUserId", "modelId", "type", "createdAt"],
                       "title": "InteractionEntity"
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5867,9 +5138,7 @@
     "/api/gallery/models/batch-interactions": {
       "post": {
         "summary": "批量获取交互状态",
-        "tags": [
-          "交互"
-        ],
+        "tags": ["交互"],
         "description": "批量获取当前用户对多个模型的交互状态",
         "requestBody": {
           "content": {
@@ -5887,9 +5156,7 @@
                     }
                   }
                 },
-                "required": [
-                  "modelIds"
-                ]
+                "required": ["modelIds"]
               }
             }
           },
@@ -5907,9 +5174,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -5933,23 +5198,14 @@
                                 "type": "boolean"
                               }
                             },
-                            "required": [
-                              "isLiked",
-                              "isFavorited"
-                            ]
+                            "required": ["isLiked", "isFavorited"]
                           }
                         }
                       },
-                      "required": [
-                        "isAuthenticated",
-                        "interactions"
-                      ]
+                      "required": ["isAuthenticated", "interactions"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -5960,9 +5216,7 @@
     "/api/users/models": {
       "get": {
         "summary": "获取当前用户的模型列表",
-        "tags": [
-          "模型管理"
-        ],
+        "tags": ["模型管理"],
         "description": "获取登录用户创建的所有模型，支持按可见性筛选和排序（需要认证）",
         "parameters": [
           {
@@ -5970,15 +5224,11 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "enum": [
-                    "PRIVATE"
-                  ]
+                  "enum": ["PRIVATE"]
                 },
                 {
                   "type": "string",
-                  "enum": [
-                    "PUBLIC"
-                  ]
+                  "enum": ["PUBLIC"]
                 }
               ]
             },
@@ -5993,21 +5243,15 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "enum": [
-                    "latest"
-                  ]
+                  "enum": ["latest"]
                 },
                 {
                   "type": "string",
-                  "enum": [
-                    "name"
-                  ]
+                  "enum": ["name"]
                 },
                 {
                   "type": "string",
-                  "enum": [
-                    "popular"
-                  ]
+                  "enum": ["popular"]
                 }
               ]
             },
@@ -6047,9 +5291,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -6074,15 +5316,11 @@
                                 "anyOf": [
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "AI_GENERATED"
-                                    ]
+                                    "enum": ["AI_GENERATED"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "USER_UPLOADED"
-                                    ]
+                                    "enum": ["USER_UPLOADED"]
                                   }
                                 ]
                               },
@@ -6189,15 +5427,11 @@
                                 "anyOf": [
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PRIVATE"
-                                    ]
+                                    "enum": ["PRIVATE"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "PUBLIC"
-                                    ]
+                                    "enum": ["PUBLIC"]
                                   }
                                 ]
                               },
@@ -6256,39 +5490,27 @@
                                     "anyOf": [
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "NOT_STARTED"
-                                        ]
+                                        "enum": ["NOT_STARTED"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "SLICING"
-                                        ]
+                                        "enum": ["SLICING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "SLICE_COMPLETE"
-                                        ]
+                                        "enum": ["SLICE_COMPLETE"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "PRINTING"
-                                        ]
+                                        "enum": ["PRINTING"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "PRINT_COMPLETE"
-                                        ]
+                                        "enum": ["PRINT_COMPLETE"]
                                       },
                                       {
                                         "type": "string",
-                                        "enum": [
-                                          "FAILED"
-                                        ]
+                                        "enum": ["FAILED"]
                                       }
                                     ]
                                   },
@@ -6388,18 +5610,10 @@
                           "type": "boolean"
                         }
                       },
-                      "required": [
-                        "items",
-                        "total",
-                        "publicCount",
-                        "hasMore"
-                      ]
+                      "required": ["items", "total", "publicCount", "hasMore"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6415,9 +5629,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -6431,15 +5643,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6455,9 +5662,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -6471,10 +5676,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -6485,9 +5687,7 @@
     "/api/models/{id}": {
       "patch": {
         "summary": "更新模型信息",
-        "tags": [
-          "模型管理"
-        ],
+        "tags": ["模型管理"],
         "description": "更新模型的名称和描述（需要认证且为模型拥有者）",
         "requestBody": {
           "content": {
@@ -6535,9 +5735,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "3D 模型实体",
@@ -6556,15 +5754,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "AI_GENERATED"
-                              ]
+                              "enum": ["AI_GENERATED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "USER_UPLOADED"
-                              ]
+                              "enum": ["USER_UPLOADED"]
                             }
                           ]
                         },
@@ -6671,15 +5865,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "PRIVATE"
-                              ]
+                              "enum": ["PRIVATE"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "PUBLIC"
-                              ]
+                              "enum": ["PUBLIC"]
                             }
                           ]
                         },
@@ -6738,39 +5928,27 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "NOT_STARTED"
-                                  ]
+                                  "enum": ["NOT_STARTED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICING"
-                                  ]
+                                  "enum": ["SLICING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICE_COMPLETE"
-                                  ]
+                                  "enum": ["SLICE_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINTING"
-                                  ]
+                                  "enum": ["PRINTING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINT_COMPLETE"
-                                  ]
+                                  "enum": ["PRINT_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "FAILED"
-                                  ]
+                                  "enum": ["FAILED"]
                                 }
                               ]
                             },
@@ -6855,10 +6033,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6874,9 +6049,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -6890,15 +6063,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6914,9 +6082,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -6930,15 +6096,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6954,9 +6115,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -6970,15 +6129,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -6994,9 +6148,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7010,15 +6162,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7034,9 +6181,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -7050,10 +6195,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -7062,9 +6204,7 @@
       },
       "delete": {
         "summary": "删除模型",
-        "tags": [
-          "模型管理"
-        ],
+        "tags": ["模型管理"],
         "description": "删除指定的模型（需要认证且为模型拥有者）",
         "parameters": [
           {
@@ -7090,9 +6230,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -7102,15 +6240,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7126,9 +6259,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7142,15 +6273,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7166,9 +6292,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7182,15 +6306,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7206,9 +6325,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7222,15 +6339,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7246,9 +6358,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -7262,10 +6372,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -7276,9 +6383,7 @@
     "/api/models/{id}/visibility": {
       "patch": {
         "summary": "修改模型可见性",
-        "tags": [
-          "模型管理"
-        ],
+        "tags": ["模型管理"],
         "description": "将模型设置为公开或私有（需要认证且为模型拥有者）",
         "requestBody": {
           "content": {
@@ -7291,22 +6396,16 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "enum": [
-                          "PRIVATE"
-                        ]
+                        "enum": ["PRIVATE"]
                       },
                       {
                         "type": "string",
-                        "enum": [
-                          "PUBLIC"
-                        ]
+                        "enum": ["PUBLIC"]
                       }
                     ]
                   }
                 },
-                "required": [
-                  "visibility"
-                ]
+                "required": ["visibility"]
               }
             }
           },
@@ -7336,9 +6435,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "description": "3D 模型实体",
@@ -7357,15 +6454,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "AI_GENERATED"
-                              ]
+                              "enum": ["AI_GENERATED"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "USER_UPLOADED"
-                              ]
+                              "enum": ["USER_UPLOADED"]
                             }
                           ]
                         },
@@ -7472,15 +6565,11 @@
                           "anyOf": [
                             {
                               "type": "string",
-                              "enum": [
-                                "PRIVATE"
-                              ]
+                              "enum": ["PRIVATE"]
                             },
                             {
                               "type": "string",
-                              "enum": [
-                                "PUBLIC"
-                              ]
+                              "enum": ["PUBLIC"]
                             }
                           ]
                         },
@@ -7539,39 +6628,27 @@
                               "anyOf": [
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "NOT_STARTED"
-                                  ]
+                                  "enum": ["NOT_STARTED"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICING"
-                                  ]
+                                  "enum": ["SLICING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "SLICE_COMPLETE"
-                                  ]
+                                  "enum": ["SLICE_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINTING"
-                                  ]
+                                  "enum": ["PRINTING"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "PRINT_COMPLETE"
-                                  ]
+                                  "enum": ["PRINT_COMPLETE"]
                                 },
                                 {
                                   "type": "string",
-                                  "enum": [
-                                    "FAILED"
-                                  ]
+                                  "enum": ["FAILED"]
                                 }
                               ]
                             },
@@ -7656,10 +6733,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7675,9 +6749,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7691,15 +6763,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7715,9 +6782,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7731,15 +6796,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7755,9 +6815,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7771,15 +6829,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7795,9 +6848,7 @@
                     "status": {
                       "description": "失败状态（客户端错误）",
                       "type": "string",
-                      "enum": [
-                        "fail"
-                      ]
+                      "enum": ["fail"]
                     },
                     "data": {
                       "type": "object",
@@ -7811,15 +6862,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }
@@ -7835,9 +6881,7 @@
                     "status": {
                       "description": "错误状态（服务端错误）",
                       "type": "string",
-                      "enum": [
-                        "error"
-                      ]
+                      "enum": ["error"]
                     },
                     "message": {
                       "description": "错误信息",
@@ -7851,10 +6895,7 @@
                       "description": "附加错误数据"
                     }
                   },
-                  "required": [
-                    "status",
-                    "message"
-                  ]
+                  "required": ["status", "message"]
                 }
               }
             }
@@ -7865,9 +6906,7 @@
     "/api/workers/status": {
       "get": {
         "summary": "获取 Worker 状态",
-        "tags": [
-          "Worker"
-        ],
+        "tags": ["Worker"],
         "description": "获取所有 Worker（Image Worker、Model Worker）的运行状态和队列信息",
         "responses": {
           "200": {
@@ -7881,9 +6920,7 @@
                     "status": {
                       "description": "成功状态",
                       "type": "string",
-                      "enum": [
-                        "success"
-                      ]
+                      "enum": ["success"]
                     },
                     "data": {
                       "type": "object",
@@ -7901,21 +6938,15 @@
                                 "anyOf": [
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "running"
-                                    ]
+                                    "enum": ["running"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "stopped"
-                                    ]
+                                    "enum": ["stopped"]
                                   },
                                   {
                                     "type": "string",
-                                    "enum": [
-                                      "error"
-                                    ]
+                                    "enum": ["error"]
                                   }
                                 ]
                               },
@@ -7952,33 +6983,17 @@
                                     "type": "integer"
                                   }
                                 },
-                                "required": [
-                                  "active",
-                                  "waiting",
-                                  "completed",
-                                  "failed"
-                                ]
+                                "required": ["active", "waiting", "completed", "failed"]
                               }
                             },
-                            "required": [
-                              "name",
-                              "status",
-                              "queueName",
-                              "concurrency",
-                              "stats"
-                            ]
+                            "required": ["name", "status", "queueName", "concurrency", "stats"]
                           }
                         }
                       },
-                      "required": [
-                        "workers"
-                      ]
+                      "required": ["workers"]
                     }
                   },
-                  "required": [
-                    "status",
-                    "data"
-                  ]
+                  "required": ["status", "data"]
                 }
               }
             }

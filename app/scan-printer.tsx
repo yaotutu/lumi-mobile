@@ -18,7 +18,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
-import { ScreenWrapper } from '@/components/screen-wrapper';
+import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { usePrinterStore } from '@/stores';
@@ -51,8 +51,8 @@ export default function ScanPrinterScreen() {
   const [binding, setBinding] = useState(false);
 
   // 从 Store 获取绑定方法
-  const bindPrinter = usePrinterStore((state) => state.bindPrinter);
-  const fetchPrinters = usePrinterStore((state) => state.fetchPrinters);
+  const bindPrinter = usePrinterStore(state => state.bindPrinter);
+  const fetchPrinters = usePrinterStore(state => state.fetchPrinters);
 
   /**
    * 请求相机权限
@@ -216,9 +216,7 @@ export default function ScanPrinterScreen() {
             <Text style={styles.buttonText}>授予权限</Text>
           </Pressable>
           <Pressable onPress={handleBack} style={styles.cancelButton}>
-            <Text style={[styles.cancelButtonText, { color: Colors[colorScheme].text }]}>
-              返回
-            </Text>
+            <Text style={[styles.cancelButtonText, { color: Colors[colorScheme].text }]}>返回</Text>
           </Pressable>
         </View>
       </ScreenWrapper>

@@ -4,7 +4,7 @@
  */
 
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/themed/themed-text';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 

@@ -204,10 +204,7 @@ export function PrinterSelector({
                   color={isDark ? Colors.dark.text : Colors.light.text}
                 />
                 <Text
-                  style={[
-                    styles.title,
-                    { color: isDark ? Colors.dark.text : Colors.light.text },
-                  ]}
+                  style={[styles.title, { color: isDark ? Colors.dark.text : Colors.light.text }]}
                 >
                   选择打印机
                 </Text>
@@ -219,9 +216,7 @@ export function PrinterSelector({
                   style={[
                     styles.closeButtonBackground,
                     {
-                      backgroundColor: isDark
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(0, 0, 0, 0.05)',
+                      backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
                     },
                   ]}
                 >
@@ -239,9 +234,7 @@ export function PrinterSelector({
               style={[
                 styles.divider,
                 {
-                  backgroundColor: isDark
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(0, 0, 0, 0.05)',
+                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
                 },
               ]}
             />
@@ -252,7 +245,7 @@ export function PrinterSelector({
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator={false}
             >
-              {printers.map((printer) => (
+              {printers.map(printer => (
                 <PrinterOptionItem
                   key={printer.deviceId}
                   printer={printer}
@@ -271,9 +264,7 @@ export function PrinterSelector({
                       backgroundColor: isDark
                         ? 'rgba(0, 122, 255, 0.15)'
                         : 'rgba(0, 122, 255, 0.1)',
-                      borderColor: isDark
-                        ? 'rgba(0, 122, 255, 0.3)'
-                        : 'rgba(0, 122, 255, 0.2)',
+                      borderColor: isDark ? 'rgba(0, 122, 255, 0.3)' : 'rgba(0, 122, 255, 0.2)',
                     },
                   ]}
                 >
