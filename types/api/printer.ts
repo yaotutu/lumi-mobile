@@ -149,6 +149,10 @@ export interface PrinterListResponse {
   printers: PrinterBasicInfo[];
   // 总数
   total: number;
+  // 当前页码
+  page: number;
+  // 每页数量
+  size: number;
 }
 
 /**

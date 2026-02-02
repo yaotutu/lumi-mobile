@@ -16,9 +16,10 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, Alert, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, Alert, View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -263,12 +264,39 @@ export default function PrinterScreen() {
       <AuthGuard>
         <ScreenWrapper edges={['top']}>
           <View style={[styles.emptyContainer, { backgroundColor }]}>
+            {/* 图标 */}
+            <Ionicons
+              name="hardware-chip-outline"
+              size={80}
+              color={isDark ? Colors.dark.icon : Colors.light.icon}
+              style={styles.emptyIcon}
+            />
+
+            {/* 提示文字 */}
             <Text style={[styles.emptyText, { color: isDark ? Colors.dark.text : Colors.light.text }]}>
               暂无打印机
             </Text>
             <Text style={[styles.emptyHint, { color: isDark ? Colors.dark.icon : Colors.light.icon }]}>
-              请先绑定打印机
+              扫描打印机二维码进行绑定
             </Text>
+
+            {/* 添加打印机按钮 */}
+            <Pressable
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.push('/scan-printer');
+              }}
+              style={({ pressed }) => [
+                styles.emptyButton,
+                {
+                  backgroundColor: '#007AFF',
+                  opacity: pressed ? 0.8 : 1,
+                },
+              ]}
+            >
+              <Ionicons name="qr-code-outline" size={24} color="#FFFFFF" />
+              <Text style={styles.emptyButtonText}>扫码添加打印机</Text>
+            </Pressable>
           </View>
         </ScreenWrapper>
       </AuthGuard>
@@ -380,18 +408,44 @@ const styles = StyleSheet.create({
     flex: 1, // 占满整个屏幕
     justifyContent: 'center', // 垂直居中
     alignItems: 'center', // 水平居中
-    gap: Spacing.sm, // 文本之间的间距
+    paddingHorizontal: Spacing.xl, // 横向内边距
+  },
+
+  // 空状态图标
+  emptyIcon: {
+    marginBottom: Spacing.lg, // 图标和文字之间的间距
+    opacity: 0.5, // 半透明效果
   },
 
   // 空状态文本
   emptyText: {
-    fontSize: 18, // 字体大小
+    fontSize: 20, // 字体大小
     fontWeight: '600', // 字体粗细
+    marginBottom: Spacing.xs, // 与提示文字的间距
   },
 
   // 空状态提示
   emptyHint: {
     fontSize: 14, // 字体大小
     fontWeight: '400', // 字体粗细
+    marginBottom: Spacing.xxl, // 与按钮的间距
+    textAlign: 'center', // 文字居中
+  },
+
+  // 空状态按钮
+  emptyButton: {
+    flexDirection: 'row', // 横向排列
+    alignItems: 'center', // 垂直居中
+    paddingHorizontal: 24, // 横向内边距
+    paddingVertical: 14, // 纵向内边距
+    borderRadius: 12, // 圆角
+    gap: 8, // 图标和文字之间的间距
+  },
+
+  // 空状态按钮文字
+  emptyButtonText: {
+    fontSize: 16, // 字体大小
+    fontWeight: '600', // 字体粗细
+    color: '#FFFFFF', // 白色文字
   },
 });
