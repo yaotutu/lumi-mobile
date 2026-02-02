@@ -1,17 +1,15 @@
 import { useState, useCallback } from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity, Image, Text } from 'react-native';
-import { router, Stack } from 'expo-router';
+import { StyleSheet, View, FlatList, TouchableOpacity, Image } from 'react-native';
+import { router, Stack, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/layout/screen-wrapper';
 import { AuthGuard } from '@/components/auth';
 import { ThemedText } from '@/components/themed/themed-text';
 import { LoadingStateView } from '@/components/layout/loading-state-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAsyncController } from '@/hooks/useAsyncController';
 import { fetchTaskList, type BackendGenerationTask } from '@/services/api/tasks';
 import { logger } from '@/utils/logger';
-import { Spacing, FontSize, FontWeight, BorderRadius, Colors } from '@/constants/theme';
-import { useFocusEffect } from 'expo-router';
+import { Spacing, FontSize, FontWeight, BorderRadius } from '@/constants/theme';
 import { createImmersiveHeaderOptions } from '@/utils/navigation';
 
 /**
@@ -22,7 +20,6 @@ export default function CreateHistoryScreen() {
   // ==================== Hooks ====================
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { createController } = useAsyncController();
 
   // ==================== State ====================
   const [tasks, setTasks] = useState<BackendGenerationTask[]>([]);
@@ -77,58 +74,52 @@ export default function CreateHistoryScreen() {
   /**
    * 加载任务列表
    */
-  const loadTasks = useCallback(
-    async (pageNum: number, isRefresh: boolean = false) => {
-      try {
-        logger.info('[CreateHistory] 加载任务列表:', { page: pageNum, isRefresh });
+  const loadTasks = useCallback(async (pageNum: number, isRefresh: boolean = false) => {
+    try {
+      logger.info('[CreateHistory] 加载任务列表:', { page: pageNum, isRefresh });
 
-        // 设置加载状态
-        if (isRefresh) {
-          setRefreshing(true);
-        } else if (pageNum === 1) {
-          setLoading(true);
-        }
-
-        // 清除错误
-        setError(null);
-
-        // 创建取消控制器
-        const controller = createController();
-
-        // 调用 API
-        const result = await fetchTaskList(pageNum, 20);
-
-        if (!result.success) {
-          throw new Error(result.error.message);
-        }
-
-        logger.info('[CreateHistory] 任务列表加载成功:', {
-          total: result.data.total,
-          count: result.data.items.length,
-        });
-
-        // 更新数据
-        if (isRefresh || pageNum === 1) {
-          // 刷新或首次加载，替换数据
-          setTasks(result.data.items);
-        } else {
-          // 加载更多，追加数据
-          setTasks(prev => [...prev, ...result.data.items]);
-        }
-
-        // 更新分页状态
-        setPage(pageNum);
-        setHasMore(result.data.items.length === 20); // 如果返回20条，说明可能还有更多
-      } catch (err) {
-        logger.error('[CreateHistory] 加载任务列表失败:', err);
-        setError(err instanceof Error ? err.message : '加载失败');
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
+      // 设置加载状态
+      if (isRefresh) {
+        setRefreshing(true);
+      } else if (pageNum === 1) {
+        setLoading(true);
       }
-    },
-    [createController]
-  );
+
+      // 清除错误
+      setError(null);
+
+      // 调用 API
+      const result = await fetchTaskList(pageNum, 20);
+
+      if (!result.success) {
+        throw new Error(result.error.message);
+      }
+
+      logger.info('[CreateHistory] 任务列表加载成功:', {
+        total: result.data.total,
+        count: result.data.items.length,
+      });
+
+      // 更新数据
+      if (isRefresh || pageNum === 1) {
+        // 刷新或首次加载，替换数据
+        setTasks(result.data.items);
+      } else {
+        // 加载更多，追加数据
+        setTasks(prev => [...prev, ...result.data.items]);
+      }
+
+      // 更新分页状态
+      setPage(pageNum);
+      setHasMore(result.data.items.length === 20); // 如果返回20条，说明可能还有更多
+    } catch (err) {
+      logger.error('[CreateHistory] 加载任务列表失败:', err);
+      setError(err instanceof Error ? err.message : '加载失败');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   /**
    * 页面聚焦时加载数据

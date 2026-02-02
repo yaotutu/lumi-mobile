@@ -38,7 +38,6 @@ interface QRCodeData {
 export default function ScanPrinterScreen() {
   // 获取主题配置
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
 
   // 路由
   const router = useRouter();
@@ -188,9 +187,11 @@ export default function ScanPrinterScreen() {
   if (!permission) {
     return (
       <ScreenWrapper edges={[]}>
-        <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-          <ActivityIndicator size="large" color={Colors[colorScheme].tint} />
-          <Text style={[styles.message, { color: Colors[colorScheme].text }]}>
+        <View
+          style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
+        >
+          <ActivityIndicator size="large" color={Colors[colorScheme ?? 'light'].tint} />
+          <Text style={[styles.message, { color: Colors[colorScheme ?? 'light'].text }]}>
             正在请求相机权限...
           </Text>
         </View>
@@ -202,21 +203,25 @@ export default function ScanPrinterScreen() {
   if (!permission.granted) {
     return (
       <ScreenWrapper edges={[]}>
-        <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
+        <View
+          style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
+        >
           <Ionicons
             name="camera-outline"
             size={64}
-            color={Colors[colorScheme].icon}
+            color={Colors[colorScheme ?? 'light'].icon}
             style={styles.icon}
           />
-          <Text style={[styles.message, { color: Colors[colorScheme].text }]}>
+          <Text style={[styles.message, { color: Colors[colorScheme ?? 'light'].text }]}>
             需要相机权限才能扫描二维码
           </Text>
           <Pressable onPress={requestPermission} style={styles.button}>
             <Text style={styles.buttonText}>授予权限</Text>
           </Pressable>
           <Pressable onPress={handleBack} style={styles.cancelButton}>
-            <Text style={[styles.cancelButtonText, { color: Colors[colorScheme].text }]}>返回</Text>
+            <Text style={[styles.cancelButtonText, { color: Colors[colorScheme ?? 'light'].text }]}>
+              返回
+            </Text>
           </Pressable>
         </View>
       </ScreenWrapper>

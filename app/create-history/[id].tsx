@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { StyleSheet, View, TouchableOpacity, Platform } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/layout/screen-wrapper';
@@ -12,7 +12,7 @@ import { useSafeAreaSpacing } from '@/hooks/use-safe-area-spacing';
 import { useCreateStore } from '@/stores';
 import { fetchTaskStatus } from '@/services/api/tasks';
 import { logger } from '@/utils/logger';
-import { Spacing, FontSize, FontWeight, Colors } from '@/constants/theme';
+import { FontSize, FontWeight } from '@/constants/theme';
 import { createImmersiveHeaderOptions } from '@/utils/navigation';
 import type { GenerationTask } from '@/stores';
 

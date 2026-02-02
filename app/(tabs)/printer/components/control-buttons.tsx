@@ -70,7 +70,7 @@ export function ControlButtons({
     setIsPausing(true);
     try {
       await onPause();
-    } catch (error) {
+    } catch {
       Alert.alert('操作失败', '暂停打印失败，请重试');
     } finally {
       setIsPausing(false);
@@ -89,7 +89,7 @@ export function ControlButtons({
     setIsResuming(true);
     try {
       await onResume();
-    } catch (error) {
+    } catch {
       Alert.alert('操作失败', '继续打印失败，请重试');
     } finally {
       setIsResuming(false);
@@ -121,7 +121,7 @@ export function ControlButtons({
           setIsStopping(true);
           try {
             await onStop();
-          } catch (error) {
+          } catch {
             Alert.alert('操作失败', '停止打印失败，请重试');
           } finally {
             setIsStopping(false);

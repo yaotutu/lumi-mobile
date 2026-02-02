@@ -32,7 +32,7 @@ export default function DiscoverScreen() {
   useEffect(() => {
     const controller = createController();
     store.fetchModels(1, {}, controller);
-  }, [store.fetchModels, createController]);
+  }, [store, createController]);
 
   // ==================== 事件处理 ====================
   /**

@@ -73,7 +73,7 @@ export default function UserModelsScreen() {
   useEffect(() => {
     const controller = createController();
     store.fetchModels(1, {}, controller);
-  }, [store.fetchModels, createController]);
+  }, [store, createController]);
 
   // ==================== 事件处理 ====================
   /**
