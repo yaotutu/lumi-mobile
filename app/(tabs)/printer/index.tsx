@@ -304,6 +304,11 @@ export default function PrinterScreen() {
   }
 
   // 正常状态：显示打印机数据
+  // 类型守卫：确保 currentPrinter 不为 null
+  if (!currentPrinter) {
+    return null;
+  }
+
   return (
     <AuthGuard>
       <ScreenWrapper edges={['top']}>
